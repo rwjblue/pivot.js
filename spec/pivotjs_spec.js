@@ -10,6 +10,10 @@ describe('pivot', function () {
       pivot.csv(sample_csv)
     });
 
+  afterEach(function () {
+    pivot.reset();
+  });
+
   describe('CSV', function () {
     it('can parse csv into an array', function(){
       expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code:'34471'});
@@ -26,15 +30,22 @@ describe('pivot', function () {
   });
 
   describe('Filters', function() {
+    beforeEach(function () {
+      pivot.filters().set({last_name: 'Jackson'});
+    });
+
     it('narrows filter and resets when filter chain is altered', function(){
-      expect(pivot.data().raw.length).toEqual(6);
+      expect(pivot.data().all.length).toEqual(0);
 
       // apply filter
-      pivot.filters().apply({last_name: 'Jackson'});
+      pivot.filters().apply();
       expect(pivot.data().all.length).toEqual(3);
 
       // apply additional filter
-      pivot.filters().apply({first_name: 'Jon'});
+      pivot.filters().add({first_name: 'Jon'});
+
+      // with no params simply runs existing filters
+      pivot.filters().apply()
       expect(pivot.data().all.length).toEqual(1);
 
       // reset original filter
