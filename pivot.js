@@ -6,14 +6,16 @@ var pivot = (function(){
     data        = [];
     dataFilters = {};
 
+    if (options === undefined) options = {};
+
     (options.fields      === undefined) ? fields      = {}  : setFields(options.fields);
     (options.filters     === undefined) ? filters     = {}  : setFilters(options.filters);
 
-    pivot;
+    return pivot;
   }
 
   function reset(){
-    init();
+    return init();
   };
 
   //*******************************
