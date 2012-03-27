@@ -91,12 +91,18 @@ var pivot = (function(){
   //*******************************
   // Filtering
   //*******************************
-  function pivotFilters(){
-    return {
+  function pivotFilters(type){
+    var opt = {
       all:    filters,
       set:    setFilters,
       apply:  applyFilter,
     }
+
+    if (type !== undefined) {
+      return opts[type]
+    } else {
+      return opts
+    };
   };
 
   function setFilters(restrictions){
@@ -162,8 +168,8 @@ var pivot = (function(){
   //*******************************
   // Fields
   //*******************************
-  function pivotFields(){
-    return {
+  function pivotFields(type){
+    var opts =  {
       all:          getFields,
       set:          setFields,
       filterable:   restrictFields('filterable'),
@@ -173,6 +179,12 @@ var pivot = (function(){
       get:          getField,
       add:          appendField
     }
+
+    if (type !== undefined) {
+      return opts[type]
+    } else {
+      return opts
+    };
   };
 
   function setFields(listing){
@@ -251,11 +263,15 @@ var pivot = (function(){
   //*******************************
   // Data
   //*******************************
-  function pivotData(){
-    return {
-      raw: rawData,
-      all: data
-    }
+  function pivotData(type) {
+    var opts = {raw: rawData,
+                all: data};
+
+    if (type !== undefined) {
+      return opts[type]
+    } else {
+      return opts
+    };
   }
 
   return {
