@@ -2,6 +2,7 @@ describe('pivot', function () {
   beforeEach(function () {
       sample_csv = "last_name,first_name,zip_code\n" +
                    "Jackson,Robert,34471\n" +
+                   "Smith,Jon,34471\n" +
                    "Jackson,Jon,34474\n" +
                    "Jackson,Susan,34476\n" +
                    "Fornea,Chris,34474\n" +
@@ -12,11 +13,11 @@ describe('pivot', function () {
   describe('CSV', function () {
     it('can parse csv into an array', function(){
       expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code:'34471'});
-      expect(pivot.data().raw.length).toEqual(5)
+      expect(pivot.data().raw.length).toEqual(6)
     });
 
     it('can filter items from csv', function() {
-      expect(pivot.data().raw.length).toEqual(5);
+      expect(pivot.data().raw.length).toEqual(6);
 
       // apply filter
       pivot.filters().apply({last_name: 'Jackson'});
@@ -26,7 +27,7 @@ describe('pivot', function () {
 
   describe('Filters', function() {
     it('narrows filter and resets when filter chain is altered', function(){
-      expect(pivot.data().raw.length).toEqual(5);
+      expect(pivot.data().raw.length).toEqual(6);
 
       // apply filter
       pivot.filters().apply({last_name: 'Jackson'});

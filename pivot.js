@@ -8,6 +8,8 @@ var pivot = (function(){
   //*******************************
   // CSV Processing
   //*******************************
+
+  // Accepts csv as a string
   function processCSV(text) {
     var header;
     rawData = processRows(text, function(row, i) {
@@ -96,6 +98,7 @@ var pivot = (function(){
       all:    filters,
       set:    setFilters,
       apply:  applyFilter,
+      add:    appendFilter
     }
 
     if (type !== undefined) {
@@ -103,6 +106,13 @@ var pivot = (function(){
     } else {
       return opts
     };
+  };
+
+  function appendFilter(newRestriction) {
+    for (var key in newRestriction) {
+      if (newRestriction.hasOwnProperty(key))
+        filters[key] = newRestriction[key];
+    }
   };
 
   function setFilters(restrictions){
@@ -274,6 +284,7 @@ var pivot = (function(){
     };
   }
 
+  // Entry Point
   return {
     csv:      processCSV,
     data:     pivotData,
