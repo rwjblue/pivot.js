@@ -1,9 +1,20 @@
 var pivot = (function(){
-  var fields      = {},
-      filters     = {},
-      rawData     = [],
-      data        = [],
-      dataFilters = {};
+  var fields, filters, rawData, data, dataFilters;
+
+  function init(options){
+    rawData     = [];
+    data        = [];
+    dataFilters = {};
+
+    (options.fields      === undefined) ? fields      = {}  : setFields(options.fields);
+    (options.filters     === undefined) ? filters     = {}  : setFilters(options.filters);
+
+    pivot;
+  }
+
+  function reset(){
+    init();
+  };
 
   //*******************************
   // CSV Processing
@@ -12,6 +23,9 @@ var pivot = (function(){
   // Accepts csv as a string
   function processCSV(text) {
     var header;
+
+    init({fields: fields, filters: filters});
+
     rawData = processRows(text, function(row, i) {
       if (i > 0) {
         var o = {}, j = -1, m = header.length;
@@ -289,6 +303,8 @@ var pivot = (function(){
     csv:      processCSV,
     data:     pivotData,
     fields:   pivotFields,
-    filters:  pivotFilters
+    filters:  pivotFilters,
+    init:     init,
+    reset:    reset
   }
 })();
