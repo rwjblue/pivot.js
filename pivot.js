@@ -191,8 +191,8 @@ var pivot = (function(){
 
   function restrictFields(type){
     var retFields = [];
-    for (var i = 0; i < fields.length; i++) {
-      if (fields[i][type] === true) retFields.push(fields[i])
+    for (var key in fields) {
+      if (fields.hasOwnProperty(key) && fields[key][type] === true) retFields.push(fields[key]);
     }
 
     return retFields;
