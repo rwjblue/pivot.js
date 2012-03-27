@@ -148,13 +148,15 @@ var pivot = (function(){
   };
 
   function preserveFilteredData(){
-    var matches = 0;
+    var matches = 0,
+        dataFiltersLength = Object.keys(dataFilters).length;
+
     for (var key in dataFilters) {
       if (dataFilters.hasOwnProperty(key) && dataFilters.hasOwnProperty(key) && filters[field] === dataFilters[key])
         matches += 1;
     }
 
-    return matches >= Object.keys(dataFilters).length;
+    return dataFiltersLength > 0 && matches >= dataFiltersLength;
   };
 
   //*******************************
