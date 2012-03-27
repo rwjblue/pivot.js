@@ -92,7 +92,7 @@ var pivot = (function(){
   // Filtering
   //*******************************
   function pivotFilters(type){
-    var opt = {
+    var opts = {
       all:    filters,
       set:    setFilters,
       apply:  applyFilter,
@@ -169,7 +169,7 @@ var pivot = (function(){
   // Fields
   //*******************************
   function pivotFields(type){
-    var opts =  {
+    var opts = {
       all:          getFields,
       set:          setFields,
       filterable:   restrictFields('filterable'),
