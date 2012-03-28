@@ -26,7 +26,8 @@ var pivot = (function(){
 
   // Accepts csv as a string
   function processCSV(text) {
-    var header;
+    var header,
+        pseudoFields = restrictFields('pseudo');
 
     rawData = processRows(text, function(row, i) {
       if (i > 0) {
@@ -38,6 +39,12 @@ var pivot = (function(){
 
           addFieldValue(header[j], value);
         };
+
+        j = -1, m = pseudoFields.length;
+        while (++j < m) {
+          o[pseudoFields[j].name] = pseudoFields[j].pseudoFunction(o);
+        }
+
         return o;
       } else {
         header = row;
@@ -255,6 +262,9 @@ var pivot = (function(){
 
     if (field.summarizable && field.summarizableFunction === undefined)
       field.summarizeFunction = function(rows){ rows.length };
+
+    if (field.pseudo && field.pseudoFunction === undefined)
+      field.pseudoFunction = function(row){ '' };
 
     field.values = {};
 

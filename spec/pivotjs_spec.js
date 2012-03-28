@@ -9,7 +9,7 @@ describe('pivot', function () {
                    "Jackson,Susan,34476\n" +
                    "Fornea,Chris,34474\n" +
                    "Fornea,Shelly,39401"
-      pivot.csv(sample_csv)
+      pivot.csv(sample_csv);
     });
 
   afterEach(function () {
@@ -74,6 +74,18 @@ describe('pivot', function () {
       expect(pivot.fields().all().length).toEqual(3);
       pivot.fields().add({name:"not_a_real_fields", type: 'date', filterable: true})
        expect(pivot.fields().all().length).toEqual(4);
+    });
+
+    it('allows creating pseudo fields', function(){
+      pivot.reset();
+      pivot.fields().set([
+        {name: 'last_name',  type: 'string',  filterable: true},
+        {name: 'first_name', type: 'string',  filterable: true},
+        {name: 'zip_code',   type: 'integer', filterable: true},
+        {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}}
+      ]);
+      pivot.csv(sample_csv);
+      expect(pivot.data().raw[0].pseudo_zip).toEqual(34472);
     });
   });
 });
