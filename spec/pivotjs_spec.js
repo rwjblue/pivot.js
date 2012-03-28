@@ -43,6 +43,11 @@ describe('pivot', function () {
       pivot.filters().set({last_name: 'Jackson'});
     });
 
+    it('force type specifity on new filters', function(){
+      pivot.filters().add({zip_code: '34471'})
+      expect(pivot.filters().all.zip_code).toEqual(34471)
+    });
+
     it('narrows filter and resets when filter chain is altered', function(){
       expect(pivot.data().all.length).toEqual(0);
 
