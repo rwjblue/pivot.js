@@ -273,6 +273,7 @@ var pivot = (function(){
   };
 
   function castFieldValue(fieldName, value){
+    var field;
     if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
