@@ -1,6 +1,8 @@
 var pivot = (function(){
-  var fields, filters, rawData, data, dataFilters;
+  'use strict'; // Function-level strict mode syntax
 
+  var fields, filters, rawData, data, dataFilters;
+  init();
   function init(options){
     rawData     = [];
     data        = [];
