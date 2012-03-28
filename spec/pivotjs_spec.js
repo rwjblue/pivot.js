@@ -76,16 +76,25 @@ describe('pivot', function () {
        expect(pivot.fields().all().length).toEqual(4);
     });
 
-    it('allows creating pseudo fields', function(){
-      pivot.reset();
-      pivot.fields().set([
-        {name: 'last_name',  type: 'string',  filterable: true},
-        {name: 'first_name', type: 'string',  filterable: true},
-        {name: 'zip_code',   type: 'integer', filterable: true},
-        {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}}
-      ]);
-      pivot.csv(sample_csv);
-      expect(pivot.data().raw[0].pseudo_zip).toEqual(34472);
-    });
+    describe('Pseudo Fields', function(){
+      beforeEach(function(){
+        pivot.reset();
+        pivot.fields().set([
+          {name: 'last_name',  type: 'string',  filterable: true},
+          {name: 'first_name', type: 'string',  filterable: true},
+          {name: 'zip_code',   type: 'integer', filterable: true},
+          {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}}
+        ]);
+        pivot.csv(sample_csv);
+      });
+
+      it('allows creating pseudo fields', function(){
+        expect(pivot.data().raw[0].pseudo_zip).toEqual(34472);
+      });
+
+      it('captures values for filterable pseudo fields', function(){
+        expect(Object.keys(pivot.fields().pseudo[0].values).length).toEqual(4);
+      });
+    })
   });
 });

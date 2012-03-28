@@ -31,19 +31,22 @@ var pivot = (function(){
 
     rawData = processRows(text, function(row, i) {
       if (i > 0) {
+        // process actual fields
         var o = {}, j = -1, m = header.length;
         while (++j < m) {
           var value = castFieldValue(header[j], row[j]);
-
           o[header[j]] = value;
-
           addFieldValue(header[j], value);
         };
 
+        // process pseudo fields
         j = -1, m = pseudoFields.length;
         while (++j < m) {
-          o[pseudoFields[j].name] = pseudoFields[j].pseudoFunction(o);
-        }
+          var field = pseudoFields[j],
+              value = castFieldValue(field.name, field.pseudoFunction(o));
+          o[field.name] = value;
+          addFieldValue(field.name, value);
+        };
 
         return o;
       } else {
