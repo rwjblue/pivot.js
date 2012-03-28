@@ -135,22 +135,35 @@ var pivot = (function(){
     };
   };
 
+  function castFilterValues(restrictions){
+    if (restrictions === undefined) restrictions = filters;
+
+    var field;
+    for (field in filters){
+      if (restrictions.hasOwnProperty(field))
+        restrictions[field] = castFieldValue(field, restrictions[field])
+    };
+  };
+
   function appendFilter(newRestriction) {
     for (var key in newRestriction) {
       if (newRestriction.hasOwnProperty(key))
         filters[key] = newRestriction[key];
     }
+
+    castFilterValues();
   };
 
   function setFilters(restrictions){
     filters = restrictions;
+    castFilterValues();
   };
 
   function applyFilter(restrictions){
     var dataToFilter    = data,
         filteredData    = [];
 
-    if (restrictions !== undefined) filters = restrictions;
+    if (restrictions !== undefined) setFilters(restrictions);
 
     var preserveFilter = preserveFilteredData();
 
