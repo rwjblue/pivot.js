@@ -213,7 +213,7 @@ var pivot = (function(){
       filterable:   restrictFields('filterable'),
       summarizable: restrictFields('summarizable'),
       pseudo:       restrictFields('pseudo'),
-      detail:       restrictFields('detail'),
+      labelable:    restrictFields('labelable'),
       get:          getField,
       add:          appendField
     }
@@ -260,7 +260,7 @@ var pivot = (function(){
 
     if (field.type          === undefined) field.type          = 'String';
     if (field.pseudo        === undefined) field.pseudo        = false;
-    if (field.detail        === undefined) field.detail        = true;
+    if (field.labelable     === undefined) field.labelable     = true;
     if (field.filterable    === undefined) field.filterable    = false;
     if (field.summarizable  === undefined) field.summarizable  = false;
 
