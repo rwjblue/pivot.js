@@ -64,14 +64,6 @@ describe('pivot', function () {
   });
 
   describe('Fields', function(){
-    beforeEach(function () {
-      pivot.fields().set([
-        {name: 'last_name',  type: 'string',  filterable: true},
-        {name: 'first_name', type: 'string',  filterable: true},
-        {name: 'zip_code',   type: 'integer', filterable: true}
-      ]);
-    });
-
     it('allows the specification of fields', function(){
       expect(pivot.fields().get('zip_code').type).toEqual("integer");
       expect(pivot.fields().get('zip_code').filterable).toBeTruthy();
@@ -106,16 +98,6 @@ describe('pivot', function () {
   });
 
   describe('Display', function(){
-    xit('should build rows based on details passed to it', function(){
-      pivot.fields().set([
-          {name: 'last_name',  type: 'string',  filterable: true},
-          {name: 'first_name', type: 'string',  filterable: true},
-          {name: 'zip_code',   type: 'integer', filterable: true, detail: true}
-        ]);
-      pivot.filters().apply()
-      expect(typeof pivot.data().details()).toEqual(Object);
-    });
-
     it('should allow set/get of label fields', function(){
       pivot.display().label().set(['last_name']);
       expect(Object.keys(pivot.display().label().get)).toEqual(['last_name']);
@@ -125,6 +107,11 @@ describe('pivot', function () {
       pivot.display().summary().set(['last_name']);
       expect(Object.keys(pivot.display().summary().get)).toEqual(['last_name']);
     });
+  });
 
+  describe('Results', function(){
+    it('should only return display fields that were selected', function(){
+
+    });
   });
 });
