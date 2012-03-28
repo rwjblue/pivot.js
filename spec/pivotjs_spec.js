@@ -95,6 +95,17 @@ describe('pivot', function () {
       it('captures values for filterable pseudo fields', function(){
         expect(Object.keys(pivot.fields().pseudo[0].values).length).toEqual(4);
       });
-    })
+    });
+  });
+  describe('Deets', function(){
+    it('should build rows based on details based on details passed to it', function(){
+      pivot.fields().set([
+          {name: 'last_name',  type: 'string',  filterable: true},
+          {name: 'first_name', type: 'string',  filterable: true},
+          {name: 'zip_code',   type: 'integer', filterable: true, detail: true}
+        ]);
+      pivot.filters().apply()
+      expect(typeof pivot.data().details()).toEqual(Object);
+    });
   });
 });
