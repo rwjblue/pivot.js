@@ -137,10 +137,11 @@ var pivot = (function(){
 
   function applyFilter(restrictions){
     var dataToFilter    = data,
-        filteredData    = [],
-        preserveFilter  = preserveFilteredData();
+        filteredData    = [];
 
     if (restrictions !== undefined) filters = restrictions;
+
+    var preserveFilter = preserveFilteredData();
 
     if (preserveFilter) {
       dataToFilter = data;
@@ -160,7 +161,7 @@ var pivot = (function(){
           matches += 1;
       }
 
-      if (matches == filterLength) {
+      if (matches === filterLength) {
         filteredData.push(row);
       };
     };
