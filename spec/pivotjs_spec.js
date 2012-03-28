@@ -1,4 +1,6 @@
 describe('pivot', function () {
+  var sample_csv;
+
   beforeEach(function () {
       sample_csv = "last_name,first_name,zip_code\n" +
                    "Jackson,Robert,34471\n" +
