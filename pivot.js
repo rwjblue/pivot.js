@@ -306,8 +306,11 @@ var pivot = (function(){
   // Data
   //*******************************
   function pivotData(type) {
-    var opts = {raw: rawData,
-                all: data};
+    var opts = {raw:     rawData,
+                all:     data,
+                details: getDetails,
+                setDetails: setDetailFields
+              };
 
     if (type !== undefined) {
       return opts[type]
@@ -315,6 +318,17 @@ var pivot = (function(){
       return opts
     };
   }
+
+  function setDetailFields(){
+
+  };
+
+  function getDetails(){
+    console.log(pivotData().all)
+    for (var i = 0; i < pivotData.all.length; i++) {
+      pivotData.all[i]
+    };
+  };
 
   // Entry Point
   return {
