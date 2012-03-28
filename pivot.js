@@ -1,12 +1,13 @@
 var pivot = (function(){
   'use strict'; // Function-level strict mode syntax
 
-  var fields, filters, rawData, data, dataFilters;
+  var fields, filters, rawData, data, dataFilters, detailLabels;
   init();
   function init(options){
-    rawData     = [];
-    data        = [];
-    dataFilters = {};
+    rawData      = [];
+    data         = [];
+    dataFilters  = {};
+    detailLabels = [];
 
     if (options === undefined) options = {};
 
@@ -319,14 +320,16 @@ var pivot = (function(){
     };
   }
 
-  function setDetailFields(){
-
+  function setDetailFields(fields){
+    for (var i = 0; i < fields.length; i++) {
+      detailLabels.push(fields[i]);
+    };
   };
 
   function getDetails(){
     console.log(pivotData().all)
     for (var i = 0; i < pivotData.all.length; i++) {
-      pivotData.all[i]
+      pivotData.all[i];
     };
   };
 
