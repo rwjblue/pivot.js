@@ -185,7 +185,7 @@ var pivot = (function(){
         dataFiltersLength = Object.keys(dataFilters).length;
 
     for (var key in dataFilters) {
-      if (dataFilters.hasOwnProperty(key) && dataFilters.hasOwnProperty(key) && filters[field] === dataFilters[key])
+      if (dataFilters.hasOwnProperty(key) && dataFilters.hasOwnProperty(key) && filters[key] === dataFilters[key])
         matches += 1;
     }
 
