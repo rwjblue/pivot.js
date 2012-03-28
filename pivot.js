@@ -1,18 +1,18 @@
 var pivot = (function(){
   'use strict'; // Function-level strict mode syntax
 
-  var fields, filters, rawData, data, dataFilters, detailLabels;
+  var fields, filters, rawData, data, dataFilters, displayFields;
   init();
   function init(options){
-    rawData      = [];
-    data         = [];
-    dataFilters  = {};
-    detailLabels = [];
+    rawData         = [];
+    data            = [];
+    dataFilters     = {};
 
     if (options === undefined) options = {};
 
-    (options.fields      === undefined) ? fields      = {}  : setFields(options.fields);
-    (options.filters     === undefined) ? filters     = {}  : setFilters(options.filters);
+    (options.fields         === undefined) ? fields         = {}                        : setFields(options.fields);
+    (options.filters        === undefined) ? filters        = {}                        : setFilters(options.filters);
+    (options.displayFields  === undefined) ? displayFields  = {label: {}, summary: {}}  : displayFields = options.displayFields;
 
     return pivot;
   }
@@ -307,10 +307,8 @@ var pivot = (function(){
   // Data
   //*******************************
   function pivotData(type) {
-    var opts = {raw:     rawData,
-                all:     data,
-                details: getDetails,
-                setDetails: setDetailFields
+    var opts = {raw:        rawData,
+                all:        data
               };
 
     if (type !== undefined) {
@@ -320,25 +318,69 @@ var pivot = (function(){
     };
   }
 
-  function setDetailFields(fields){
-    for (var i = 0; i < fields.length; i++) {
-      detailLabels.push(fields[i]);
+  //*******************************
+  // Display
+  //*******************************
+  function pivotDisplay(){
+    return {
+      label:    pivotDisplayLabel,
+      summary:  pivotDisplaySummary
+    }
+  };
+
+  function pivotDisplayLabel(){
+    return {
+      set: setLabelDisplayFields,
+      get: displayFields.label
+    }
+  };
+
+  function pivotDisplaySummary(){
+    return {
+      set: setSummaryDisplayFields,
+      get: displayFields.summary
+    }
+  };
+
+  function setLabelDisplayFields(listing){
+    var field;
+    for (var i = 0; i < listing.length; i++) {
+      if (Object.prototype.toString.call(listing[i]) === '[object String]')
+        field = fields[listing[i]];
+      else
+        field = listing[i];
+
+      displayFields.label[field.name] = field;
     };
   };
 
-  function getDetails(){
-    console.log(pivotData().all)
-    for (var i = 0; i < pivotData.all.length; i++) {
-      pivotData.all[i];
+  function setSummaryDisplayFields(listing){
+    var field;
+    for (var i = 0; i < listing.length; i++) {
+      if (Object.prototype.toString.call(listing[i]) === '[object String]')
+        field = fields[listing[i]];
+      else
+        field = listing[i];
+
+      displayFields.summary[field.name] = field;
     };
+  };
+
+  //*******************************
+  // Results
+  //*******************************
+  function pivotResults(){
+
   };
 
   // Entry Point
   return {
     csv:      processCSV,
     data:     pivotData,
+    results:  pivotResults,
     fields:   pivotFields,
     filters:  pivotFilters,
+    display:  pivotDisplay,
     init:     init,
     reset:    reset
   }

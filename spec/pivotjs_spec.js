@@ -9,6 +9,13 @@ describe('pivot', function () {
                    "Jackson,Susan,34476\n" +
                    "Fornea,Chris,34474\n" +
                    "Fornea,Shelly,39401"
+
+      pivot.fields().set([
+        {name: 'last_name',  type: 'string',  filterable: true},
+        {name: 'first_name', type: 'string',  filterable: true},
+        {name: 'zip_code',   type: 'integer', filterable: true}
+      ]);
+
       pivot.csv(sample_csv);
     });
 
@@ -18,7 +25,7 @@ describe('pivot', function () {
 
   describe('CSV', function () {
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code:'34471'});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -97,8 +104,9 @@ describe('pivot', function () {
       });
     });
   });
-  describe('Deets', function(){
-    it('should build rows based on details based on details passed to it', function(){
+
+  describe('Display', function(){
+    xit('should build rows based on details passed to it', function(){
       pivot.fields().set([
           {name: 'last_name',  type: 'string',  filterable: true},
           {name: 'first_name', type: 'string',  filterable: true},
@@ -107,5 +115,16 @@ describe('pivot', function () {
       pivot.filters().apply()
       expect(typeof pivot.data().details()).toEqual(Object);
     });
+
+    it('should allow set/get of label fields', function(){
+      pivot.display().label().set(['last_name']);
+      expect(Object.keys(pivot.display().label().get)).toEqual(['last_name']);
+    });
+
+    it('should allow set/get of summary fields', function(){
+      pivot.display().summary().set(['last_name']);
+      expect(Object.keys(pivot.display().summary().get)).toEqual(['last_name']);
+    });
+
   });
 });
