@@ -252,8 +252,9 @@ var pivot = (function(){
     if (field.detail        === undefined) field.detail        = true;
     if (field.filterable    === undefined) field.filterable    = false;
     if (field.summarizable  === undefined) field.summarizable  = false;
-    if (field.summarizable && field.summarizable_function == undefined)
-        field.summarize_function = function(rows){ rows.length };
+
+    if (field.summarizable && field.summarizableFunction === undefined)
+      field.summarizeFunction = function(rows){ rows.length };
 
     field.values = {};
 
