@@ -1,21 +1,32 @@
 describe('pivot', function () {
-  var sample_csv;
+  var sample_csv, sample_fields;
 
   beforeEach(function () {
-      sample_csv = "last_name,first_name,zip_code\n" +
-                   "Jackson,Robert,34471\n" +
-                   "Smith,Jon,34471\n" +
-                   "Jackson,Jon,34474\n" +
-                   "Jackson,Susan,34476\n" +
-                   "Fornea,Chris,34474\n" +
-                   "Fornea,Shelly,39401"
+      sample_csv =  "last_name,first_name,zip_code,billed_amount\n" +
+                    "Jackson,Robert,34471,100.00\n" +
+                    "Smith,Jon,34471,173.20\n" +
+                    "Jackson,Jon,34474,262.42\n" +
+                    "Jackson,Susan,34476,7.45\n" +
+                    "Fornea,Chris,34474,62.98\n" +
+                    "Fornea,Shelly,39401,124.63"
 
-      pivot.fields().set([
-        {name: 'last_name',  type: 'string',  filterable: true},
+      sample_fields = [
         {name: 'first_name', type: 'string',  filterable: true},
-        {name: 'zip_code',   type: 'integer', filterable: true}
-      ]);
+        {name: 'zip_code',   type: 'integer', filterable: true},
+        {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'billed_amount',   type: 'float', labelable: false, summarizable: true,
+                summarizeFunction: function(rows){
+                  var runningTotal = 0;
+                  for (var i = 0; i < rows.length; i++) {
+                    runningTotal += rows[i].billed_amount;
+                  };
 
+                  return runningTotal;
+                }
+        }
+      ]
+
+      pivot.fields().set(sample_fields);
       pivot.csv(sample_csv);
     });
 
@@ -25,7 +36,7 @@ describe('pivot', function () {
 
   describe('CSV', function () {
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -75,23 +86,12 @@ describe('pivot', function () {
     });
 
     it('allows for adding fields', function(){
-      expect(pivot.fields().all().length).toEqual(3);
+      expect(pivot.fields().all().length).toEqual(5);
       pivot.fields().add({name:"not_a_real_fields", type: 'date', filterable: true})
-       expect(pivot.fields().all().length).toEqual(4);
+      expect(pivot.fields().all().length).toEqual(6);
     });
 
     describe('Pseudo Fields', function(){
-      beforeEach(function(){
-        pivot.reset();
-        pivot.fields().set([
-          {name: 'last_name',  type: 'string',  filterable: true},
-          {name: 'first_name', type: 'string',  filterable: true},
-          {name: 'zip_code',   type: 'integer', filterable: true},
-          {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}}
-        ]);
-        pivot.csv(sample_csv);
-      });
-
       it('allows creating pseudo fields', function(){
         expect(pivot.data().raw[0].pseudo_zip).toEqual(34472);
       });
@@ -115,8 +115,25 @@ describe('pivot', function () {
   });
 
   describe('Results', function(){
-    it('should only return display fields that were selected', function(){
+    it('should only return label fields that were selected', function(){
+      pivot.display().label().set(['last_name']);
+      expect(pivot.results()['last_name:Jackson|'].last_name).toEqual('Jackson');
+      expect(pivot.results()['last_name:Fornea|'].last_name).toEqual('Fornea');
+      expect(pivot.results()['last_name:Smith|'].zip_code).toEqual(undefined);
 
+      pivot.display().label().set(['last_name', 'zip_code']);
+      expect(pivot.results()['last_name:Jackson|zip_code:34471|'].last_name).toEqual('Jackson');
+      expect(pivot.results()['last_name:Fornea|zip_code:34474|'].zip_code).toEqual(34474);
+    });
+
+    it('should only return summary fields that were selected', function(){
+      pivot.display().label().set(['last_name']);
+      pivot.display().summary().set([]);
+
+      expect(pivot.results()['last_name:Jackson|'].billed_amount).toEqual(undefined);
+
+      pivot.display().summary().set(['billed_amount']);
+      expect(pivot.results()['last_name:Jackson|'].billed_amount).toEqual(369.87);
     });
   });
 });

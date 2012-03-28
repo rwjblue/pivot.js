@@ -1,12 +1,14 @@
 var pivot = (function(){
   'use strict'; // Function-level strict mode syntax
 
-  var fields, filters, rawData, data, dataFilters, displayFields;
+  var fields, filters, rawData, data, results, dataFilters, displayFields;
+
   init();
   function init(options){
     rawData         = [];
     data            = [];
     dataFilters     = {};
+    results         = [];
 
     if (options === undefined) options = {};
 
@@ -277,11 +279,11 @@ var pivot = (function(){
     if (field.filterable    === undefined) field.filterable    = false;
     if (field.summarizable  === undefined) field.summarizable  = false;
 
-    if (field.summarizable && field.summarizableFunction === undefined)
-      field.summarizeFunction = function(rows){ rows.length };
+    if (field.summarizable && field.summarizeFunction === undefined)
+      field.summarizeFunction = function(rows){ return rows.length };
 
     if (field.pseudo && field.pseudoFunction === undefined)
-      field.pseudoFunction = function(row){ '' };
+      field.pseudoFunction = function(row){ return '' };
 
     field.values = {};
 
@@ -355,7 +357,7 @@ var pivot = (function(){
     }
   };
 
-  function setLabelDisplayFields(listing){
+  function setDisplayFields(type, listing){
     var field;
     for (var i = 0; i < listing.length; i++) {
       if (Object.prototype.toString.call(listing[i]) === '[object String]')
@@ -363,26 +365,63 @@ var pivot = (function(){
       else
         field = listing[i];
 
-      displayFields.label[field.name] = field;
+      displayFields[type][field.name] = field;
     };
   };
 
-  function setSummaryDisplayFields(listing){
-    var field;
-    for (var i = 0; i < listing.length; i++) {
-      if (Object.prototype.toString.call(listing[i]) === '[object String]')
-        field = fields[listing[i]];
-      else
-        field = listing[i];
+  function setLabelDisplayFields(listing){
+    setDisplayFields('label', listing);
+  };
 
-      displayFields.summary[field.name] = field;
-    };
+  function setSummaryDisplayFields(listing){
+    setDisplayFields('summary', listing);
   };
 
   //*******************************
   // Results
   //*******************************
   function pivotResults(){
+    return {
+      data:     getDataResults,
+      columns:  getColumnResults
+    }
+  };
+
+  function getDataResults(){
+    applyFilter();
+    results = {};
+
+    for (var i = 0; i < data.length; i++) {
+      var row       = data[i],
+          resultKey = '';
+
+      for (var key in displayFields.label) {
+        if (displayFields.label.hasOwnProperty(key)) resultKey += key + ':' + row[key] + '|';
+      }
+      if (results[resultKey] === undefined) {
+        results[resultKey] = {};
+
+        for (var key in displayFields.label) {
+          if (displayFields.label.hasOwnProperty(key)) results[resultKey][key] = row[key];
+        }
+
+        results[resultKey].rows = [];
+      };
+
+      results[resultKey].rows.push(row);
+    };
+
+    for (resultKey in results) {
+      for (var key in displayFields.summary) {
+        if (displayFields.summary.hasOwnProperty(key))
+          results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows);
+      };
+    };
+
+    return results;
+  };
+
+  function getColumnResults(){
 
   };
 
@@ -390,7 +429,7 @@ var pivot = (function(){
   return {
     csv:      processCSV,
     data:     pivotData,
-    results:  pivotResults,
+    results:  getDataResults,
     fields:   pivotFields,
     filters:  pivotFilters,
     display:  pivotDisplay,
