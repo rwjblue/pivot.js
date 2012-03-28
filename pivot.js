@@ -28,8 +28,6 @@ var pivot = (function(){
   function processCSV(text) {
     var header;
 
-    init({fields: fields, filters: filters});
-
     rawData = processRows(text, function(row, i) {
       if (i > 0) {
         var o = {}, j = -1, m = header.length;
