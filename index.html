@@ -6,92 +6,9 @@
   <link rel="stylesheet" href="./lib/css/bootstrap.min.css" type="text/css" />
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="./pivot.js"></script>
-  <script type="text/javascript">
-  var start_time;
 
-  $(document).ready(function() {
-    start_time = Date.now();
-    process();
-  });
-
-  function process(){
-    var data = "last_name,first_name,zip_code,billed_amount\n" +
-              "Jackson,Robert,34471,100.00\n" +
-              "Smith,Jon,34471,173.20\n" +
-              "Jackson,Jon,34474,262.42\n" +
-              "Jackson,Susan,34476,7.45\n" +
-              "Fornea,Chris,34474,62.98\n" +
-              "Fornea,Shelly,39401,124.63"
-
-    console.log('Downloaded in ' + (Date.now() - start_time));
-
-    pivot.fields().set([{name: 'last_name',  type: 'string',  filterable: true},
-        {name: 'first_name', type: 'string',  filterable: true},
-        {name: 'zip_code',   type: 'integer', filterable: true},
-        {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount',   type: 'float', labelable: false, summarizable: true, summaryFunction: function(row){ return row.billed_amount } }
-    ]);
-
-    pivot.csv(data);
-
-    build_filter_fields();
-    build_toggle_fields($('#label-fields'), pivot.fields().labelable, 'labelable');
-    build_toggle_fields($('#summary-fields'), pivot.fields().summarizable, 'summary');
-
-    $('.filter').change(function(event) {
-      update_filtered_rows();
-    });
-
-    console.log('Finished in ' + (Date.now() - start_time))
-  }
-
-  function build_filter_fields(){
-    filterForm = $('#filter-fields');
-    jQuery.each(pivot.fields().filterable, function(index, field){
-      var snip = '<label>' + field.name + '</label>' +
-             '<select class="filter span3" data-field="' + field.name + '">' +
-             '<option></option>';
-
-      jQuery.each(field.values, function(value, count){
-        snip += '<option>' + value + '</option>';
-      });
-
-      snip += '</select>';
-      filterForm.append(snip);
-    });
-  };
-
-  function build_toggle_fields(form, fields, classes){
-    jQuery.each(fields, function(index, field){
-      form.append('<label class="checkbox">' +
-                    '<input type="checkbox" ' +
-                      'class="' + classes + '" ' +
-                      'data-field="' + field.name + '"' +
-                    '> ' + field.name +
-                  '</label>');
-    });
-  };
-
-  function update_filtered_rows(){
-    restrictions = {};
-
-    $('.filter').each(function(index){
-      if ($(this).val() != '')
-        restrictions[$(this).attr('data-field')] = $(this).val();
-    });
-
-    start_time = Date.now();
-    pivot.filters().apply(restrictions);
-    console.log('Filtered in: ' + (Date.now() - start_time))
-
-    result_table = $('#results');
-    result_table.empty().append('<table>');
-    jQuery.each(pivot.data().all.slice(0,250),function(index, row){
-      result_table.append('<tr><td>' + JSON.stringify(row) + "</td></tr>");
-    });
-    result_table.append('</table>')
-  }
-</script>
+  <!-- Must be loaded after pivot.js & jQuery -->
+  <script type="text/javascript" src="./lib/javascripts/pivot_demo.js"></script>
 </head>
 <body>
   <div class="container">
