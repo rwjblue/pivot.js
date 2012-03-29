@@ -357,15 +357,18 @@ var pivot = (function(){
     }
   };
 
-  function setDisplayFields(type, listing){
-    var field;
-    for (var i = 0; i < listing.length; i++) {
-      if (Object.prototype.toString.call(listing[i]) === '[object String]')
-        field = fields[listing[i]];
-      else
-        field = listing[i];
+  function appendDisplayField(type, field){
+    if (Object.prototype.toString.call(field) === '[object String]')
+      field = fields[field];
 
-      displayFields[type][field.name] = field;
+    displayFields[type][field.name] = field;
+  };
+
+  function setDisplayFields(type, listing){
+    displayFields[type] = {};
+
+    for (var i = 0; i < listing.length; i++) {
+      appendDisplayField(type, listing[i]);
     };
   };
 
