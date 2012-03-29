@@ -269,6 +269,22 @@ var pivot = (function(){
     return fields[name];
   };
 
+  function defaultSummarizeFunctionSum(rows, field){
+    var runningTotal = 0;
+    for (var i = 0; i < rows.length; i++) {
+      runningTotal += rows[i][field.name];
+    };
+    return runningTotal;
+  };
+
+  function defaultSummarizeFunctionAvg(rows, field){
+    return defaultSummarizeFunctionSum(rows, field)/rows.length;
+  };
+
+  function defaultSummarizeFunctionCount(rows, field){
+    return rows.length;
+  }
+
   function appendField(field){
     // if field is a simple string setup and object with that string as a name
     if (Object.prototype.toString.call(field) === '[object String]') field = {name: field};
@@ -282,17 +298,13 @@ var pivot = (function(){
     if (field.summarizable && field.summarizeFunction === undefined){
       switch (field.summarizable){
         case 'sum':
-          field.summarizeFunction = function(rows){
-                    var runningTotal = 0;
-                    for (var i = 0; i < rows.length; i++) {
-                      runningTotal += rows[i][field.name];
-                    };
-
-                    return runningTotal;
-                  }
+          field.summarizeFunction = defaultSummarizeFunctionSum;
+          break;
+        case 'avg':
+          field.summarizeFunction = defaultSummarizeFunctionAvg;
           break;
         default:
-          field.summarizeFunction = function(rows){ return rows.length };
+          field.summarizeFunction = defaultSummarizeFunctionCount;
           break;
       };
 
@@ -434,7 +446,7 @@ var pivot = (function(){
     for (resultKey in results) {
       for (var key in displayFields.summary) {
         if (displayFields.summary.hasOwnProperty(key))
-          results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows);
+          results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows, fields[key]);
       };
     };
 

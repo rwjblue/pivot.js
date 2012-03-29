@@ -127,12 +127,17 @@ describe('pivot', function () {
 
     it('should only return summary fields that were selected', function(){
       pivot.display().label().set(['last_name']);
-      pivot.display().summary().set([]);
 
+      pivot.display().summary().set([]);
       expect(pivot.results()['last_name:Jackson|'].billed_amount).toEqual(undefined);
 
       pivot.display().summary().set(['billed_amount']);
       expect(pivot.results()['last_name:Jackson|'].billed_amount).toEqual(369.87);
+    });
+
+    it("should return sum for summarizable: 'sum' fields", function(){
+      pivot.display().summary().set(['billed_amount']);
+      expect(pivot.results()[''].billed_amount.toFixed(2)).toEqual('730.68');
     });
   });
 });
