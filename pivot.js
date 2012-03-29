@@ -1,14 +1,14 @@
 var pivot = (function(){
   'use strict'; // Function-level strict mode syntax
 
-  var fields, filters, rawData, data, results, dataFilters, displayFields;
+  var fields, filters, rawData, data, dataFilters, displayFields;
 
   init();
+
   function init(options){
     rawData         = [];
     data            = [];
     dataFilters     = {};
-    results         = [];
 
     if (options === undefined) options = {};
 
@@ -392,7 +392,7 @@ var pivot = (function(){
 
   function getDataResults(){
     applyFilter();
-    results = {};
+    var results = {};
 
     for (var i = 0; i < data.length; i++) {
       var row       = data[i],
