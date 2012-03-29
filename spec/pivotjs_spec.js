@@ -14,16 +14,7 @@ describe('pivot', function () {
         {name: 'first_name', type: 'string',  filterable: true},
         {name: 'zip_code',   type: 'integer', filterable: true},
         {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount',   type: 'float', labelable: false, summarizable: true,
-                summarizeFunction: function(rows){
-                  var runningTotal = 0;
-                  for (var i = 0; i < rows.length; i++) {
-                    runningTotal += rows[i].billed_amount;
-                  };
-
-                  return runningTotal;
-                }
-        }
+        {name: 'billed_amount', type: 'float', labelable: false, summarizable: 'sum'}
       ]
 
       pivot.fields().set(sample_fields);
