@@ -112,6 +112,14 @@ describe('pivot', function () {
       pivot.display().summary().set(['last_name']);
       expect(Object.keys(pivot.display().summary().get)).toEqual(['last_name']);
     });
+
+    it('should reset summary fields on subsequent calls', function(){
+      pivot.display().summary().set(['last_name']);
+      expect(Object.keys(pivot.display().summary().get)).toEqual(['last_name']);
+
+      pivot.display().summary().set(['first_name']);
+      expect(Object.keys(pivot.display().summary().get)).toEqual(['first_name']);
+    });
   });
 
   describe('Results', function(){
