@@ -279,8 +279,25 @@ var pivot = (function(){
     if (field.filterable    === undefined) field.filterable    = false;
     if (field.summarizable  === undefined) field.summarizable  = false;
 
-    if (field.summarizable && field.summarizeFunction === undefined)
-      field.summarizeFunction = function(rows){ return rows.length };
+    if (field.summarizable && field.summarizeFunction === undefined){
+      switch (field.summarizable){
+        case 'sum':
+          field.summarizeFunction = function(rows){
+                    var runningTotal = 0;
+                    for (var i = 0; i < rows.length; i++) {
+                      runningTotal += rows[i][field.name];
+                    };
+
+                    return runningTotal;
+                  }
+          break;
+        default:
+          field.summarizeFunction = function(rows){ return rows.length };
+          break;
+      };
+
+      field.summarizable = true;
+    };
 
     if (field.pseudo && field.pseudoFunction === undefined)
       field.pseudoFunction = function(row){ return '' };
