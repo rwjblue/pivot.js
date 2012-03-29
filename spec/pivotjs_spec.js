@@ -11,9 +11,9 @@ describe('pivot', function () {
                     "Fornea,Shelly,39401,124.63"
 
       sample_fields = [
-        {name: 'first_name', type: 'string',  filterable: true},
-        {name: 'zip_code',   type: 'integer', filterable: true},
-        {name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'first_name',    type: 'string',  filterable: true},
+        {name: 'zip_code',      type: 'integer', filterable: true},
+        {name: 'pseudo_zip',    type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
         {name: 'billed_amount', type: 'float', labelable: false, summarizable: 'sum'}
       ]
 
