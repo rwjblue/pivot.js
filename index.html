@@ -8,7 +8,7 @@
   <script type="text/javascript" src="./pivot.js"></script>
 
   <!-- Must be loaded after pivot.js & jQuery -->
-  <script type="text/javascript" src="./lib/javascripts/pivot_demo.js"></script>
+  <script type="text/javascript" src="./lib/javascripts/jquery_pivot.js"></script>
 </head>
 <body>
   <div class="container">
@@ -31,3 +31,9 @@
     <div id="results"></div>
   </div>
 </body>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').pivot_display('process')
+  });
+</script>
