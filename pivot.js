@@ -24,7 +24,7 @@ var pivot = (function(){
   };
 
   //*******************************
-  // General Purpose Formatting
+  // General Purpose Functions
   //*******************************
   function pad(sideToPad, input, width, padString){
     if (padString === undefined) padString = " ";
@@ -56,6 +56,17 @@ var pivot = (function(){
 
   function formatTime(value){
     return formatDate(value) + ' ' + padLeft(value.getUTCHours(), 2,'0') + ':' + padLeft(value.getUTCMinutes(),2,'0');
+  };
+
+  function isArray(arg){
+    if(!Array.isArray)
+      return Object.prototype.toString.call(arg) == '[object Array]';
+    else
+      return Array.isArray(arg);
+  };
+
+  function isRegExp(arg){
+    return Object.prototype.toString.call(arg) == '[object RegExp]';
   };
 
   //*******************************
@@ -176,9 +187,17 @@ var pivot = (function(){
     if (restrictions === undefined) restrictions = filters;
 
     var field;
-    for (field in filters){
+    for (field in restrictions){
       if (restrictions.hasOwnProperty(field))
-        restrictions[field] = castFieldValue(field, restrictions[field])
+        if (isRegExp(restrictions[field])) {
+          // no need to change
+        } else if (isArray(restrictions[field])) {
+          for (var i = 0; i < restrictions[field].length; i++) {
+            restrictions[field][i] = castFieldValue(field, restrictions[field][i])
+          };
+        } else {
+          restrictions[field] = castFieldValue(field, restrictions[field])
+        }
     };
   };
 
@@ -218,7 +237,7 @@ var pivot = (function(){
           matches = 0;
 
       for (var key in filters) {
-        if (filters.hasOwnProperty(key) && row.hasOwnProperty(key) && row[key] === filters[key])
+        if (filters.hasOwnProperty(key) && row.hasOwnProperty(key) && matchesFilter(filters[key], row[key]))
           matches += 1;
       }
 
@@ -230,6 +249,20 @@ var pivot = (function(){
     data = filteredData;
     setDataFilters();
     return data;
+  };
+
+  function matchesFilter(filter, value){
+    if (isArray(filter)) {
+      for (var i = 0; i < filter.length; i++) {
+        if(filter[i] === value) return true
+      };
+    } else if (isRegExp(filter)){
+      return filter.test(value);
+    } else {
+      return value === filter;
+    }
+
+    return false
   };
 
   function setDataFilters(){

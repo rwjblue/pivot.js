@@ -87,6 +87,16 @@ describe('pivot', function () {
       pivot.filters().apply({last_billed_date: '1329091200000'});
       expect(pivot.data().all.length).toEqual(1);
     });
+
+    it('should filter given a regular expression', function(){
+      pivot.filters().apply({last_name: /ack/});
+      expect(pivot.data().all.length).toEqual(3);
+    });
+
+    it('should filter given an array of filter values', function(){
+      pivot.filters().apply({last_name: ['Jackson','Smith']});
+      expect(pivot.data().all.length).toEqual(4);
+    });
   });
 
   describe('Fields', function(){
