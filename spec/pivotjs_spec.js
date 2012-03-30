@@ -29,7 +29,7 @@ describe('pivot', function () {
 
   describe('CSV', function () {
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: new Date('2012-01-24')});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: Date.parse('2012-01-24')});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -70,6 +70,17 @@ describe('pivot', function () {
       pivot.filters().apply({last_name: 'Fornea'});
       expect(pivot.data().all.length).toEqual(2);
     });
+
+    it('should allow filtering on date fields', function(){
+      pivot.filters().apply({last_billed_date: 'Sun Feb 12 2012 19:00:00 GMT-0500 (EST)'});
+      expect(pivot.data().all.length).toEqual(1);
+
+      pivot.filters().apply({last_billed_date: new Date('2012-02-13')});
+      expect(pivot.data().all.length).toEqual(1);
+
+      pivot.filters().apply({last_billed_date: '2012-02-13'});
+      expect(pivot.data().all.length).toEqual(1);
+    });
   });
 
   describe('Fields', function(){
@@ -96,7 +107,7 @@ describe('pivot', function () {
     });
 
     it('uses default displayFunctions for date', function(){
-      expect(pivot.fields().get('last_billed_date').values[new Date('2012-01-24')].displayValue).toEqual('2012-01-24');
+      expect(pivot.fields().get('last_billed_date').values[Date.parse('2012-01-24')].displayValue).toEqual('2012-01-24');
     });
 
     describe('Pseudo Fields', function(){

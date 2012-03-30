@@ -381,9 +381,9 @@ var pivot = (function(){
       case "currency":
         return '$' + value.toFixed(2);
       case "date":
-        return formatDate(value);
+        return formatDate(new Date(value));
       case "time":
-        return formatTime(value);
+        return formatTime(new Date(value));
       default:
         return value;
     }
@@ -404,9 +404,9 @@ var pivot = (function(){
       case "currency":
         return parseFloat(value, 10);
       case "date":
-        return new Date(value);
+        return Date.parse(value);
       case "time":
-        return new Date(value);
+        return Date.parse(value);
       default:
         return value.toString();
     }
