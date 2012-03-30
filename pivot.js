@@ -24,6 +24,41 @@ var pivot = (function(){
   };
 
   //*******************************
+  // General Purpose Formatting
+  //*******************************
+  function pad(sideToPad, input, width, padString){
+    if (padString === undefined) padString = " ";
+
+    input     = input.toString();
+    padString = padString.toString();
+
+    while (input.length < width) {
+      if (sideToPad === "left")
+        input = padString + input;
+      else
+        input = input + padString;
+    }
+
+    return input
+  };
+
+  function padRight(input, width, padString){
+    return pad('right', input, width, padString)
+  };
+
+  function padLeft(input, width, padString){
+    return pad('left', input, width, padString)
+  };
+
+  function formatDate(value){
+    return value.getUTCFullYear() + '-' + padLeft((value.getUTCMonth() + 1), 2, "0") + '-' + padLeft(value.getUTCDate(), 2, '0');
+  };
+
+  function formatTime(value){
+    return formatDate(value) + ' ' + padLeft(value.getUTCHours(), 2,'0') + ':' + padLeft(value.getUTCMinutes(),2,'0');
+  };
+
+  //*******************************
   // CSV Processing
   //*******************************
 
