@@ -324,11 +324,11 @@ var pivot = (function(){
     // if field is a simple string setup and object with that string as a name
     if (Object.prototype.toString.call(field) === '[object String]') field = {name: field};
 
-    if (field.type          === undefined) field.type          = 'String';
-    if (field.pseudo        === undefined) field.pseudo        = false;
-    if (field.labelable     === undefined) field.labelable     = true;
-    if (field.filterable    === undefined) field.filterable    = false;
-    if (field.summarizable  === undefined) field.summarizable  = false;
+    if (field.type              === undefined) field.type          = 'string';
+    if (field.pseudo            === undefined) field.pseudo        = false;
+    if (field.labelable         === undefined) field.labelable     = true;
+    if (field.filterable        === undefined) field.filterable    = false;
+    if (field.summarizable      === undefined) field.summarizable  = false;
 
     if (field.summarizable && field.summarizeFunction === undefined){
       switch (field.summarizable){
@@ -349,7 +349,11 @@ var pivot = (function(){
     if (field.pseudo && field.pseudoFunction === undefined)
       field.pseudoFunction = function(row){ return '' };
 
-    field.values = {};
+    if (field.displayFunction === undefined)
+      field.displayFunction = displayFieldValue;
+
+    field.values        = {};
+    field.displayValues = {};
 
     fields[field.name] = field;
 
@@ -359,11 +363,31 @@ var pivot = (function(){
   function addFieldValue(field, value){
     if (fields[field] === undefined || fields[field].filterable === false) return;
 
-    if (fields[field].values[value] === undefined)
-      fields[field].values[value] = 0;
-    else
-      fields[field].values[value] += 1;
+    if (fields[field].values[value] === undefined) {
+      fields[field].values[value]        = {count: 1, displayValue: fields[field].displayFunction(value, field)};
+    } else {
+      fields[field].values[value].count += 1;
+    }
   };
+
+  function displayFieldValue(value, fieldName){
+    var field;
+    if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
+    if (field === undefined) field = appendField(fieldName);
+
+    switch (field.type){
+      case "cents":
+        return '$' + (value/100).toFixed(2);
+      case "currency":
+        return '$' + value.toFixed(2);
+      case "date":
+        return formatDate(value);
+      case "time":
+        return formatTime(value);
+      default:
+        return value;
+    }
+  }
 
   function castFieldValue(fieldName, value){
     var field;
@@ -373,9 +397,15 @@ var pivot = (function(){
     switch (field.type){
       case "integer":
         return parseInt(value, 10);
+      case "cents":
+        return parseInt(value, 10);
       case "float":
         return parseFloat(value, 10);
+      case "currency":
+        return parseFloat(value, 10);
       case "date":
+        return new Date(value);
+      case "time":
         return new Date(value);
       default:
         return value.toString();
@@ -469,7 +499,7 @@ var pivot = (function(){
         results[resultKey] = {};
 
         for (var key in displayFields.label) {
-          if (displayFields.label.hasOwnProperty(key)) results[resultKey][key] = row[key];
+          if (displayFields.label.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
         }
 
         results[resultKey].rows = [];
@@ -480,8 +510,10 @@ var pivot = (function(){
 
     for (resultKey in results) {
       for (var key in displayFields.summary) {
-        if (displayFields.summary.hasOwnProperty(key))
+        if (displayFields.summary.hasOwnProperty(key)) {
           results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows, fields[key]);
+          results[resultKey][key] = fields[key].displayFunction(results[resultKey][key], key);
+        }
       };
     };
 
