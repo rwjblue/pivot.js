@@ -2,19 +2,21 @@ describe('pivot', function () {
   var sample_csv, sample_fields;
 
   beforeEach(function () {
-      sample_csv =  "last_name,first_name,zip_code,billed_amount\n" +
-                    "Jackson,Robert,34471,100.00\n" +
-                    "Smith,Jon,34471,173.20\n" +
-                    "Jackson,Jon,34474,262.42\n" +
-                    "Jackson,Susan,34476,7.45\n" +
-                    "Fornea,Chris,34474,62.98\n" +
-                    "Fornea,Shelly,39401,124.63"
+      sample_csv =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+                    "Jackson,Robert,34471,100.00,2012-01-24\n" +
+                    "Smith,Jon,34471,173.20,2012-02-13\n" +
+                    "Jackson,Jon,34474,262.42,2012-03-05\n" +
+                    "Jackson,Susan,34476,7.45,2011-12-15\n" +
+                    "Fornea,Chris,34474,62.98,2012-01-30\n" +
+                    "Fornea,Shelly,39401,124.63,2012-02-17"
 
       sample_fields = [
         {name: 'first_name',    type: 'string',  filterable: true},
+        {name: 'last_name',     type: 'string',  filterable: true},
         {name: 'zip_code',      type: 'integer', filterable: true},
         {name: 'pseudo_zip',    type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount', type: 'float', labelable: false, summarizable: 'sum'}
+        {name: 'billed_amount', type: 'float', labelable: false, summarizable: 'sum'},
+        {name: 'last_billed_date', type: 'date', filterable: true}
       ]
 
       pivot.fields().set(sample_fields);
@@ -27,7 +29,7 @@ describe('pivot', function () {
 
   describe('CSV', function () {
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: new Date('2012-01-24')});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -77,9 +79,24 @@ describe('pivot', function () {
     });
 
     it('allows for adding fields', function(){
-      expect(pivot.fields().all().length).toEqual(5);
+      expect(pivot.fields().all().length).toEqual(sample_fields.length);
       pivot.fields().add({name:"not_a_real_fields", type: 'date', filterable: true})
-      expect(pivot.fields().all().length).toEqual(6);
+      expect(pivot.fields().all().length).toEqual(sample_fields.length + 1);
+    });
+
+    it('stores a list of values for filterable fields', function(){
+      expect(Object.keys(pivot.fields().get('last_name').values)).toEqual(['Jackson','Smith','Fornea']);
+    });
+
+    it('stores a list of display values using the fields displayFunction', function(){
+      pivot.fields().set(sample_fields);
+      pivot.fields().get('last_name').displayFunction = function(value){return value.toLowerCase()};
+      pivot.csv(sample_csv);
+      expect(pivot.fields().get('last_name').values['Jackson'].displayValue).toEqual('jackson');
+    });
+
+    it('uses default displayFunctions for date', function(){
+      expect(pivot.fields().get('last_billed_date').values[new Date('2012-01-24')].displayValue).toEqual('2012-01-24');
     });
 
     describe('Pseudo Fields', function(){
@@ -138,6 +155,13 @@ describe('pivot', function () {
     it("should return sum for summarizable: 'sum' fields", function(){
       pivot.display().summary().set(['billed_amount']);
       expect(pivot.results()[''].billed_amount.toFixed(2)).toEqual('730.68');
+    });
+
+    it("should reformat the output based on the fields displayFunction", function(){
+      pivot.fields().get('billed_amount').displayFunction = function(value){ return "$" + value.toFixed(2)};
+
+      pivot.display().summary().set(['billed_amount']);
+      expect(pivot.results()[''].billed_amount).toEqual('$730.68');
     });
   });
 });
