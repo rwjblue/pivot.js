@@ -390,7 +390,7 @@ var pivot = (function(){
   }
 
   function castFieldValue(fieldName, value){
-    var field;
+    var field, retValue;
     if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
@@ -404,8 +404,10 @@ var pivot = (function(){
       case "currency":
         return parseFloat(value, 10);
       case "date":
-        return Date.parse(value);
       case "time":
+        retValue = Date.parse(value);
+        if (isNaN(retValue)) retValue = parseInt(value);
+        return retValue;
         return Date.parse(value);
       default:
         return value.toString();
