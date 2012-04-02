@@ -75,11 +75,14 @@ describe('pivot', function () {
       pivot.filters().apply({last_billed_date: 'Sun Feb 12 2012 19:00:00 GMT-0500 (EST)'});
       expect(pivot.data().all.length).toEqual(1);
 
-      pivot.filters().apply({last_billed_date: new Date('2012-02-13')});
-      expect(pivot.data().all.length).toEqual(1);
+      // only test iso8601 type dates if the browser parses them properly
+      if (new Date('2012-02-13').toString() !== 'Invalid Date') {
+        pivot.filters().apply({last_billed_date: new Date('2012-02-13')});
+        expect(pivot.data().all.length).toEqual(1);
 
-      pivot.filters().apply({last_billed_date: '2012-02-13'});
-      expect(pivot.data().all.length).toEqual(1);
+        pivot.filters().apply({last_billed_date: '2012-02-13'});
+        expect(pivot.data().all.length).toEqual(1);
+      }
 
       pivot.filters().apply({last_billed_date: 1329091200000});
       expect(pivot.data().all.length).toEqual(1);
