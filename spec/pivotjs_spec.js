@@ -29,7 +29,7 @@ describe('pivot', function () {
 
   describe('CSV', function () {
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: Date.parse('Tue, 24 Jan 2012 00:00:00 +0000')});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: 1327363200000});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -123,7 +123,7 @@ describe('pivot', function () {
     });
 
     it('uses default displayFunctions for date', function(){
-      expect(pivot.fields().get('last_billed_date').values[Date.parse('Tue, 24 Jan 2012 00:00:00 +0000')].displayValue).toEqual('2012-01-24');
+      expect(pivot.fields().get('last_billed_date').values[1327363200000].displayValue).toEqual('2012-01-24');
     });
 
     describe('Pseudo Fields', function(){
