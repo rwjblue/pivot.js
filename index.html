@@ -17,7 +17,7 @@
     <div class="row">
       <div class="span4">
         <h2>Filter Fields</h2>
-        <form id="filter-fields"></form>
+        <div id="filter-list"></div>
       </div>
       <div class="span4">
         <h2>Label Fields</h2>
@@ -28,6 +28,8 @@
         <form id="summary-fields"></form>
       </div>
     </div>
+    <hr/>
+    <h1>Results</h1>
     <div id="results"></div>
   </div>
 </body>
@@ -35,5 +37,6 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('body').pivot_display('process')
+    $('body').pivot_display('build_filter_list')
   });
 </script>
