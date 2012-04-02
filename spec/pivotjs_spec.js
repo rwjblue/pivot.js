@@ -3,12 +3,12 @@ describe('pivot', function () {
 
   beforeEach(function () {
       sample_csv =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
-                    "Jackson,Robert,34471,100.00,2012-01-24\n" +
-                    "Smith,Jon,34471,173.20,2012-02-13\n" +
-                    "Jackson,Jon,34474,262.42,2012-03-05\n" +
-                    "Jackson,Susan,34476,7.45,2011-12-15\n" +
-                    "Fornea,Chris,34474,62.98,2012-01-30\n" +
-                    "Fornea,Shelly,39401,124.63,2012-02-17"
+                    "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
+                    "Smith,Jon,34471,173.20,\"Mon, 13 Feb 2012 00:00:00 +0000\"\n" +
+                    "Jackson,Jon,34474,262.42,\"Mon, 5 Mar 2012 00:00:00 +0000\"\n" +
+                    "Jackson,Susan,34476,7.45,\"Thu, 15 Dec 2011 00:00:00 +0000\"\n" +
+                    "Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
+                    "Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
       sample_fields = [
         {name: 'first_name',    type: 'string',  filterable: true},
@@ -29,7 +29,7 @@ describe('pivot', function () {
 
   describe('CSV', function () {
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: Date.parse('2012-01-24')});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: Date.parse('Tue, 24 Jan 2012 00:00:00 +0000')});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -123,7 +123,7 @@ describe('pivot', function () {
     });
 
     it('uses default displayFunctions for date', function(){
-      expect(pivot.fields().get('last_billed_date').values[Date.parse('2012-01-24')].displayValue).toEqual('2012-01-24');
+      expect(pivot.fields().get('last_billed_date').values[Date.parse('Tue, 24 Jan 2012 00:00:00 +0000')].displayValue).toEqual('2012-01-24');
     });
 
     describe('Pseudo Fields', function(){

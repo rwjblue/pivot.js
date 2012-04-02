@@ -36,6 +36,19 @@ for (var i = 0; i < pivot.data().all; i++) {
 };
 
 ```
+
+Date Processing
+===============
+
+Dates are stored internally as milliseconds since the epoch.  Dates to be
+parsed from CSV will use Date.parse so make sure that the format you use
+will be recongnized by your target browser.  Please use a shim library if
+you need to ensure proper parsing regardless of browser implementation.
+
+See [here](https://github.com/csnover/js-iso8601) for an example.
+
+(ISO8601 dates are still not handled properly by Safari 5.1 or IE8.)
+
 License
 ----------
 This software is licensed under a modified BSD license.
