@@ -94,6 +94,9 @@ describe('pivot', function () {
     it('should filter given a regular expression', function(){
       pivot.filters().apply({last_name: /ack/});
       expect(pivot.data().all.length).toEqual(3);
+
+      pivot.filters().apply({last_name: /(ack|smi)/i});
+      expect(pivot.data().all.length).toEqual(4);
     });
 
     it('should filter given an array of filter values', function(){
