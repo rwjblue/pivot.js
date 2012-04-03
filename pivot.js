@@ -546,7 +546,8 @@ var pivot = (function(){
 
   function getDataResults(){
     applyFilter();
-    var results = {};
+    var results = {},
+        output  = [];
 
     for (var i = 0; i < data.length; i++) {
       var row       = data[i],
@@ -577,7 +578,11 @@ var pivot = (function(){
       };
     };
 
-    return results;
+    for (var key in results){
+      output.push(results[key])
+    }
+
+    return output;
   };
 
   function getColumnResults(){
