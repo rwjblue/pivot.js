@@ -4,14 +4,14 @@ Pivot.js is a simple way for you to get to your data.  It allows for the creatio
 
 >In data processing, a pivot table is a data summarization tool found in data visualization programs such as spreadsheets or business intelligence software. Among other functions, pivot-table tools can automatically sort, count, total or give the average of the data stored in one table or spreadsheet. It displays the results in a second table (called a "pivot table") showing the summarized data.
 
-In this case the 'pivot table' is displayed in a `div` as an HTML table from the calculation of the other table, which is passed into the pivot object as CSV.  Without further ado let's get to usage.
+In our case, results (or the pivot-table) will be displayed as an HTML table pivoting from the CSV data. Without further ado let's get to usage.
 
 #Usage
 
 Step one is to initialize the pivot object.  It expects the following attributes:
 
 * `csv` - which should contain a valid javascript string of comma separated values.  It is __important to note__ that you must include a header row in the CSV for pivot to work properly  (you'll understand why in a minute)
-* `fields` - which should be an associative array of objects.  This is used to instruct pivot on how to interact with the fields you pass in.  It keys off of the header row names.  And is formated like so:
+* `fields` - which should be an array of objects.  This is used to instruct pivot on how to interact with the fields you pass in.  It keys off of the header row names.  And is formated like so:
 
 ```javascript
  [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
