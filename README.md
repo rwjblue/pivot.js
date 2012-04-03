@@ -56,10 +56,10 @@ Now that you have a pivot object instantiated properly. Let's start using it!
 ```javascript
 // From here on I'll be using the CSV from the spec for all examples
 
-// before filters have been run pivot.data().all
-// and pivot.data().raw are the same
+// before filters have been run pivot.data().raw will contain the raw data 
+// and pivot.data().all will be empty []
 pivot.data().all
-//=> [Object, Object, Object, Object, Object, Object]
+//=> []
 
 pivot.data().raw
 //=> [Object, Object, Object, Object, Object, Object]
@@ -69,7 +69,7 @@ pivot.data().raw
 
 ```javascript
 pivot.data().all()
-//=> [Object, Object, Object, Object, Object, Object]
+//=> []
 
 pivot.filters().set({last_name: 'Jackson'});
 pivot.filters().apply();
