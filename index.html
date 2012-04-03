@@ -34,7 +34,7 @@
               "Fornea,Shelly,39401,124.63,2012-02-17"
 
     // Define the structure of fields, if this is not defined then all fields will be assumed
-    // to be strings.  Name must match csv header in order to parse correctly.
+    // to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
     var fields = [{name: 'last_name',  type: 'string',  filterable: true},
         {name: 'first_name',        type: 'string',   filterable: true},
         {name: 'zip_code',          type: 'integer',  filterable: true},
