@@ -6,6 +6,7 @@ Pivot.js is a simple way for you to get to your data.  It allows for the creatio
 
 In our case, results (or the pivot-table) will be displayed as an HTML table pivoting from the CSV data. Without further ado let's get to usage.
 
+View an example here: [pivot-gh-pages](http://rjackson.github.com/pivot.js/)
 #Usage
 
 Step one is to initialize the pivot object.  It expects the following attributes:
