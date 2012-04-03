@@ -14,21 +14,10 @@
   <div class="container">
     <h1>Pivot.js</h1>
     <p>Pivot.js is a simple way to summarize large data sets on the fly.</p>
-    <div class="row">
-      <div class="span4">
-        <h2>Filter Fields</h2>
-        <div id="filter-list"></div>
-      </div>
-      <div class="span4">
-        <h2>Label Fields</h2>
-        <form id="label-fields"></form>
-      </div>
-      <div class="span4">
-        <h2>Summary Fields</h2>
-        <form id="summary-fields"></form>
-      </div>
+    <div class="span12" id="pivot-demo">
     </div>
     <hr/>
+
     <h1>Results</h1>
     <div id="results"></div>
   </div>
@@ -36,7 +25,24 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    $('body').pivot_display('process')
-    $('body').pivot_display('build_filter_list')
+    var data = "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+              "Jackson,Robert,34471,100.00,2012-01-24\n" +
+              "Smith,Jon,34471,173.20,2012-02-13\n" +
+              "Jackson,Jon,34474,262.42,2012-03-05\n" +
+              "Jackson,Susan,34476,7.45,2011-12-15\n" +
+              "Fornea,Chris,34474,62.98,2012-01-30\n" +
+              "Fornea,Shelly,39401,124.63,2012-02-17"
+
+    // Define the structure of fields, if this is not defined then all fields will be assumed
+    // to be strings.  Name must match csv header in order to parse correctly.
+    var fields = [{name: 'last_name',  type: 'string',  filterable: true},
+        {name: 'first_name',        type: 'string',   filterable: true},
+        {name: 'zip_code',          type: 'integer',  filterable: true},
+        {name: 'pseudo_zip',        type: 'integer',  filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'billed_amount',     type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return '$' + value.toFixed(2)}},
+        {name: 'last_billed_date',  type: 'date',     filterable: true}
+    ]
+
+    $('#pivot-demo').pivot_display('process', fields, data)
   });
 </script>
