@@ -129,6 +129,13 @@ You don't have to know all of the internals to get something running quickly.  W
 Set the following in your HTML
 
 ```html
+<head>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <!-- Set src to location of pivot.js and jquery_pivot.js relative to this file! -->
+  <script type="text/javascript" src=".location/to/pivot.js"></script>
+  <!-- Must be loaded after pivot.js & jQuery -->
+  <script type="text/javascript" src="./location/to/jquery_pivot.js"></script>
+</head>>
 <div id="pivot-table">
 </div>
 <div id="results">
