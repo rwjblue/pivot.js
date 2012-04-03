@@ -16,6 +16,9 @@ var pivot = (function(){
     (options.filters        === undefined) ? filters        = {}                        : setFilters(options.filters);
     (options.displayFields  === undefined) ? displayFields  = {label: {}, summary: {}}  : displayFields = options.displayFields;
 
+    if (options.csv !== undefined)
+      processCSV(options.csv)
+
     return pivot;
   }
 
