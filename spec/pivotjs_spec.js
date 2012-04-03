@@ -15,7 +15,7 @@ describe('pivot', function () {
         {name: 'last_name',     type: 'string',  filterable: true},
         {name: 'zip_code',      type: 'integer', filterable: true},
         {name: 'pseudo_zip',    type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount', type: 'float', labelable: false, summarizable: 'sum'},
+        {name: 'billed_amount', type: 'float', summarizable: 'sum'},
         {name: 'last_billed_date', type: 'date', filterable: true}
       ]
 
@@ -118,9 +118,9 @@ describe('pivot', function () {
     });
 
     it('allows for adding fields', function(){
-      expect(pivot.fields().all().length).toEqual(sample_fields.length);
+      var initialFieldCount = pivot.fields().all().length;
       pivot.fields().add({name:"not_a_real_fields", type: 'date', filterable: true})
-      expect(pivot.fields().all().length).toEqual(sample_fields.length + 1);
+      expect(pivot.fields().all().length).toEqual(initialFieldCount + 1);
     });
 
     it('stores a list of values for filterable fields', function(){
@@ -145,6 +145,12 @@ describe('pivot', function () {
 
       it('captures values for filterable pseudo fields', function(){
         expect(Object.keys(pivot.fields().pseudo[0].values).length).toEqual(4);
+      });
+
+      it('should create psuedo field for summary columns if they are also labelable', function(){
+        pivot.fields().add({name: 'zip_code', type: 'integer', summarizable: true})
+        expect(pivot.fields().get('zip_code_count')).toBeDefined();
+
       });
     });
   });
@@ -185,22 +191,22 @@ describe('pivot', function () {
       pivot.display().label().set(['last_name']);
 
       pivot.display().summary().set([]);
-      expect(pivot.results()['last_name:Jackson|'].billed_amount).toEqual(undefined);
+      expect(pivot.results()['last_name:Jackson|'].billed_amount_sum).toEqual(undefined);
 
-      pivot.display().summary().set(['billed_amount']);
-      expect(pivot.results()['last_name:Jackson|'].billed_amount).toEqual(369.87);
+      pivot.display().summary().set(['billed_amount_sum']);
+      expect(pivot.results()['last_name:Jackson|'].billed_amount_sum).toEqual(369.87);
     });
 
     it("should return sum for summarizable: 'sum' fields", function(){
-      pivot.display().summary().set(['billed_amount']);
-      expect(pivot.results()[''].billed_amount.toFixed(2)).toEqual('730.68');
+      pivot.display().summary().set(['billed_amount_sum']);
+      expect(pivot.results()[''].billed_amount_sum.toFixed(2)).toEqual('730.68');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
-      pivot.fields().get('billed_amount').displayFunction = function(value){ return "$" + value.toFixed(2)};
+      pivot.fields().get('billed_amount_sum').displayFunction = function(value){ return "$" + value.toFixed(2)};
 
-      pivot.display().summary().set(['billed_amount']);
-      expect(pivot.results()[''].billed_amount).toEqual('$730.68');
+      pivot.display().summary().set(['billed_amount_sum']);
+      expect(pivot.results()[''].billed_amount_sum).toEqual('$730.68');
     });
   });
 });

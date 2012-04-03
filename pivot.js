@@ -346,7 +346,7 @@ var pivot = (function(){
   function defaultSummarizeFunctionSum(rows, field){
     var runningTotal = 0;
     for (var i = 0; i < rows.length; i++) {
-      runningTotal += rows[i][field.name];
+      runningTotal += rows[i][field.dataSource];
     };
     return runningTotal;
   };
@@ -367,23 +367,42 @@ var pivot = (function(){
     if (field.pseudo            === undefined) field.pseudo        = false;
     if (field.labelable         === undefined) field.labelable     = true;
     if (field.filterable        === undefined) field.filterable    = false;
-    if (field.summarizable      === undefined) field.summarizable  = false;
+    if (field.dataSource        === undefined) field.dataSource    = field.name;
 
-    if (field.summarizable && field.summarizeFunction === undefined){
-      switch (field.summarizable){
-        case 'sum':
-          field.summarizeFunction = defaultSummarizeFunctionSum;
-          break;
-        case 'avg':
-          field.summarizeFunction = defaultSummarizeFunctionAvg;
-          break;
-        default:
-          field.summarizeFunction = defaultSummarizeFunctionCount;
-          break;
+    if (field.summarizable && (field.labelable || field.filterable)) {
+      var summarizable_field            = shallowClone(field);
+      summarizable_field.labelable      = false;
+      summarizable_field.filterable     = false;
+      summarizable_field.dataSource     = field.name;
+
+      if (summarizable_field.summarizable !== true)
+        summarizable_field.name = summarizable_field.name + '_' + summarizable_field.summarizable;
+      else
+        summarizable_field.name = summarizable_field.name + '_count'
+
+      appendField(summarizable_field);
+
+      field.summarizable  = false;
+      field.summarizeFunction = undefined;
+    } else if (field.summarizable) {
+      if (field.summarizeFunction === undefined){
+        switch (field.summarizable){
+          case 'sum':
+            field.summarizeFunction = defaultSummarizeFunctionSum;
+            break;
+          case 'avg':
+            field.summarizeFunction = defaultSummarizeFunctionAvg;
+            break;
+          default:
+            field.summarizeFunction = defaultSummarizeFunctionCount;
+            break;
+        };
+
+        field.summarizable  = true;
       };
-
-      field.summarizable = true;
-    };
+    } else {
+      field.summarizable  = false
+    }
 
     if (field.pseudo && field.pseudoFunction === undefined)
       field.pseudoFunction = function(row){ return '' };
