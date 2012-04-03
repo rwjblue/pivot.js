@@ -72,6 +72,17 @@ var pivot = (function(){
     return Object.prototype.toString.call(arg) == '[object RegExp]';
   };
 
+  function shallowClone(input){
+    var output = {};
+
+    for (var key in input) {
+      if (input.hasOwnProperty(key))
+        output[key] = input[key];
+    }
+
+    return output;
+  };
+
   //*******************************
   // CSV Processing
   //*******************************
@@ -249,8 +260,9 @@ var pivot = (function(){
       };
     };
 
-    data = filteredData;
-    setDataFilters();
+    data        = filteredData;
+    dataFilters = shallowClone(filters);
+
     return data;
   };
 
@@ -266,15 +278,6 @@ var pivot = (function(){
     }
 
     return false
-  };
-
-  function setDataFilters(){
-    dataFilters = {};
-
-    for (var key in filters) {
-      if (filters.hasOwnProperty(key))
-        dataFilters[key] = filters[key];
-    }
   };
 
   function preserveFilteredData(){
