@@ -13,7 +13,7 @@ Step one is to initialize the pivot object.  It expects the following attributes
 * `csv` - which should contain a valid javascript string of comma separated values.  It is __important to note__ that you must include a header row in the CSV for pivot to work properly  (you'll understand why in a minute)
 * `fields` - which should be an associative array of objects.  This is used to instruct pivot on how to interact with the fields you pass in.  It keys off of the header row names.  And is formated like so:
 
-```
+```javascript
  [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
  {name: 'header-name', type: 'string', optional_attributes: 'optional field' }]
 ```
@@ -21,7 +21,7 @@ Step one is to initialize the pivot object.  It expects the following attributes
 
 * `filters` (default is empty) - which should contain any filters you would like to restrict your data to.  A filter is defined as an object like so:
 
-```
+```javascript
 {zip_code: '34471'}
 ```
 
@@ -29,7 +29,7 @@ Those are the options that you should consider.  There are other options that ar
 
 A valid pivot could then be set up like so.
 
-```
+```javascript
 var data =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
                 "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
                 "Jackson,Jonathan,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
@@ -53,7 +53,7 @@ Now that you have a pivot object instantiated properly. Let's start using it!
 
 ### Get the data
 
-```
+```javascript
 // From here on I'll be using the CSV from the spec for all examples
 
 // before filters have been run pivot.data().all
@@ -67,7 +67,7 @@ pivot.data().raw
 
 ### Apply a filter
 
-```
+```javascript
 pivot.data().all()
 //=> [Object, Object, Object, Object, Object, Object]
 
@@ -80,7 +80,7 @@ As you can see once the filter was applied the fields were filtered accordingly.
 
 ### Append filter to existing filters
 
-```
+```javascript
 // Set pre-existing filters
 pivot.filters().set({last_name: 'Jackson'});
 pivot.filters().apply();
@@ -95,7 +95,7 @@ pivot.filters().add({first_name: 'Jon'});
 
 Pivot has a concept of labels.  A label is simply the value that is shown after data has been filtered.  By default, every field is `labelable`.  To access said labels:
 
-```
+```javascript
 pivot.display().label().set(['last_name'])
 
 // which creates an object that you can view with pivot.display().label().get:
@@ -112,7 +112,7 @@ In table you'll use the labels to display your filtered fields.  Once again I re
 
 You can summarize by adding the attribute `summarizable` to the field on init.
 
-```
+```javascript
 {name: 'last_name',   type: 'string',   filterable: true, summarizable: 'count' }
 ```
 
@@ -128,7 +128,7 @@ You don't have to know all of the internals to get something running quickly.  W
 
 Set the following in your HTML
 
-```
+```html
 <div id="pivot-table">
 </div>
 <div id="results">
