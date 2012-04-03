@@ -178,13 +178,13 @@ describe('pivot', function () {
   describe('Results', function(){
     it('should only return label fields that were selected', function(){
       pivot.display().label().set(['last_name']);
-      expect(pivot.results()[0].last_name).toEqual('Jackson');
-      expect(pivot.results()[2].last_name).toEqual('Fornea');
+      expect(pivot.results()[0].last_name).toEqual('Fornea');
+      expect(pivot.results()[2].last_name).toEqual('Smith');
       expect(pivot.results()[0].zip_code).toEqual(undefined);
 
       pivot.display().label().set(['last_name', 'zip_code']);
-      expect(pivot.results()[0].last_name).toEqual('Jackson');
-      expect(pivot.results()[0].zip_code).toEqual(34471);
+      expect(pivot.results()[0].last_name).toEqual('Fornea');
+      expect(pivot.results()[0].zip_code).toEqual(34474);
     });
 
     it('should only return summary fields that were selected', function(){
@@ -194,7 +194,7 @@ describe('pivot', function () {
       expect(pivot.results()[0].billed_amount_sum).toEqual(undefined);
 
       pivot.display().summary().set(['billed_amount_sum']);
-      expect(pivot.results()[0].billed_amount_sum).toEqual(369.87);
+      expect(pivot.results()[1].billed_amount_sum).toEqual(369.87);
     });
 
     it("should return sum for summarizable: 'sum' fields", function(){

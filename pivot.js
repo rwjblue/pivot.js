@@ -559,7 +559,8 @@ var pivot = (function(){
   function getDataResults(){
     applyFilter();
     var results = {},
-        output  = [];
+        output  = [],
+        keys;
 
     for (var i = 0; i < data.length; i++) {
       var row       = data[i],
@@ -590,9 +591,10 @@ var pivot = (function(){
       };
     };
 
-    for (var key in results){
-      output.push(results[key])
-    }
+    keys = objectKeys(results).sort();
+    for (var i = 0; i < keys.length; i++) {
+      output.push(results[keys[i]])
+    };
 
     return output;
   };
