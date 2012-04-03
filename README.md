@@ -30,18 +30,18 @@ Those are the options that you should consider.  There are other options that ar
 A valid pivot could then be set up like so.
 
 ```javascript
-var data =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
-                "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
-                "Jackson,Jonathan,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
+var csv_string =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+                  "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
+                  "Jackson,Jonathan,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
-var fields = [{name: 'last_name',   type: 'string',   filterable: true},
+var field_definitions = [{name: 'last_name',   type: 'string',   filterable: true},
         {name: 'first_name',        type: 'string',   filterable: true},
         {name: 'zip_code',          type: 'integer',  filterable: true},
         {name: 'pseudo_zip',        type: 'integer',  filterable: true },
         {name: 'billed_amount',     type: 'float',    labelable: false,},
         {name: 'last_billed_date',  type: 'date',     filterable: true}
 
-$('#pivot-demo').pivot_display('process', data, fields)
+pivot.init({csv: csv_string, fields: field_definitions});
 ```
 
 # Data Interaction
@@ -101,9 +101,9 @@ pivot.display().label().set(['last_name'])
 // which creates an object that you can view with pivot.display().label().get:
 
 pivot.display().label().get;
-> Object
- >last_name: Object
- >__proto__: Object
+//> Object
+// >last_name: Object
+// >__proto__: Object
 ```
 
 In table you'll use the labels to display your filtered fields.  Once again I reccomend reading the spec for more details.
@@ -120,7 +120,7 @@ There are a few built in functions that can be used on a summarizable field ('su
 
 For example,
 
-If you were to filter the spec csv by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results()[''].last_name_count`.  The reason for the empty string is because no label fields were set.  Each label will have its own object in results that corresponds to the summarized values.
+If you were to filter the spec csv by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results()[0].last_name_count`.  The reason for the empty string is because no label fields were set.  Each combination of labels has its own object in results(an array of objects) that corresponds to the summarized values.
 
 # Integrating with jQuery
 
