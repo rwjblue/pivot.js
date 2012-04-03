@@ -28,6 +28,12 @@ describe('pivot', function () {
   });
 
   describe('CSV', function () {
+    it('can populate csv data on initialization', function(){
+      var initialRawData = pivot.data().raw;
+      pivot.init({fields: sample_fields, csv: sample_csv});
+      expect(pivot.data().raw).toEqual(initialRawData);
+    });
+
     it('can parse csv into an array', function(){
       expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: 1327363200000});
       expect(pivot.data().raw.length).toEqual(6)
