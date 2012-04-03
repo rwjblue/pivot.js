@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>Pivot.js</title>
+  <!-- Twitter Bootstrap -->
+  <link rel="stylesheet" href="./lib/css/bootstrap.min.css" type="text/css" />
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="./pivot.js"></script>
+
+  <!-- Must be loaded after pivot.js & jQuery -->
+  <script type="text/javascript" src="./lib/javascripts/jquery_pivot.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Pivot.js</h1>
+    <p>Pivot.js is a simple way to summarize large data sets on the fly.</p>
+    <div class="span12" id="pivot-demo">
+    </div>
+    <hr/>
+
+    <h1>Results</h1>
+    <div id="results"></div>
+  </div>
+</body>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var data =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+                "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
+                "Smith,Jon,34471,173.20,\"Mon, 13 Feb 2012 00:00:00 +0000\"\n" +
+                "Jackson,Jon,34474,262.42,\"Mon, 5 Mar 2012 00:00:00 +0000\"\n" +
+                "Jackson,Susan,34476,7.45,\"Thu, 15 Dec 2011 00:00:00 +0000\"\n" +
+                "Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
+                "Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
+
+    // Define the structure of fields, if this is not defined then all fields will be assumed
+    // to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
+    var fields = [{name: 'last_name',  type: 'string',  filterable: true},
+        {name: 'first_name',        type: 'string',   filterable: true},
+        {name: 'zip_code',          type: 'integer',  filterable: true},
+        {name: 'pseudo_zip',        type: 'integer',  filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'billed_amount',     type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return '$' + value.toFixed(2)}},
+        {name: 'last_billed_date',  type: 'date',     filterable: true}
+    ]
+
+    $('#pivot-demo').pivot_display('process', data, fields)
+  });
+</script>
