@@ -83,6 +83,18 @@ var pivot = (function(){
     return output;
   };
 
+  function objectKeys(object){
+    if (Object.keys) return Object.keys(object);
+
+    var output = [];
+
+    for (key in object){
+      output.push(key);
+    }
+
+    return output;
+  };
+
   //*******************************
   // CSV Processing
   //*******************************
@@ -244,7 +256,7 @@ var pivot = (function(){
     }
 
     var dataToFilterLength = dataToFilter.length,
-        filterLength = Object.keys(filters).length;
+        filterLength = objectKeys(filters).length;
 
     for (var i = 0; i < dataToFilterLength; i++) {
       var row     = dataToFilter[i],
@@ -282,7 +294,7 @@ var pivot = (function(){
 
   function preserveFilteredData(){
     var matches = 0,
-        dataFiltersLength = Object.keys(dataFilters).length;
+        dataFiltersLength = objectKeys(dataFilters).length;
 
     for (var key in dataFilters) {
       if (dataFilters.hasOwnProperty(key) && dataFilters.hasOwnProperty(key) && filters[key] === dataFilters[key])
