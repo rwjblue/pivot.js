@@ -114,19 +114,19 @@ var pivot = (function(){
     return output;
   };
 
-  function processJSON(text) {
+  function processJSON(input) {
     var header,
-        parsedData    = JSON.parse(text),
         pseudoFields  = restrictFields('pseudo');
 
-    rawData    = [];
+    if (Object.prototype.toString.call(input) === '[object String]') input = JSON.parse(input);
+    rawData     = [];
 
-    var o = {}, j = -1, m = parsedData.length;
+    var o = {}, j = -1, m = input.length;
     while (++j < m) {
       if (j === 0)
-        header = processHeaderRow(parsedData[j]);
+        header = processHeaderRow(input[j]);
       else
-        rawData.push(processRow(parsedData[j], header, pseudoFields));
+        rawData.push(processRow(input[j], header, pseudoFields));
     };
   };
 
