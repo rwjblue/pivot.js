@@ -511,19 +511,28 @@ var pivot = (function(){
 
     switch (field.type){
       case "integer":
-        return parseInt(value, 10);
       case "cents":
-        return parseInt(value, 10);
+        if (objectType(value) === 'number')
+          return value;
+        else
+          return parseInt(value, 10);
       case "float":
-        return parseFloat(value, 10);
       case "currency":
-        return parseFloat(value, 10);
+        if (objectType(value) === 'number')
+          return value;
+        else
+          return parseFloat(value, 10);
       case "date":
       case "time":
-        retValue = Date.parse(value);
-        if (isNaN(retValue)) retValue = parseInt(value);
-        return retValue;
-        return Date.parse(value);
+        switch (objectType(value)){
+          case 'number':
+          case 'date':
+            return value;
+          default:
+            var output = Date.parse(value);
+            if (isNaN(output)) output = parseInt(value);
+            return output;
+        };
       default:
         return value.toString();
     }

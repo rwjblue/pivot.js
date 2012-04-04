@@ -99,7 +99,7 @@ describe('pivot', function () {
 
       // only test iso8601 type dates if the browser parses them properly
       if (new Date('2012-02-13').toString() !== 'Invalid Date') {
-        pivot.filters().apply({last_billed_date: new Date('2012-02-13')});
+        pivot.filters().apply({last_billed_date: Date.parse('2012-02-13')});
         expect(pivot.data().all.length).toEqual(1);
 
         pivot.filters().apply({last_billed_date: '2012-02-13'});
