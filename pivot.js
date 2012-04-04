@@ -66,13 +66,13 @@ var pivot = (function(){
 
   function isArray(arg){
     if(!Array.isArray)
-      return Object.prototype.toString.call(arg) == '[object Array]';
+      return objectType(arg) == 'array';
     else
       return Array.isArray(arg);
   };
 
   function isRegExp(arg){
-    return Object.prototype.toString.call(arg) == '[object RegExp]';
+    return objectType(arg) == 'regexp';
   };
 
   function shallowClone(input){
@@ -98,6 +98,10 @@ var pivot = (function(){
     return output;
   };
 
+  function objectType(obj) {
+    return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
+  };
+
   //*******************************
   // Data Processing
   //*******************************
@@ -120,7 +124,7 @@ var pivot = (function(){
     var header,
         pseudoFields  = restrictFields('pseudo');
 
-    if (Object.prototype.toString.call(input) === '[object String]') input = JSON.parse(input);
+    if (objectType(input) === 'string') input = JSON.parse(input);
     rawData     = [];
 
     var o = {}, j = -1, m = input.length;
@@ -414,7 +418,7 @@ var pivot = (function(){
 
   function appendField(field){
     // if field is a simple string setup and object with that string as a name
-    if (Object.prototype.toString.call(field) === '[object String]') field = {name: field};
+    if (objectType(field) === 'string') field = {name: field};
 
     if (field.type              === undefined) field.type          = 'string';
     if (field.pseudo            === undefined) field.pseudo        = false;
@@ -483,7 +487,7 @@ var pivot = (function(){
 
   function displayFieldValue(value, fieldName){
     var field;
-    if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
+    if (objectType(fieldName) === 'string') field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
     switch (field.type){
@@ -502,7 +506,7 @@ var pivot = (function(){
 
   function castFieldValue(fieldName, value){
     var field, retValue;
-    if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
+    if (objectType(fieldName) === 'string') field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
     switch (field.type){
@@ -565,7 +569,7 @@ var pivot = (function(){
   };
 
   function appendDisplayField(type, field){
-    if (Object.prototype.toString.call(field) === '[object String]')
+    if (objectType(field) === 'string')
       field = fields[field];
 
     displayFields[type][field.name] = field;
