@@ -32,6 +32,7 @@ Step one is to initialize the pivot object.  It expects the following attributes
 ```javascript
  [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
  {name: 'header-name', type: 'string', optional_attributes: 'optional field' }]
+ 
 ```
 (<small>See more about fields in Section below</small>)
 
@@ -39,6 +40,7 @@ Step one is to initialize the pivot object.  It expects the following attributes
 
 ```javascript
 {zip_code: '34471'}
+
 ```
 
 Those are the options that you should consider.  There are other options that are well covered in the spec.
@@ -67,6 +69,7 @@ var json_string = '[["last_name","first_name","zip_code","billed_amount","last_b
                     ' ["Smith", "Jon", 34471, 173.20, "Mon, 13 Feb 2012 00:00:00 +0000"]]'
 
 pivot.init({json: json_string, fields: field_definitions});
+
 ```
 
 # Data Interaction
@@ -88,6 +91,7 @@ pivot.data().all
 
 pivot.data().raw
 //=> [Object, Object, Object, Object, Object, Object]
+
 ```
 
 ### Apply a filter
@@ -99,6 +103,7 @@ pivot.data().all()
 pivot.filters().set({last_name: 'Jackson'});
 pivot.filters().apply();
 //=> [Object, Object, Object]
+
 ```
 
 As you can see once the filter was applied the fields were filtered accordingly.  Only objects with last_name of 'Jackson' remain in `pivot.data().all`
@@ -114,6 +119,7 @@ pivot.filters().apply();
 // Further restrict the data
 pivot.filters().add({first_name: 'Jon'});
 //=> [Object]
+
 ```
 
 ## Labels
@@ -129,6 +135,7 @@ pivot.display().label().get;
 //> Object
 // >last_name: Object
 // >__proto__: Object
+
 ```
 
 In table you'll use the labels to display your filtered fields.  Once again I reccomend reading the spec for more details.
@@ -139,6 +146,7 @@ You can summarize by adding the attribute `summarizable` to the field on init.
 
 ```javascript
 {name: 'last_name',   type: 'string',   filterable: true, summarizable: 'count' }
+
 ```
 
 There are a few built in functions that can be used on a summarizable field ('sum', 'avg', 'count').  If you would like to define your own simply pass an anonymous function in the field declaration.  The functions will be applied to each cell in the cvs that matches the filter criteria.
@@ -177,6 +185,7 @@ Set the following in your HTML
     $('#pivot-demo').pivot_display('process', {csv: data, fields: fields})
   });
 </script>
+
 ```
 
 This will create the filters in a drop down list, and checkboxes for labels/summaries.  Optionally you can disable the creation of the containing element.  If you do this then `<div id='filter-list'></div>`, `<div id="label-fields"></div>`, and `<div id='summary-fields'></div>` must be defined.  This offers a much more configurable setup (results div must exist).
