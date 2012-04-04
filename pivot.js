@@ -104,7 +104,9 @@ var pivot = (function(){
 
   function processHeaderRow(row){
     var output = [];
-    for (var i = 0; i < row.length; i++) {
+
+    var o = {}, i = -1, m = row.length;
+    while (++i < m) {
       var field = fields[row[i]];
       if (field === undefined) field = appendField(row[i]);
       field.rowIndex = i;
@@ -251,7 +253,8 @@ var pivot = (function(){
         if (isRegExp(restrictions[field])) {
           // no need to change
         } else if (isArray(restrictions[field])) {
-          for (var i = 0; i < restrictions[field].length; i++) {
+          var i = -1, m = restrictions[field].length;
+          while (++i < m) {
             restrictions[field][i] = castFieldValue(field, restrictions[field][i])
           };
         } else {
@@ -288,10 +291,11 @@ var pivot = (function(){
       dataToFilter = rawData;
     }
 
-    var dataToFilterLength = dataToFilter.length,
-        filterLength = objectKeys(filters).length;
+    var dataToFilterLength  = dataToFilter.length,
+        filterLength        = objectKeys(filters).length,
+        i                   = -1;
 
-    for (var i = 0; i < dataToFilterLength; i++) {
+    while (++i < dataToFilterLength) {
       var row     = dataToFilter[i],
           matches = 0;
 
@@ -313,7 +317,8 @@ var pivot = (function(){
 
   function matchesFilter(filter, value){
     if (isArray(filter)) {
-      for (var i = 0; i < filter.length; i++) {
+      var i = -1, m = filter.length;
+      while (++i < m) {
         if(filter[i] === value) return true
       };
     } else if (isRegExp(filter)){
@@ -361,7 +366,8 @@ var pivot = (function(){
 
   function setFields(listing){
     fields = {};
-    for (var i = 0; i < listing.length; i++) {
+    var i = -1, m = listing.length;
+    while (++i < m) {
       appendField(listing[i]);
     }
   };
@@ -389,8 +395,10 @@ var pivot = (function(){
   };
 
   function defaultSummarizeFunctionSum(rows, field){
-    var runningTotal = 0;
-    for (var i = 0; i < rows.length; i++) {
+    var runningTotal  = 0,
+        i             = -1,
+        m             = rows.length;
+    while (++i < m) {
       runningTotal += rows[i][field.dataSource];
     };
     return runningTotal;
@@ -566,7 +574,8 @@ var pivot = (function(){
   function setDisplayFields(type, listing){
     displayFields[type] = {};
 
-    for (var i = 0; i < listing.length; i++) {
+    var i = -1, m = listing.length;
+    while (++i < m) {
       appendDisplayField(type, listing[i]);
     };
   };
@@ -593,9 +602,11 @@ var pivot = (function(){
     applyFilter();
     var results = {},
         output  = [],
+        i       = -1,
+        m       = data.length,
         keys;
 
-    for (var i = 0; i < data.length; i++) {
+    while (++i < m) {
       var row       = data[i],
           resultKey = '';
 
@@ -625,7 +636,8 @@ var pivot = (function(){
     };
 
     keys = objectKeys(results).sort();
-    for (var i = 0; i < keys.length; i++) {
+    i = -1; m = keys.length;
+    while (++i < m){
       output.push(results[keys[i]])
     };
 
