@@ -10,6 +10,14 @@ describe('pivot', function () {
                     "Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
                     "Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
+      sample_json = '[["last_name","first_name","zip_code","billed_amount","last_billed_date"],' +
+                    ' ["Jackson", "Robert", 34471, 100.00, "Tue, 24 Jan 2012 00:00:00 +0000"],' +
+                    ' ["Smith", "Jon", 34471, 173.20, "Mon, 13 Feb 2012 00:00:00 +0000"],' +
+                    ' ["Jackson", "Jon", 34474, 262.42, "Mon, 5 Mar 2012 00:00:00 +0000"],' +
+                    ' ["Jackson", "Susan", 34476, 7.45, "Thu, 15 Dec 2011 00:00:00 +0000"],' +
+                    ' ["Fornea", "Chris", 34474, 62.98, "Mon, 30 Jan 2012 00:00:00 +0000"],' +
+                    ' ["Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
+
       sample_fields = [
         {name: 'first_name',    type: 'string',  filterable: true},
         {name: 'last_name',     type: 'string',  filterable: true},
@@ -45,6 +53,14 @@ describe('pivot', function () {
       // apply filter
       pivot.filters().apply({last_name: 'Jackson'});
       expect(pivot.data().all.length).toEqual(3);
+    });
+  });
+
+  describe('JSON', function(){
+    it('can populate csv data on initialization', function(){
+      var initialRawData = pivot.data().raw;
+      pivot.init({fields: sample_fields, json: sample_json});
+      expect(pivot.data().raw).toEqual(initialRawData);
     });
   });
 

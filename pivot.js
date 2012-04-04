@@ -1,5 +1,5 @@
 var pivot = (function(){
-  'use strict'; // Function-level strict mode syntax
+  'use strict';
 
   var fields, filters, rawData, data, dataFilters, displayFields;
 
@@ -18,6 +18,9 @@ var pivot = (function(){
 
     if (options.csv !== undefined)
       processCSV(options.csv)
+
+    if (options.json !== undefined)
+      processJSON(options.json)
 
     return pivot;
   }
@@ -96,38 +99,47 @@ var pivot = (function(){
   };
 
   //*******************************
-  // CSV Processing
+  // Data Processing
   //*******************************
+
+  function processHeaderRow(row){
+    var output = [];
+    for (var i = 0; i < row.length; i++) {
+      var field = fields[row[i]];
+      if (field === undefined) field = appendField(row[i]);
+      field.rowIndex = i;
+      output.push(field);
+    };
+
+    return output;
+  };
+
+  function processJSON(text) {
+    var header,
+        parsedData    = JSON.parse(text),
+        pseudoFields  = restrictFields('pseudo');
+
+    rawData    = [];
+
+    var o = {}, j = -1, m = parsedData.length;
+    while (++j < m) {
+      if (j === 0)
+        header = processHeaderRow(parsedData[j]);
+      else
+        rawData.push(processRow(parsedData[j], header, pseudoFields));
+    };
+  };
 
   // Accepts csv as a string
   function processCSV(text) {
     var header,
         pseudoFields = restrictFields('pseudo');
 
-    rawData = processRows(text, function(row, i) {
-      if (i > 0) {
-        // process actual fields
-        var o = {}, j = -1, m = header.length;
-        while (++j < m) {
-          var value = castFieldValue(header[j], row[j]);
-          o[header[j]] = value;
-          addFieldValue(header[j], value);
-        };
-
-        // process pseudo fields
-        j = -1, m = pseudoFields.length;
-        while (++j < m) {
-          var field = pseudoFields[j],
-              value = castFieldValue(field.name, field.pseudoFunction(o));
-          o[field.name] = value;
-          addFieldValue(field.name, value);
-        };
-
-        return o;
-      } else {
-        header = row;
-        return null;
-      }
+    rawData = processRows(text, function(row, i){
+      if (i === 0)
+        header = processHeaderRow(row);
+      else
+        return processRow(row, header, pseudoFields);
     });
   };
 
@@ -189,6 +201,27 @@ var pivot = (function(){
     }
 
     return rows;
+  };
+
+  function processRow(row, header, pseudoFields) {
+    // process actual fields
+    var o = {}, j = -1, m = header.length;
+    while (++j < m) {
+      var value = castFieldValue(header[j].name, row[j]);
+      o[header[j].name] = value;
+      addFieldValue(header[j].name, value);
+    };
+
+    // process pseudo fields
+    j = -1, m = pseudoFields.length;
+    while (++j < m) {
+      var field = pseudoFields[j],
+          value = castFieldValue(field.name, field.pseudoFunction(o));
+      o[field.name] = value;
+      addFieldValue(field.name, value);
+    };
+
+    return o;
   };
 
   //*******************************
@@ -606,6 +639,7 @@ var pivot = (function(){
   // Entry Point
   return {
     csv:      processCSV,
+    json:     processJSON,
     data:     pivotData,
     results:  getDataResults,
     fields:   pivotFields,
