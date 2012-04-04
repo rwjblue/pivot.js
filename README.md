@@ -1,17 +1,25 @@
 # Welcome to Pivot.js
 
-Pivot.js is a simple way for you to get to your data.  It allows for the creation of highly customizeable unique table views from your browser.
+Pivot.js is a simple way for you to get to your data.  It allows for the
+creation of highly customizable unique table views from your browser.
 
->In data processing, a pivot table is a data summarization tool found in data visualization programs such as spreadsheets or business intelligence software. Among other functions, pivot-table tools can automatically sort, count, total or give the average of the data stored in one table or spreadsheet. It displays the results in a second table (called a "pivot table") showing the summarized data.
+> In data processing, a pivot table is a data summarization tool found in
+> data visualization programs such as spreadsheets or business intelligence
+> software. Among other functions, pivot-table tools can automatically sort,
+> count, total or give the average of the data stored in one table or
+> spreadsheet. It displays the results in a second table (called a "pivot
+> table") showing the summarized data.
 
-In our case, results (or the pivot-table) will be displayed as an HTML table pivoting from the CSV data. Without further ado let's get to usage.
+In our case, results (or the pivot-table) will be displayed as an HTML table
+pivoting from the CSV data. Without further ado let's get to usage.
 
-View an example here: [pivot-gh-pages](http://rjackson.github.com/pivot.js/)
+View an [example](http://rjackson.github.com/pivot.js/).
+
 #Usage
 
 Step one is to initialize the pivot object.  It expects the following attributes:
 
-* `csv` - which should contain a valid javascript string of comma separated values.  It is __important to note__ that you must include a header row in the CSV for pivot to work properly  (you'll understand why in a minute)
+* `csv` - which should contain a valid javascript string of comma separated values.  It is __important to note__ that you must include a header row in the CSV for pivot to work properly  (you'll understand why in a minute).
 * `fields` - which should be an array of objects.  This is used to instruct pivot on how to interact with the fields you pass in.  It keys off of the header row names.  And is formated like so:
 
 ```javascript
@@ -57,7 +65,7 @@ Now that you have a pivot object instantiated properly. Let's start using it!
 ```javascript
 // From here on I'll be using the CSV from the spec for all examples
 
-// before filters have been run pivot.data().raw will contain the raw data 
+// before filters have been run pivot.data().raw will contain the raw data
 // and pivot.data().all will be empty []
 pivot.data().all
 //=> []
