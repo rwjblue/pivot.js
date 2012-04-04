@@ -11,7 +11,7 @@ creation of highly customizable unique table views from your browser.
 > table") showing the summarized data.
 
 In our case, results (or the pivot-table) will be displayed as an HTML table
-pivoting from the CSV data. Without further ado let's get to usage.
+pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
 
 View an [example](http://rjackson.github.com/pivot.js/).
 
@@ -19,8 +19,15 @@ View an [example](http://rjackson.github.com/pivot.js/).
 
 Step one is to initialize the pivot object.  It expects the following attributes:
 
-* `csv` - which should contain a valid javascript string of comma separated values.  It is __important to note__ that you must include a header row in the CSV for pivot to work properly  (you'll understand why in a minute).
-* `fields` - which should be an array of objects.  This is used to instruct pivot on how to interact with the fields you pass in.  It keys off of the header row names.  And is formated like so:
+* `csv` - which should contain a valid string of comma separated values.  It is
+  __important to note__ that you must include a header row in the CSV for pivot
+  to work properly  (you'll understand why in a minute).
+* `json` - which should contain a valid JSON string. At this time this string
+  must be an array of arrays, and not an array of objects (storing the field
+  names with each row consumes significantly more space).
+* `fields` - which should be an array of objects.  This is used to instruct
+  pivot on how to interact with the fields you pass in.  It keys off of the
+  header row names.  And is formated like so:
 
 ```javascript
  [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
@@ -36,12 +43,9 @@ Step one is to initialize the pivot object.  It expects the following attributes
 
 Those are the options that you should consider.  There are other options that are well covered in the spec.
 
-A valid pivot could then be set up like so.
+A valid pivot could then be set up from like so.
 
 ```javascript
-var csv_string =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
-                  "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
-                  "Jackson,Jonathan,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
 var field_definitions = [{name: 'last_name',   type: 'string',   filterable: true},
         {name: 'first_name',        type: 'string',   filterable: true},
@@ -50,7 +54,19 @@ var field_definitions = [{name: 'last_name',   type: 'string',   filterable: tru
         {name: 'billed_amount',     type: 'float',    labelable: false,},
         {name: 'last_billed_date',  type: 'date',     filterable: true}
 
+// from csv data:
+var csv_string  =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+                   "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
+                   "Jackson,Jonathan,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
+
 pivot.init({csv: csv_string, fields: field_definitions});
+
+// from json data:
+var json_string = '[["last_name","first_name","zip_code","billed_amount","last_billed_date"],' +
+                    ' ["Jackson", "Robert", 34471, 100.00, "Tue, 24 Jan 2012 00:00:00 +0000"],' +
+                    ' ["Smith", "Jon", 34471, 173.20, "Mon, 13 Feb 2012 00:00:00 +0000"]]'
+
+pivot.init({json: json_string, fields: field_definitions});
 ```
 
 # Data Interaction
@@ -63,7 +79,7 @@ Now that you have a pivot object instantiated properly. Let's start using it!
 ### Get the data
 
 ```javascript
-// From here on I'll be using the CSV from the spec for all examples
+// From here on I'll be using the data from the spec for all examples
 
 // before filters have been run pivot.data().raw will contain the raw data
 // and pivot.data().all will be empty []
@@ -129,7 +145,7 @@ There are a few built in functions that can be used on a summarizable field ('su
 
 For example,
 
-If you were to filter the spec csv by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results()[0].last_name_count`.  The reason for the empty string is because no label fields were set.  Each combination of labels has its own object in results(an array of objects) that corresponds to the summarized values.
+If you were to filter by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results()[0].last_name_count`.  The reason for the empty string is because no label fields were set.  Each combination of labels has its own object in results(an array of objects) that corresponds to the summarized values.
 
 # Integrating with jQuery
 
@@ -152,13 +168,13 @@ Set the following in your HTML
 
 <script type="text/javascript">
   $(document).ready(function() {
-    var data = "" // Your CSV as a string
+    var data = "" // Your CSV or JSON data as a string
 
     // default fields are labelable, non-sumarrizable, non-filterable
     // so be sure define the fields you expect to be able to filter by
     var fields = []
 
-    $('#pivot-demo').pivot_display('process', data, fields)
+    $('#pivot-demo').pivot_display('process', {csv: data, fields: fields})
   });
 </script>
 ```
