@@ -32,6 +32,21 @@ var pivot = (function(){
   //*******************************
   // General Purpose Functions
   //*******************************
+  function pivotUtils(){
+    return {
+      pad: pad,
+      padRight: padRight,
+      padLeft: padLeft,
+      formatDate: formatDate,
+      formatTime: formatTime,
+      isArray: isArray,
+      isRegExp: isRegExp,
+      shallowClone: shallowClone,
+      objectKeys: objectKeys,
+      objectType: objectType
+    }
+  };
+
   function pad(sideToPad, input, width, padString){
     if (padString === undefined) padString = " ";
 
@@ -671,6 +686,7 @@ var pivot = (function(){
     filters:  pivotFilters,
     display:  pivotDisplay,
     init:     init,
-    reset:    reset
+    reset:    reset,
+    utils:     pivotUtils
   }
 })();
