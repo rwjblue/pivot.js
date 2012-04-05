@@ -10,6 +10,14 @@ describe('pivot', function () {
                     "Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
                     "Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
+      sample_json = '[["last_name","first_name","zip_code","billed_amount","last_billed_date"],' +
+                    ' ["Jackson", "Robert", 34471, 100.00, "Tue, 24 Jan 2012 00:00:00 +0000"],' +
+                    ' ["Smith", "Jon", 34471, 173.20, "Mon, 13 Feb 2012 00:00:00 +0000"],' +
+                    ' ["Jackson", "Jon", 34474, 262.42, "Mon, 5 Mar 2012 00:00:00 +0000"],' +
+                    ' ["Jackson", "Susan", 34476, 7.45, "Thu, 15 Dec 2011 00:00:00 +0000"],' +
+                    ' ["Fornea", "Chris", 34474, 62.98, "Mon, 30 Jan 2012 00:00:00 +0000"],' +
+                    ' ["Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
+
       sample_fields = [
         {name: 'first_name',    type: 'string',  filterable: true},
         {name: 'last_name',     type: 'string',  filterable: true},
@@ -48,6 +56,14 @@ describe('pivot', function () {
     });
   });
 
+  describe('JSON', function(){
+    it('can populate csv data on initialization', function(){
+      var initialRawData = pivot.data().raw;
+      pivot.init({fields: sample_fields, json: sample_json});
+      expect(pivot.data().raw).toEqual(initialRawData);
+    });
+  });
+
   describe('Filters', function() {
     beforeEach(function () {
       pivot.filters().set({last_name: 'Jackson'});
@@ -83,7 +99,7 @@ describe('pivot', function () {
 
       // only test iso8601 type dates if the browser parses them properly
       if (new Date('2012-02-13').toString() !== 'Invalid Date') {
-        pivot.filters().apply({last_billed_date: new Date('2012-02-13')});
+        pivot.filters().apply({last_billed_date: Date.parse('2012-02-13')});
         expect(pivot.data().all.length).toEqual(1);
 
         pivot.filters().apply({last_billed_date: '2012-02-13'});
@@ -178,13 +194,13 @@ describe('pivot', function () {
   describe('Results', function(){
     it('should only return label fields that were selected', function(){
       pivot.display().label().set(['last_name']);
-      expect(pivot.results()[0].last_name).toEqual('Jackson');
-      expect(pivot.results()[2].last_name).toEqual('Fornea');
+      expect(pivot.results()[0].last_name).toEqual('Fornea');
+      expect(pivot.results()[2].last_name).toEqual('Smith');
       expect(pivot.results()[0].zip_code).toEqual(undefined);
 
       pivot.display().label().set(['last_name', 'zip_code']);
-      expect(pivot.results()[0].last_name).toEqual('Jackson');
-      expect(pivot.results()[0].zip_code).toEqual(34471);
+      expect(pivot.results()[0].last_name).toEqual('Fornea');
+      expect(pivot.results()[0].zip_code).toEqual(34474);
     });
 
     it('should only return summary fields that were selected', function(){
@@ -194,7 +210,7 @@ describe('pivot', function () {
       expect(pivot.results()[0].billed_amount_sum).toEqual(undefined);
 
       pivot.display().summary().set(['billed_amount_sum']);
-      expect(pivot.results()[0].billed_amount_sum).toEqual(369.87);
+      expect(pivot.results()[1].billed_amount_sum).toEqual(369.87);
     });
 
     it("should return sum for summarizable: 'sum' fields", function(){

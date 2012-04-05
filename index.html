@@ -4,20 +4,71 @@
   <title>Pivot.js</title>
   <!-- Twitter Bootstrap -->
   <link rel="stylesheet" href="./lib/css/bootstrap.min.css" type="text/css" />
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="./pivot.js"></script>
+  <link rel="stylesheet" href="./lib/css/subnav.css" type="text/css" />
 
-  <!-- Must be loaded after pivot.js & jQuery -->
-  <script type="text/javascript" src="./lib/javascripts/jquery_pivot.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+  <script type="text/javascript" src="./lib/javascripts/subnav.js"></script>
+
+  <!-- jquery_pivot must be loaded after pivot.js and jQuery -->
+  <script type="text/javascript" src="./pivot.js"></script>
+  <script type="text/javascript" src="./jquery_pivot.js"></script>
 </head>
 <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <ul class="nav">
+            <li class="active">
+              <a class="brand" href="#">Pivot.js</a>
+            </li>
+            <li><a href="https://github.com/rjackson/pivot.js">Fork On Github</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   <div class="container">
     <h1>Pivot.js</h1>
-    <p>Pivot.js is a simple way to summarize large data sets on the fly.</p>
-    <div class="span12" id="pivot-demo">
+    <p>Pivot.js is a simple way to summarize large data sets on the fly. On this page we are using the pivot jQuery plugin which offers a nice entry point to Pivot.js.<br/><br/>
+      <b>To begin:</b>
+      <ul>
+        <li>Select the fields you would like to display from the Label Fields/Summary Fields drop down.</li>
+        <li>Then filter your data by selecting from the filters drop down.</li>
+        <li>Ta-da, you have yourself a custom report!</li>
+      </ul>
+    </p>
+    <div class="subnav">
+      <ul class="nav nav-pills">
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Filter Fields
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu stop-propagation" style="overflow:scroll;max-height:450px;padding:10px;">
+            <div id="filter-list"></div>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Label Fields
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu stop-propagation" style="overflow:scroll;max-height:450px;padding:10px;">
+            <div id="label-fields"></div>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Summary Fields
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu stop-propagation" style="overflow:scroll;max-height:450px;padding:10px;">
+            <div id="summary-fields"></div>
+          </ul>
+        </li>
+      </ul>
     </div>
     <hr/>
-
     <h1>Results</h1>
     <div id="results"></div>
   </div>
@@ -43,6 +94,11 @@
         {name: 'last_billed_date',  type: 'date',     filterable: true}
     ]
 
-    $('#pivot-demo').pivot_display('process', data, fields)
+    $('#pivot-demo').pivot_display('process', {fields: fields, csv: data})
+
+    // prevent dropdown from closing after selection
+    $('.stop-propagation').click(function(event){
+      event.stopPropagation();
+    });
   });
 </script>

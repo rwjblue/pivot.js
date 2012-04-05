@@ -1,16 +1,14 @@
 (function( $ ){
+  'use strict';
 var element;
 var methods = {
-  process : function(csv,fields,skipBuildContainers){
+  process : function(options){
     var self = methods;
     element = this; // set element for build_containers()
 
-    if (fields == undefined)
-      fields = [];
+    pivot.init(options);
 
-    pivot.init({fields: fields, csv: csv});
-
-    if (skipBuildContainers === undefined || skipBuildContainers === false) self.build_containers();
+    if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
     self.build_toggle_fields('#label-fields', 'labels', pivot.fields().labelable, 'labelable');
     self.build_toggle_fields('#summary-fields', 'summary', pivot.fields().summarizable, 'summary');
@@ -58,15 +56,23 @@ var methods = {
     })
   },
   build_filter_field : function(index) {
-    var field = pivot.fields().filterable[index]
+    var remove_filter,
+        snip,
+        orderedValues = [],
+        field = pivot.fields().filterable[index];
 
     remove_filter = ' <a class="remove-filter-field" style="cursor:pointer;">(X)</a>'
-    var snip      = '<label>' + field.name + remove_filter + '</label>' +
+    snip          = '<label>' + field.name + remove_filter + '</label>' +
                     '<select class="filter span3" data-field="' + field.name + '">' +
                     '<option></option>';
 
-    jQuery.each(field.values, function(value, details){
-      snip += '<option value="' + value + '">' + details.displayValue + '</option>';
+    for (var value in field.values){
+      orderedValues.push(value);
+    };
+
+    orderedValues = orderedValues.sort();
+    jQuery.each(orderedValues, function(index, value){
+      snip += '<option value="' + value + '">' + field.values[value].displayValue + '</option>';
     });
     snip += '</select>'
 
@@ -78,11 +84,12 @@ var methods = {
     });
     // remove_filter listener
     $('.remove-filter-field').click(function(){
-      $(this).parents('div').first().remove()
+      $(this).parents('div').first().remove();
+      methods.update_filtered_rows();
     })
   },
   update_filtered_rows :  function(){
-    restrictions = {};
+    var restrictions = {};
 
     $('.filter').each(function(index){
       if ($(this).val() != '')
@@ -125,8 +132,6 @@ var methods = {
   },
 
   update_results : function(){
-    start_time = Date.now();
-
     var results = pivot.results(),
         columns = [],
         snip    = '',

@@ -1,5 +1,5 @@
 var pivot = (function(){
-  'use strict'; // Function-level strict mode syntax
+  'use strict';
 
   var fields, filters, rawData, data, dataFilters, displayFields;
 
@@ -19,6 +19,9 @@ var pivot = (function(){
     if (options.csv !== undefined)
       processCSV(options.csv)
 
+    if (options.json !== undefined)
+      processJSON(options.json)
+
     return pivot;
   }
 
@@ -29,6 +32,21 @@ var pivot = (function(){
   //*******************************
   // General Purpose Functions
   //*******************************
+  function pivotUtils(){
+    return {
+      pad: pad,
+      padRight: padRight,
+      padLeft: padLeft,
+      formatDate: formatDate,
+      formatTime: formatTime,
+      isArray: isArray,
+      isRegExp: isRegExp,
+      shallowClone: shallowClone,
+      objectKeys: objectKeys,
+      objectType: objectType
+    }
+  };
+
   function pad(sideToPad, input, width, padString){
     if (padString === undefined) padString = " ";
 
@@ -63,13 +81,13 @@ var pivot = (function(){
 
   function isArray(arg){
     if(!Array.isArray)
-      return Object.prototype.toString.call(arg) == '[object Array]';
+      return objectType(arg) == 'array';
     else
       return Array.isArray(arg);
   };
 
   function isRegExp(arg){
-    return Object.prototype.toString.call(arg) == '[object RegExp]';
+    return objectType(arg) == 'regexp';
   };
 
   function shallowClone(input){
@@ -83,39 +101,66 @@ var pivot = (function(){
     return output;
   };
 
+  function objectKeys(object){
+    if (Object.keys) return Object.keys(object);
+
+    var output = [];
+
+    for (key in object){
+      output.push(key);
+    }
+
+    return output;
+  };
+
+  function objectType(obj) {
+    return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
+  };
+
   //*******************************
-  // CSV Processing
+  // Data Processing
   //*******************************
+
+  function processHeaderRow(row){
+    var output = [];
+
+    var o = {}, i = -1, m = row.length;
+    while (++i < m) {
+      var field = fields[row[i]];
+      if (field === undefined) field = appendField(row[i]);
+      field.rowIndex = i;
+      output.push(field);
+    };
+
+    return output;
+  };
+
+  function processJSON(input) {
+    var header,
+        pseudoFields  = restrictFields('pseudo');
+
+    if (objectType(input) === 'string') input = JSON.parse(input);
+    rawData     = [];
+
+    var o = {}, j = -1, m = input.length;
+    while (++j < m) {
+      if (j === 0)
+        header = processHeaderRow(input[j]);
+      else
+        rawData.push(processRow(input[j], header, pseudoFields));
+    };
+  };
 
   // Accepts csv as a string
   function processCSV(text) {
     var header,
         pseudoFields = restrictFields('pseudo');
 
-    rawData = processRows(text, function(row, i) {
-      if (i > 0) {
-        // process actual fields
-        var o = {}, j = -1, m = header.length;
-        while (++j < m) {
-          var value = castFieldValue(header[j], row[j]);
-          o[header[j]] = value;
-          addFieldValue(header[j], value);
-        };
-
-        // process pseudo fields
-        j = -1, m = pseudoFields.length;
-        while (++j < m) {
-          var field = pseudoFields[j],
-              value = castFieldValue(field.name, field.pseudoFunction(o));
-          o[field.name] = value;
-          addFieldValue(field.name, value);
-        };
-
-        return o;
-      } else {
-        header = row;
-        return null;
-      }
+    rawData = processRows(text, function(row, i){
+      if (i === 0)
+        header = processHeaderRow(row);
+      else
+        return processRow(row, header, pseudoFields);
     });
   };
 
@@ -179,6 +224,27 @@ var pivot = (function(){
     return rows;
   };
 
+  function processRow(row, header, pseudoFields) {
+    // process actual fields
+    var o = {}, j = -1, m = header.length;
+    while (++j < m) {
+      var value = castFieldValue(header[j].name, row[j]);
+      o[header[j].name] = value;
+      addFieldValue(header[j].name, value);
+    };
+
+    // process pseudo fields
+    j = -1, m = pseudoFields.length;
+    while (++j < m) {
+      var field = pseudoFields[j],
+          value = castFieldValue(field.name, field.pseudoFunction(o));
+      o[field.name] = value;
+      addFieldValue(field.name, value);
+    };
+
+    return o;
+  };
+
   //*******************************
   // Filtering
   //*******************************
@@ -206,7 +272,8 @@ var pivot = (function(){
         if (isRegExp(restrictions[field])) {
           // no need to change
         } else if (isArray(restrictions[field])) {
-          for (var i = 0; i < restrictions[field].length; i++) {
+          var i = -1, m = restrictions[field].length;
+          while (++i < m) {
             restrictions[field][i] = castFieldValue(field, restrictions[field][i])
           };
         } else {
@@ -243,10 +310,11 @@ var pivot = (function(){
       dataToFilter = rawData;
     }
 
-    var dataToFilterLength = dataToFilter.length,
-        filterLength = Object.keys(filters).length;
+    var dataToFilterLength  = dataToFilter.length,
+        filterLength        = objectKeys(filters).length,
+        i                   = -1;
 
-    for (var i = 0; i < dataToFilterLength; i++) {
+    while (++i < dataToFilterLength) {
       var row     = dataToFilter[i],
           matches = 0;
 
@@ -268,7 +336,8 @@ var pivot = (function(){
 
   function matchesFilter(filter, value){
     if (isArray(filter)) {
-      for (var i = 0; i < filter.length; i++) {
+      var i = -1, m = filter.length;
+      while (++i < m) {
         if(filter[i] === value) return true
       };
     } else if (isRegExp(filter)){
@@ -282,7 +351,7 @@ var pivot = (function(){
 
   function preserveFilteredData(){
     var matches = 0,
-        dataFiltersLength = Object.keys(dataFilters).length;
+        dataFiltersLength = objectKeys(dataFilters).length;
 
     for (var key in dataFilters) {
       if (dataFilters.hasOwnProperty(key) && dataFilters.hasOwnProperty(key) && filters[key] === dataFilters[key])
@@ -316,7 +385,8 @@ var pivot = (function(){
 
   function setFields(listing){
     fields = {};
-    for (var i = 0; i < listing.length; i++) {
+    var i = -1, m = listing.length;
+    while (++i < m) {
       appendField(listing[i]);
     }
   };
@@ -344,8 +414,10 @@ var pivot = (function(){
   };
 
   function defaultSummarizeFunctionSum(rows, field){
-    var runningTotal = 0;
-    for (var i = 0; i < rows.length; i++) {
+    var runningTotal  = 0,
+        i             = -1,
+        m             = rows.length;
+    while (++i < m) {
       runningTotal += rows[i][field.dataSource];
     };
     return runningTotal;
@@ -361,7 +433,7 @@ var pivot = (function(){
 
   function appendField(field){
     // if field is a simple string setup and object with that string as a name
-    if (Object.prototype.toString.call(field) === '[object String]') field = {name: field};
+    if (objectType(field) === 'string') field = {name: field};
 
     if (field.type              === undefined) field.type          = 'string';
     if (field.pseudo            === undefined) field.pseudo        = false;
@@ -430,7 +502,7 @@ var pivot = (function(){
 
   function displayFieldValue(value, fieldName){
     var field;
-    if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
+    if (objectType(fieldName) === 'string') field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
     switch (field.type){
@@ -449,24 +521,33 @@ var pivot = (function(){
 
   function castFieldValue(fieldName, value){
     var field, retValue;
-    if (Object.prototype.toString.call(fieldName) === '[object String]') field = fields[fieldName];
+    if (objectType(fieldName) === 'string') field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
     switch (field.type){
       case "integer":
-        return parseInt(value, 10);
       case "cents":
-        return parseInt(value, 10);
+        if (objectType(value) === 'number')
+          return value;
+        else
+          return parseInt(value, 10);
       case "float":
-        return parseFloat(value, 10);
       case "currency":
-        return parseFloat(value, 10);
+        if (objectType(value) === 'number')
+          return value;
+        else
+          return parseFloat(value, 10);
       case "date":
       case "time":
-        retValue = Date.parse(value);
-        if (isNaN(retValue)) retValue = parseInt(value);
-        return retValue;
-        return Date.parse(value);
+        switch (objectType(value)){
+          case 'number':
+          case 'date':
+            return value;
+          default:
+            var output = Date.parse(value);
+            if (isNaN(output)) output = parseInt(value);
+            return output;
+        };
       default:
         return value.toString();
     }
@@ -512,7 +593,7 @@ var pivot = (function(){
   };
 
   function appendDisplayField(type, field){
-    if (Object.prototype.toString.call(field) === '[object String]')
+    if (objectType(field) === 'string')
       field = fields[field];
 
     displayFields[type][field.name] = field;
@@ -521,7 +602,8 @@ var pivot = (function(){
   function setDisplayFields(type, listing){
     displayFields[type] = {};
 
-    for (var i = 0; i < listing.length; i++) {
+    var i = -1, m = listing.length;
+    while (++i < m) {
       appendDisplayField(type, listing[i]);
     };
   };
@@ -547,9 +629,12 @@ var pivot = (function(){
   function getDataResults(){
     applyFilter();
     var results = {},
-        output  = [];
+        output  = [],
+        i       = -1,
+        m       = data.length,
+        keys;
 
-    for (var i = 0; i < data.length; i++) {
+    while (++i < m) {
       var row       = data[i],
           resultKey = '';
 
@@ -578,9 +663,11 @@ var pivot = (function(){
       };
     };
 
-    for (var key in results){
-      output.push(results[key])
-    }
+    keys = objectKeys(results).sort();
+    i = -1; m = keys.length;
+    while (++i < m){
+      output.push(results[keys[i]])
+    };
 
     return output;
   };
@@ -592,12 +679,14 @@ var pivot = (function(){
   // Entry Point
   return {
     csv:      processCSV,
+    json:     processJSON,
     data:     pivotData,
     results:  getDataResults,
     fields:   pivotFields,
     filters:  pivotFilters,
     display:  pivotDisplay,
     init:     init,
-    reset:    reset
+    reset:    reset,
+    utils:     pivotUtils
   }
 })();
