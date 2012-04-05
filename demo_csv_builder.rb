@@ -3,6 +3,12 @@ require 'date'
 require 'csv'
 require 'pry'
 
+class String
+  def titleize
+    self.split(/\s/).map(&:capitalize).join(' ')
+  end
+end
+
 class DemoCSV
   attr_reader :cities, :header, :companies, :count
   def initialize(count, cities=nil)
@@ -14,7 +20,7 @@ class DemoCSV
                   "Praxis Corporation","Sombra Corporation","Wayne Enterprises","Wentworth Industries","ZiffCorp","Bluth Company","Strickland Propane","Water and Power",
                   "Western Gas & Electric","Mammoth Pictures","Mooby Corp","Gringotts"]
 
-    @cities = CSV.table('/Users/jjackson/cities.csv')
+    @cities = CSV.table('./lib/csv/cities.csv')
   end
 
   def generate_csv
@@ -23,7 +29,7 @@ class DemoCSV
       count.times do |i|
         invoice_date     = time_rand(Time.local(2010, 1, 1))
         last_billed_date = time_rand(Time.local(2010, 1, 1), invoice_date)
-        city             = cities[rand(1000)]
+        city             = cities[rand(29)]
 
         csv << [ Faker::Name.last_name,
                  Faker::Name.first_name,
@@ -32,12 +38,13 @@ class DemoCSV
                  "#{rand(1000)}.#{rand(10)}".ljust(2),
                  invoice_date.to_date.rfc2822,
                  last_billed_date.to_date.rfc2822,
-                 city[:city],
+                 city[:city].titleize,
                  city[:state],
                  city[:zip] ]
       end
     end
   end
+
 
   def to_s
     puts generate_csv
@@ -54,5 +61,5 @@ end
 
 if __FILE__ == $0
   dcsv = DemoCSV.new(1000)
-  dcsv.to_file #"/Users/jjackson/dev/javascript/pivot.js/lib/csv/demo.csv"
+  dcsv.to_file "./lib/csv/demo.csv"
 end
