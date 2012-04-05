@@ -76,25 +76,21 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    var data =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
-                "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
-                "Smith,Jon,34471,173.20,\"Mon, 13 Feb 2012 00:00:00 +0000\"\n" +
-                "Jackson,Jon,34474,262.42,\"Mon, 5 Mar 2012 00:00:00 +0000\"\n" +
-                "Jackson,Susan,34476,7.45,\"Thu, 15 Dec 2011 00:00:00 +0000\"\n" +
-                "Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
-                "Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
     // Define the structure of fields, if this is not defined then all fields will be assumed
     // to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
-    var fields = [{name: 'last_name',  type: 'string',  filterable: true},
+    var fields = [
+        {name: 'last_name',         type: 'string',   filterable: true},
         {name: 'first_name',        type: 'string',   filterable: true},
         {name: 'zip_code',          type: 'integer',  filterable: true},
-        {name: 'pseudo_zip',        type: 'integer',  filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'state',             type: 'string',  filterable: true},
+        {name: 'city',              type: 'string',  filterable: true},
         {name: 'billed_amount',     type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return '$' + value.toFixed(2)}},
+        {name: 'payment_amount',    type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return '$' + value.toFixed(2)}},
         {name: 'last_billed_date',  type: 'date',     filterable: true}
     ]
 
-    $('#pivot-demo').pivot_display('process', {fields: fields, csv: data})
+    $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields})
 
     // prevent dropdown from closing after selection
     $('.stop-propagation').click(function(event){
