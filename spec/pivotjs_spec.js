@@ -19,20 +19,29 @@ describe('pivot', function () {
                     ' ["Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
 
       sample_fields = [
-        {name: 'first_name',    type: 'string',  filterable: true},
-        {name: 'last_name',     type: 'string',  filterable: true},
-        {name: 'zip_code',      type: 'integer', filterable: true},
-        {name: 'pseudo_zip',    type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount', type: 'float', summarizable: 'sum'},
+        {name: 'first_name',       type: 'string',  filterable: true},
+        {name: 'last_name',        type: 'string',  filterable: true},
+        {name: 'zip_code',         type: 'integer', filterable: true},
+        {name: 'pseudo_zip',       type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'billed_amount',    type: 'float', summarizable: 'sum'},
         {name: 'last_billed_date', type: 'date', filterable: true}
       ]
 
-      pivot.fields().set(sample_fields);
-      pivot.csv(sample_csv);
+      pivot.init({csv: sample_csv, fields: sample_fields});
     });
 
   afterEach(function () {
     pivot.reset();
+  });
+
+  describe('config', function(){
+    it('can generate a valid configuration object for passing into pivot.init()', function(){
+      var initialDisplay = pivot.display().all(),
+          initialFilters = pivot.filters().all(),
+          initialFields  = pivot.fields().all();
+
+      expect(pivot.config()).toEqual({fields: initialFields, filters: initialFilters, display: initialDisplay});
+    });
   });
 
   describe('CSV', function () {
@@ -71,7 +80,7 @@ describe('pivot', function () {
 
     it('force type specifity on new filters', function(){
       pivot.filters().add({zip_code: '34471'})
-      expect(pivot.filters().all.zip_code).toEqual(34471)
+      expect(pivot.filters().all().zip_code).toEqual(34471)
     });
 
     it('narrows filter and resets when filter chain is altered', function(){
