@@ -28,13 +28,17 @@ var methods = {
     $('.summary').change(function(event) {
       self.update_summary_fields();
     });
+
+    methods.update_results();
   },
   process_from_url : function(options){
-    jQuery.ajax({
+    $.ajax({
       url: options.url,
+      dataType: "text",
       accepts: "text/csv",
-      success: function(){
-
+      success: function(data, status){
+        options['csv'] = data
+        methods.process(options)
       }
     });
   },
@@ -118,10 +122,16 @@ var methods = {
 
   build_toggle_fields : function(div, id, fields, classes){
     $.each(fields, function(index, field){
+
+      // if checked on setup() declare checked attribute.
+      var is_checked = "";
+      if (pivot.display().label[field.name] !== undefined) is_checked = "checked=checked";
+
       $(div).append('<label id="' + id + '" ' + 'class="checkbox">' +
                     '<input type="checkbox" ' +
                       'class="' + classes + '" ' +
-                      'data-field="' + field.name + '"' +
+                      'data-field="' + field.name + '" ' +
+                       is_checked +
                     '> ' + field.name +
                   '</label>');
     });

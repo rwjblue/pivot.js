@@ -8,15 +8,15 @@ var pivot = (function(){
   // Configuration
   //*******************************
   function init(options){
-    rawData         = [];
-    data            = [];
-    dataFilters     = {};
+    rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
+    displayFields   = {label: {}, summary: {}};
 
     if (options === undefined) options = {};
 
-    (options.fields   === undefined) ? fields         = {}                        : setFields(options.fields);
-    (options.filters  === undefined) ? filters        = {}                        : setFilters(options.filters);
-    (options.display  === undefined) ? displayFields  = {label: {}, summary: {}}  : displayFields = options.display;
+    if (options.fields   !== undefined) setFields(options.fields);
+    if (options.filters  !== undefined) setFilters(options.filters);
+    if (options.label    !== undefined) setLabelDisplayFields(options.label);
+    if (options.summary  !== undefined) setSummaryDisplayFields(options.summary);
 
     if (options.csv !== undefined)
       processCSV(options.csv)
@@ -50,7 +50,8 @@ var pivot = (function(){
       shallowClone: shallowClone,
       objectKeys: objectKeys,
       objectType: objectType,
-      sortNumerically: sortNumerically
+      sortNumerically: sortNumerically,
+      inArray: inArray
     }
   };
 
