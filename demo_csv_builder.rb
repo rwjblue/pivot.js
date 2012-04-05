@@ -13,7 +13,7 @@ class DemoCSV
   attr_reader :cities, :header, :companies, :count
   def initialize(count, cities=nil)
     @count     = count
-    @header    = ["last_name", "first_name", "employer", "billed_amount", "payment_amount", "invoice_date", "last_billed_date", "city", "state", "zip_code"]
+    @header    = ["last_name", "first_name", "employer", "billed_amount", "payment_amount", "invoice_date", "last_payment_date", "city", "state", "zip_code"]
 
     @companies = ["Acme, inc.","Widget Corp","123 Warehousing","Demo Company","Smith and Co.","Foo Bars","ABC Telecom","Fake Brothers","QWERTY Logistics","Sample Company",
                   "Sample, inc","Acme Corp","Mr. Sparkle","Globex Corporation","LexCorp","LuthorCorp","North Central Positronics","Omni Consimer Products",
