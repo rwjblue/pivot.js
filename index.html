@@ -88,7 +88,7 @@
         {name: 'city',              type: 'string', filterable: true},
         {name: 'billed_amount',     type: 'float',  labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
         {name: 'payment_amount',    type: 'float',  labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
-        {name: 'last_billed_date',  type: 'date',   filterable: true}
+        {name: 'last_payment_date',  type: 'date',  filterable: true}
     ]
 
     $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields, filters: {employer: 'Acme Corp'}, label:["city"], summary:["billed_amount", "payment_amount"]})
