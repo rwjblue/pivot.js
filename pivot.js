@@ -50,8 +50,7 @@ var pivot = (function(){
       shallowClone: shallowClone,
       objectKeys: objectKeys,
       objectType: objectType,
-      sortNumerically: sortNumerically,
-      inArray: inArray
+      sortNumerically: sortNumerically
     }
   };
 
