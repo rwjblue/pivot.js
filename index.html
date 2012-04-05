@@ -91,7 +91,7 @@
         {name: 'last_billed_date',  type: 'date',   filterable: true}
     ]
 
-    $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields, filters: {city: 'Aventura'}, label:["city"], summary:["billed_amount", "payment_amount"]})
+    $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields, filters: {employer: 'Acme Corp'}, label:["city"], summary:["billed_amount", "payment_amount"]})
 
     // prevent dropdown from closing after selection
     $('.stop-propagation').click(function(event){
