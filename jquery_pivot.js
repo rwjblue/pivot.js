@@ -19,7 +19,7 @@ var methods = {
     self.build_toggle_fields('#label-fields',   pivot.fields().labelable,     'labelable');
     self.build_toggle_fields('#summary-fields', pivot.fields().summarizable,  'summary');
 
-    $('body').pivot_display('build_filter_list');
+    methods.build_filter_list();
 
     $('.labelable').change(function(event) {
       self.update_label_fields();
