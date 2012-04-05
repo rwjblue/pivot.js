@@ -4,17 +4,19 @@ var pivot = (function(){
   var fields, filters, rawData, data, dataFilters, displayFields;
 
   init();
-
+  //*******************************
+  // Configuration
+  //*******************************
   function init(options){
-    rawData         = [];
-    data            = [];
-    dataFilters     = {};
+    rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
+    displayFields   = {label: {}, summary: {}};
 
     if (options === undefined) options = {};
 
-    (options.fields         === undefined) ? fields         = {}                        : setFields(options.fields);
-    (options.filters        === undefined) ? filters        = {}                        : setFilters(options.filters);
-    (options.displayFields  === undefined) ? displayFields  = {label: {}, summary: {}}  : displayFields = options.displayFields;
+    if (options.fields   !== undefined) setFields(options.fields);
+    if (options.filters  !== undefined) setFilters(options.filters);
+    if (options.label    !== undefined) setLabelDisplayFields(options.label);
+    if (options.summary  !== undefined) setSummaryDisplayFields(options.summary);
 
     if (options.csv !== undefined)
       processCSV(options.csv)
@@ -27,6 +29,10 @@ var pivot = (function(){
 
   function reset(){
     return init();
+  };
+
+  function config(){
+    return {fields: getFields(), filters: filters, display: displayFields};
   };
 
   //*******************************
@@ -43,7 +49,9 @@ var pivot = (function(){
       isRegExp: isRegExp,
       shallowClone: shallowClone,
       objectKeys: objectKeys,
-      objectType: objectType
+      objectType: objectType,
+      sortNumerically: sortNumerically,
+      inArray: inArray
     }
   };
 
@@ -117,6 +125,10 @@ var pivot = (function(){
     return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
   };
 
+  function sortNumerically(array){
+    return array.sort(function(a,b){ return a - b;});
+  };
+
   //*******************************
   // Data Processing
   //*******************************
@@ -128,7 +140,6 @@ var pivot = (function(){
     while (++i < m) {
       var field = fields[row[i]];
       if (field === undefined) field = appendField(row[i]);
-      field.rowIndex = i;
       output.push(field);
     };
 
@@ -250,7 +261,7 @@ var pivot = (function(){
   //*******************************
   function pivotFilters(type){
     var opts = {
-      all:    filters,
+      all:    getFilters,
       set:    setFilters,
       apply:  applyFilter,
       add:    appendFilter
@@ -289,6 +300,10 @@ var pivot = (function(){
     }
 
     castFilterValues();
+  };
+
+  function getFilters(){
+    return filters;
   };
 
   function setFilters(restrictions){
@@ -394,7 +409,7 @@ var pivot = (function(){
   function getFields(){
     var retFields = [];
     for (var key in fields) {
-      if (fields.hasOwnProperty(key)) retFields.push(fields[key]);
+      if (fields.hasOwnProperty(key)) retFields[fields[key].index] = fields[key];
     }
 
     return retFields;
@@ -440,6 +455,7 @@ var pivot = (function(){
     if (field.labelable         === undefined) field.labelable     = true;
     if (field.filterable        === undefined) field.filterable    = false;
     if (field.dataSource        === undefined) field.dataSource    = field.name;
+    if (field.index             === undefined) field.index         = objectKeys(fields).length;
 
     if (field.summarizable && (field.labelable || field.filterable)) {
       var summarizable_field            = shallowClone(field);
@@ -573,9 +589,14 @@ var pivot = (function(){
   //*******************************
   function pivotDisplay(){
     return {
+      all:      pivotDisplayAll,
       label:    pivotDisplayLabel,
       summary:  pivotDisplaySummary
     }
+  };
+
+  function pivotDisplayAll(){
+    return displayFields;
   };
 
   function pivotDisplayLabel(){
@@ -678,15 +699,16 @@ var pivot = (function(){
 
   // Entry Point
   return {
+    init:     init,
+    reset:    reset,
+    config:   config,
+    utils:    pivotUtils,
     csv:      processCSV,
     json:     processJSON,
     data:     pivotData,
     results:  getDataResults,
     fields:   pivotFields,
     filters:  pivotFilters,
-    display:  pivotDisplay,
-    init:     init,
-    reset:    reset,
-    utils:     pivotUtils
+    display:  pivotDisplay
   }
 })();

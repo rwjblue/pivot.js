@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="./lib/css/subnav.css" type="text/css" />
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-
   <script type="text/javascript" src="./lib/javascripts/subnav.js"></script>
+  <script type="text/javascript" src="./lib/javascripts/accounting.min.js"></script>
 
   <!-- jquery_pivot must be loaded after pivot.js and jQuery -->
   <script type="text/javascript" src="./pivot.js"></script>
@@ -75,6 +75,7 @@
 </body>
 
 <script type="text/javascript">
+
   $(document).ready(function() {
 
     // Define the structure of fields, if this is not defined then all fields will be assumed
@@ -82,15 +83,15 @@
     var fields = [
         {name: 'last_name',         type: 'string',   filterable: true},
         {name: 'first_name',        type: 'string',   filterable: true},
-        {name: 'zip_code',          type: 'integer',  filterable: true},
         {name: 'state',             type: 'string',  filterable: true},
+        {name: 'employer',          type: 'string',  filterable: true},
         {name: 'city',              type: 'string',  filterable: true},
-        {name: 'billed_amount',     type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return '$' + value.toFixed(2)}},
-        {name: 'payment_amount',    type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return '$' + value.toFixed(2)}},
+        {name: 'billed_amount',     type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+        {name: 'payment_amount',    type: 'float',    labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
         {name: 'last_billed_date',  type: 'date',     filterable: true}
     ]
 
-    $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields})
+    $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields, label:["city"], summary:["billed_amount", "payment_amount"]})
 
     // prevent dropdown from closing after selection
     $('.stop-propagation').click(function(event){
