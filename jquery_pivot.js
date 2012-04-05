@@ -16,8 +16,8 @@ var methods = {
 
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
-    self.build_toggle_fields('#label-fields', 'labels', pivot.fields().labelable, 'labelable');
-    self.build_toggle_fields('#summary-fields', 'summary', pivot.fields().summarizable, 'summary');
+    self.build_toggle_fields('#label-fields',   pivot.fields().labelable,     'labelable');
+    self.build_toggle_fields('#summary-fields', pivot.fields().summarizable,  'summary');
 
     $('body').pivot_display('build_filter_list');
 
@@ -120,42 +120,50 @@ var methods = {
 
   //toggles
 
-  build_toggle_fields : function(div, id, fields, classes){
+  build_toggle_fields : function(div, fields, klass){
     $.each(fields, function(index, field){
-
-      // if checked on setup() declare checked attribute.
-      var is_checked = "";
-      if (pivot.display().label[field.name] !== undefined) is_checked = "checked=checked";
-
-      $(div).append('<label id="' + id + '" ' + 'class="checkbox">' +
-                    '<input type="checkbox" ' +
-                      'class="' + classes + '" ' +
+      $(div).append('<label class="checkbox">' +
+                    '<input type="checkbox" class="' + klass + '" ' +
                       'data-field="' + field.name + '" ' +
-                       is_checked +
                     '> ' + field.name +
-                  '</label>');
+                    '</label>');
     });
-    // order listener
-    $('#' + id + ' > input').on("click", function(){
-      if (this.checked) {
-        var last_checked = $(div + ' input:checked');     // last changed field (lcf)
-        var field        = $(this).parent().detach()[0]; // pluck item from div
-        var children     = $(div).children();
 
-        //subtract 1 because clicked field is already checked insert plucked item into div at index
-        if ((last_checked.length-1) === 0)
-          $(div).prepend( field );
-        else if (children.length < last_checked.length)
-          $(div).append( field );
-        else
-          $(children[last_checked.length-1]).before( field );
+    var displayFields;
+    if (klass === 'labelable')
+      displayFields = pivot.display().label().get
+    else
+      displayFields = pivot.display().summary().get
+
+    for (var fieldName in displayFields) {
+      var elem = $(div + ' input[data-field=' + fieldName +']');
+      elem.prop("checked", true);
+      methods.orderChecked(div, elem);
+    };
+
+    // order listener
+    $(div + ' input').on("click", function(){
+      if (this.checked) {
+        methods.orderChecked(div, this);
       } else {
         var field = $(this).parent().detach()[0];
         $(div).append( field );
       };
     });
   },
+  orderChecked : function(parent, elem){
+    var last_checked = $(parent + ' input:checked');     // last changed field (lcf)
+    var field        = $(elem).parent().detach()[0]; // pluck item from div
+    var children     = $(parent).children();
 
+    //subtract 1 because clicked field is already checked insert plucked item into div at index
+    if ((last_checked.length-1) === 0)
+      $(parent).prepend( field );
+    else if (children.length < last_checked.length)
+      $(parent).append( field );
+    else
+      $(children[last_checked.length-1]).before( field );
+  },
   update_results : function(){
     var results = pivot.results(),
         columns = [],
