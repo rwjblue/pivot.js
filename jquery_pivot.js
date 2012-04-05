@@ -2,9 +2,15 @@
   'use strict';
 var element;
 var methods = {
+  setup   : function(options){
+    element = this; // set element for build_containers()
+    if (options.url !== undefined)
+      methods.process_from_url(options);
+    else
+      methods.process(options);
+  },
   process : function(options){
     var self = methods;
-    element = this; // set element for build_containers()
 
     pivot.init(options);
 
@@ -21,6 +27,15 @@ var methods = {
 
     $('.summary').change(function(event) {
       self.update_summary_fields();
+    });
+  },
+  process_from_url : function(options){
+    jQuery.ajax({
+      url: options.url,
+      accepts: "text/csv",
+      success: function(){
+
+      }
     });
   },
   build_containers : function(){
