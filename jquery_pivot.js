@@ -65,20 +65,25 @@ var methods = {
     var select = '<select>'
     select += '<option></option>'
     $.each(pivot.fields().filterable, function(index, field){
-      select += '<option value="' + index  + '">' + field.name + '</option>';
+      select += '<option>' + field.name + '</option>';
     })
     select += '</select>'
-
     $('#filter-list').append(select);
+
+    // show pre-defined filters (from init)
+    $.each(pivot.filters().all(), function(fieldName, restriction){
+      methods.build_filter_field(fieldName, restriction);
+    });
+
     $('#filter-list select').change(function(){
       methods.build_filter_field($(this).val());
     })
   },
-  build_filter_field : function(index) {
+  build_filter_field : function(fieldName, selectedValue) {
     var remove_filter,
         snip,
         orderedValues = [],
-        field = pivot.fields().filterable[index];
+        field = pivot.fields().get(fieldName);
 
     remove_filter = ' <a class="remove-filter-field" style="cursor:pointer;">(X)</a>'
     snip          = '<label>' + field.name + remove_filter + '</label>' +
@@ -91,7 +96,9 @@ var methods = {
 
     orderedValues = orderedValues.sort();
     jQuery.each(orderedValues, function(index, value){
-      snip += '<option value="' + value + '">' + field.values[value].displayValue + '</option>';
+      var selected = "";
+      if (value === selectedValue) selected = 'selected="selected"';
+      snip += '<option value="' + value + '" ' + selected + '>' + field.values[value].displayValue + '</option>';
     });
     snip += '</select>'
 
