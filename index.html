@@ -11,7 +11,7 @@
   <script type="text/javascript" src="./lib/javascripts/accounting.min.js"></script>
 
   <!-- jquery_pivot must be loaded after pivot.js and jQuery -->
-  <script type="text/javascript" src="./pivot.min.js"></script>
+  <script type="text/javascript" src="./pivot.js"></script>
   <script type="text/javascript" src="./jquery_pivot.js"></script>
 </head>
 <body>
@@ -82,11 +82,29 @@
     // Define the structure of fields, if this is not defined then all fields will be assumed
     // to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
     var fields = [
+        // filterable fields
         {name: 'last_name',         type: 'string', filterable: true},
         {name: 'first_name',        type: 'string', filterable: true},
         {name: 'state',             type: 'string', filterable: true},
         {name: 'employer',          type: 'string', filterable: true},
         {name: 'city',              type: 'string', filterable: true},
+        {name: 'invoice_date',      type: 'date',   filterable: true},
+
+        // psuedo fields
+        {name: 'invoice_mm', type: 'string', filterable: true, pseudo: true,
+          pseudoFunction: function(row){
+              var date = new Date(row.invoice_date);
+              return pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
+        },
+        {name: 'invoice_yyyy_mm', type: 'string', filterable: true, pseudo: true,
+          pseudoFunction: function(row){
+            var date = new Date(row.invoice_date);
+            return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
+        },
+        {name: 'invoice_yyyy', type: 'string', filterable: true, pseudo: true,
+          pseudoFunction: function(row){ return new Date(row.invoice_date).getFullYear() }},
+
+        // summary fields
         {name: 'billed_amount',     type: 'float',  labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
         {name: 'payment_amount',    type: 'float',  labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
         {name: 'last_payment_date',  type: 'date',  filterable: true}
