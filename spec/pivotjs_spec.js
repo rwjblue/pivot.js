@@ -25,7 +25,7 @@ describe('pivot', function () {
         {name: 'pseudo_zip',          type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
         {name: 'billed_amount',       type: 'float',   summarizable: 'sum'},
         {name: 'last_billed_date',    type: 'date',    filterable: true},
-        {name: 'last_billed_yyyy_mm', type: 'string',  filterable: true, pseudo: true, columnLabelable: true
+        {name: 'last_billed_yyyy_mm', type: 'string',  filterable: true, pseudo: true, columnLabelable: true,
           pseudoFunction: function(row){
             var date = new Date(row.last_billed_date);
             return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')
@@ -252,6 +252,12 @@ describe('pivot', function () {
 
       pivot.display().summaries().set(['billed_amount_sum']);
       expect(pivot.results().all()[0].billed_amount_sum).toEqual('$730.68');
+    });
+
+    it('should return a column for each field value in columnLabels', function(){
+      pivot.display().summaries().set(['billed_amount_sum']);
+      pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
+      expect(pivot.results().all()[0]['2012_01']).toEqual('$730.68');
     });
   });
 });
