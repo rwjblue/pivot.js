@@ -28,12 +28,9 @@ function reset(){
 };
 
 function config(){
-  var fieldsOutput = getFields(), i = -1, m = fieldsOutput.length;
-  while (++i < m){
-    delete fieldsOutput[i].values;
-  }
 
-  return {  fields: fieldsOutput,
+
+  return {  fields: cloneFields(),
             filters: filters,
             rowLabels: objectKeys(displayFields.rowLabels),
             columnLabels: objectKeys(displayFields.columnLabels),
