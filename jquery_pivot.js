@@ -73,8 +73,7 @@ var methods = {
       select += '<option>' + field.name + '</option>';
     })
     select += '</select>'
-    $('#filter-list').append(select);
-
+    $('#filter-list').empty().append(select);
     // show pre-defined filters (from init)
     $.each(pivot.filters().all(), function(fieldName, restriction){
       methods.build_filter_field(fieldName, restriction);
@@ -133,6 +132,7 @@ var methods = {
   //toggles
 
   build_toggle_fields : function(div, fields, klass){
+    $(div).empty();
     $.each(fields, function(index, field){
       $(div).append('<label class="checkbox">' +
                     '<input type="checkbox" class="' + klass + '" ' +

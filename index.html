@@ -93,10 +93,25 @@
             <div id="summary-fields"></div>
           </ul>
         </li>
+        <li class="dropdown pull-right">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Canned Reports
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+           <li><a id="ar-aged-balance" href="#">AR Aged Balance</a></li>
+           <li><a id="acme-detail-report" href="#">Acme Corp Detail</a></li>
+           <li><a id="jacksonville-invoice-detail" href="#">Jacksonville Invoice Detail</a></li>
+          </ul>
+        </li>
       </ul>
     </div>
     <hr/>
+
     <h1>Results</h1>
+    <span id="pivot-detail"></span>
+
+    <hr/>
     <div id="results"></div>
   </div>
 </body>
@@ -119,46 +134,58 @@ function ageBucket(row, field){
   }
 };
 
+// Define the structure of fields, if this is not defined then all fields will be assumed
+// to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
+var fields = [
+    // filterable fields
+    {name: 'last_name',         type: 'string', filterable: true},
+    {name: 'first_name',        type: 'string', filterable: true},
+    {name: 'state',             type: 'string', filterable: true},
+    {name: 'employer',          type: 'string', filterable: true},
+    {name: 'city',              type: 'string', filterable: true},
+    {name: 'invoice_date',      type: 'date',   filterable: true},
+
+    // psuedo fields
+    {name: 'invoice_mm', type: 'string', filterable: true, pseudo: true,
+      pseudoFunction: function(row){
+          var date = new Date(row.invoice_date);
+          return pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
+    },
+    {name: 'invoice_yyyy_mm', type: 'string', filterable: true, pseudo: true,
+      pseudoFunction: function(row){
+        var date = new Date(row.invoice_date);
+        return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
+    },
+    {name: 'invoice_yyyy', type: 'string', filterable: true, pseudo: true,
+      pseudoFunction: function(row){ return new Date(row.invoice_date).getFullYear() }},
+    {name: 'age_bucket', type: 'string', filterable: true, columnLabelable: true, pseudo: true, dataSource: 'last_payment_date', pseudoFunction: ageBucket},
+
+
+    // summary fields
+    {name: 'billed_amount',     type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+    {name: 'payment_amount',    type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+    {name: 'last_payment_date',  type: 'date',  filterable: true}
+]
+
   $(document).ready(function() {
-
-    // Define the structure of fields, if this is not defined then all fields will be assumed
-    // to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
-    var fields = [
-        // filterable fields
-        {name: 'last_name',         type: 'string', filterable: true},
-        {name: 'first_name',        type: 'string', filterable: true},
-        {name: 'state',             type: 'string', filterable: true},
-        {name: 'employer',          type: 'string', filterable: true},
-        {name: 'city',              type: 'string', filterable: true},
-        {name: 'invoice_date',      type: 'date',   filterable: true},
-
-        // psuedo fields
-        {name: 'invoice_mm', type: 'string', filterable: true, pseudo: true,
-          pseudoFunction: function(row){
-              var date = new Date(row.invoice_date);
-              return pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
-        },
-        {name: 'invoice_yyyy_mm', type: 'string', filterable: true, pseudo: true,
-          pseudoFunction: function(row){
-            var date = new Date(row.invoice_date);
-            return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
-        },
-        {name: 'invoice_yyyy', type: 'string', filterable: true, pseudo: true,
-          pseudoFunction: function(row){ return new Date(row.invoice_date).getFullYear() }},
-        {name: 'age_bucket', type: 'string', filterable: true, columnLabelable: true, pseudo: true, dataSource: 'last_payment_date', pseudoFunction: ageBucket},
-
-
-        // summary fields
-        {name: 'billed_amount',     type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
-        {name: 'payment_amount',    type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
-        {name: 'last_payment_date',  type: 'date',  filterable: true}
-    ]
 
     $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields, filters: {employer: 'Acme Corp'}, rowLabels:["city"], summaries:["billed_amount", "payment_amount"]})
 
     // prevent dropdown from closing after selection
     $('.stop-propagation').click(function(event){
       event.stopPropagation();
+    });
+
+    $('#ar-aged-balance').click(function(event){
+      $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{},"rowLabels":["age_bucket"],"columnLabels":[],"summaries":["billed_amount","payment_amount"]})
+    });
+
+    $('#acme-detail-report').click(function(event){
+      $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"employer":"Acme Corp"},"rowLabels":["city","last_name","first_name","state","invoice_date"],"columnLabels":[],"summaries":[]})
+    });
+
+    $('#jacksonville-invoice-detail').click(function(event){
+      $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"city":"Jacksonville"},"rowLabels":["last_name","first_name","employer","invoice_date"],"columnLabels":[],"summaries":["payment_amount"]})
     });
   });
 </script>
