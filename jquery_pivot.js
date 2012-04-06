@@ -138,9 +138,9 @@ var methods = {
 
     var displayFields;
     if (klass === 'labelable')
-      displayFields = pivot.display().label().get
+      displayFields = pivot.display().rowLabels().get
     else
-      displayFields = pivot.display().summary().get
+      displayFields = pivot.display().summaries().get
 
     for (var fieldName in displayFields) {
       var elem = $(div + ' input[data-field=' + fieldName +']');
@@ -177,11 +177,11 @@ var methods = {
         snip    = '',
         fieldName;
 
-    for (fieldName in pivot.display().label().get){
+    for (fieldName in pivot.display().rowLabels().get){
       columns.push(fieldName);
     };
 
-    for (fieldName in pivot.display().summary().get){
+    for (fieldName in pivot.display().summaries().get){
       columns.push(fieldName);
     };
 
@@ -216,7 +216,7 @@ var methods = {
         display_fields.push($(this).attr('data-field'));
     });
 
-    pivot.display().label().set(display_fields);
+    pivot.display().rowLabels().set(display_fields);
 
     methods.update_results();
   },
@@ -227,7 +227,7 @@ var methods = {
         summary_fields.push($(this).attr('data-field'));
     });
 
-    pivot.display().summary().set(summary_fields);
+    pivot.display().summaries().set(summary_fields);
 
     methods.update_results();
   }

@@ -6,13 +6,14 @@ init();
 
 function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
-  displayFields   = {label: {}, summary: {}};
+  displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
 
   if (options === undefined) options = {};
-  if (options.fields   !== undefined) setFields(options.fields);
-  if (options.filters  !== undefined) setFilters(options.filters);
-  if (options.label    !== undefined) setLabelDisplayFields(options.label);
-  if (options.summary  !== undefined) setSummaryDisplayFields(options.summary);
+  if (options.fields        !== undefined) setFields(options.fields);
+  if (options.filters       !== undefined) setFilters(options.filters);
+  if (options.rowLabels     !== undefined) setRowLabelDisplayFields(options.rowLabels);
+  if (options.columnLabels  !== undefined) setColumnLabelDisplayFields(options.columnLabels);
+  if (options.summaries     !== undefined) setSummaryDisplayFields(options.summaries);
 
   if (options.csv !== undefined)
     processCSV(options.csv)
@@ -20,9 +21,16 @@ function init(options){
     processJSON(options.json)
   return pivot;
 }
+
 function reset(){
   return init();
 };
+
 function config(){
-  return {fields: getFields(), filters: filters, display: displayFields};
+  return {  fields: getFields(),
+            filters: filters,
+            rowLabels: objectKeys(displayFields.rowLabels),
+            columnLabels: objectKeys(displayFields.columnLabels),
+            summaries: objectKeys(displayFields.summaries)
+          };
 };

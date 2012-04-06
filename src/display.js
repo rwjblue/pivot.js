@@ -1,8 +1,9 @@
-function pivotDisplay(){
+  function pivotDisplay(){
     return {
-      all:      pivotDisplayAll,
-      label:    pivotDisplayLabel,
-      summary:  pivotDisplaySummary
+      all:          pivotDisplayAll,
+      rowLabels:    pivotDisplayRowLabels,
+      columnLabels: pivotDisplayColumnLabels,
+      summaries:    pivotDisplaySummaries
     }
   };
 
@@ -10,17 +11,24 @@ function pivotDisplay(){
     return displayFields;
   };
 
-  function pivotDisplayLabel(){
+  function pivotDisplayRowLabels(){
     return {
-      set: setLabelDisplayFields,
-      get: displayFields.label
+      set: setRowLabelDisplayFields,
+      get: displayFields.rowLabels
     }
   };
 
-  function pivotDisplaySummary(){
+  function pivotDisplayColumnLabels(){
+    return {
+      set: setColumnLabelDisplayFields,
+      get: displayFields.columnLabels
+    }
+  };
+
+  function pivotDisplaySummaries(){
     return {
       set: setSummaryDisplayFields,
-      get: displayFields.summary
+      get: displayFields.summaries
     }
   };
 
@@ -40,10 +48,14 @@ function pivotDisplay(){
     };
   };
 
-  function setLabelDisplayFields(listing){
-    setDisplayFields('label', listing);
+  function setRowLabelDisplayFields(listing){
+    setDisplayFields('rowLabels', listing);
+  };
+
+  function setColumnLabelDisplayFields(listing){
+    setDisplayFields('columnLabels', listing);
   };
 
   function setSummaryDisplayFields(listing){
-    setDisplayFields('summary', listing);
+    setDisplayFields('summaries', listing);
   };
