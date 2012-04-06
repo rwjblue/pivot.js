@@ -92,3 +92,5 @@ html { padding-top: 40px;}
             border-radius: 0;
   }
 }
+
+.dropdown-menu a.remove-filter-field { display: inline;}
