@@ -76,7 +76,6 @@ function pivotFields(type){
     if (field.columnLabelable   === undefined) field.columnLabelable  = false;
     if (field.filterable        === undefined) field.filterable       = false;
     if (field.dataSource        === undefined) field.dataSource       = field.name;
-    if (field.index             === undefined) field.index            = objectKeys(fields).length;
 
     if (field.summarizable && (field.rowLabelable || field.columnLabelable || field.filterable)) {
       var summarizable_field            = shallowClone(field);
@@ -122,7 +121,8 @@ function pivotFields(type){
     field.values        = {};
     field.displayValues = {};
 
-    fields[field.name] = field;
+    field.index         = objectKeys(fields).length;
+    fields[field.name]  = field;
 
     return field;
   };

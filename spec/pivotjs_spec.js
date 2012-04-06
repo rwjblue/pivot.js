@@ -48,6 +48,13 @@ describe('pivot', function () {
                                         columnLabels: initialColumnLabels,
                                         summaries: initialSummaries
                                       });
+
+      var fields = pivot.config().fields,
+          i = -1,
+          m = fields.length;
+      while (++i < m){
+        expect(fields[i].values).toBeUndefined();
+      }
     });
   });
 

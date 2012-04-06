@@ -27,7 +27,12 @@ function reset(){
 };
 
 function config(){
-  return {  fields: getFields(),
+  var fieldsOutput = getFields(), i = -1, m = fieldsOutput.length;
+  while (++i < m){
+    delete fieldsOutput[i].values;
+  }
+
+  return {  fields: fieldsOutput,
             filters: filters,
             rowLabels: objectKeys(displayFields.rowLabels),
             columnLabels: objectKeys(displayFields.columnLabels),
