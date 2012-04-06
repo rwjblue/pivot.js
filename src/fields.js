@@ -5,6 +5,7 @@ function pivotFields(type){
       summarizable:     restrictFields('summarizable'),
       filterable:       restrictFields('filterable'),
       pseudo:           restrictFields('pseudo'),
+      clone:            cloneFields,
       add:              appendField,
       all:              getFields,
       set:              setFields,
@@ -25,6 +26,20 @@ function pivotFields(type){
       appendField(listing[i]);
     }
   };
+
+  function cloneFields(){
+    var fieldsOutput = [];
+    for (var field in fields){
+      var newField = {};
+      for (var key in fields[field]){
+        if (fields[field].hasOwnProperty(key) && key !== 'values')
+          newField[key] = fields[field][key];
+      }
+      fieldsOutput.push(newField);
+    }
+
+    return fieldsOutput;
+  }
 
   function getFields(){
     var retFields = [];

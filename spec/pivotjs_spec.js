@@ -40,7 +40,7 @@ describe('pivot', function () {
           initialColumnLabels = pivot.utils().objectKeys(pivot.display().columnLabels().get),
           initialSummaries = pivot.utils().objectKeys(pivot.display().summaries().get),
           initialFilters = pivot.filters().all(),
-          initialFields  = pivot.fields().all();
+          initialFields  = pivot.fields().clone();
 
       expect(pivot.config()).toEqual({  fields: initialFields,
                                         filters: initialFilters,
