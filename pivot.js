@@ -1,19 +1,20 @@
 var pivot = (function(){
 'use strict';
 
-var fields, filters, rawData, data, dataFilters, displayFields;
+var fields, filters, rawData, data, dataFilters, displayFields, results;
 
 init();
 
 function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
-  displayFields   = {label: {}, summary: {}};
+  displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
 
   if (options === undefined) options = {};
-  if (options.fields   !== undefined) setFields(options.fields);
-  if (options.filters  !== undefined) setFilters(options.filters);
-  if (options.label    !== undefined) setLabelDisplayFields(options.label);
-  if (options.summary  !== undefined) setSummaryDisplayFields(options.summary);
+  if (options.fields        !== undefined) setFields(options.fields);
+  if (options.filters       !== undefined) setFilters(options.filters);
+  if (options.rowLabels     !== undefined) setRowLabelDisplayFields(options.rowLabels);
+  if (options.columnLabels  !== undefined) setColumnLabelDisplayFields(options.columnLabels);
+  if (options.summaries     !== undefined) setSummaryDisplayFields(options.summaries);
 
   if (options.csv !== undefined)
     processCSV(options.csv)
@@ -21,11 +22,23 @@ function init(options){
     processJSON(options.json)
   return pivot;
 }
+
 function reset(){
   return init();
 };
+
 function config(){
-  return {fields: getFields(), filters: filters, display: displayFields};
+  var fieldsOutput = getFields(), i = -1, m = fieldsOutput.length;
+  while (++i < m){
+    delete fieldsOutput[i].values;
+  }
+
+  return {  fields: fieldsOutput,
+            filters: filters,
+            rowLabels: objectKeys(displayFields.rowLabels),
+            columnLabels: objectKeys(displayFields.columnLabels),
+            summaries: objectKeys(displayFields.summaries)
+          };
 };
 function pivotUtils(){
     return {
@@ -231,7 +244,7 @@ function processHeaderRow(row){
     j = -1, m = pseudoFields.length;
     while (++j < m) {
       var field = pseudoFields[j],
-          value = castFieldValue(field.name, field.pseudoFunction(o));
+          value = castFieldValue(field.name, field.pseudoFunction(o, field));
       o[field.name] = value;
       addFieldValue(field.name, value);
     };
@@ -356,14 +369,15 @@ function pivotFilters(type){
   };
 function pivotFields(type){
     var opts = {
-      all:          getFields,
-      set:          setFields,
-      filterable:   restrictFields('filterable'),
-      summarizable: restrictFields('summarizable'),
-      pseudo:       restrictFields('pseudo'),
-      labelable:    restrictFields('labelable'),
-      get:          getField,
-      add:          appendField
+      columnLabelable:  restrictFields('columnLabelable'),
+      rowLabelable:     restrictFields('rowLabelable'),
+      summarizable:     restrictFields('summarizable'),
+      filterable:       restrictFields('filterable'),
+      pseudo:           restrictFields('pseudo'),
+      add:              appendField,
+      all:              getFields,
+      set:              setFields,
+      get:              getField
     }
 
     if (type !== undefined) {
@@ -425,16 +439,16 @@ function pivotFields(type){
     // if field is a simple string setup and object with that string as a name
     if (objectType(field) === 'string') field = {name: field};
 
-    if (field.type              === undefined) field.type          = 'string';
-    if (field.pseudo            === undefined) field.pseudo        = false;
-    if (field.labelable         === undefined) field.labelable     = true;
-    if (field.filterable        === undefined) field.filterable    = false;
-    if (field.dataSource        === undefined) field.dataSource    = field.name;
-    if (field.index             === undefined) field.index         = objectKeys(fields).length;
+    if (field.type              === undefined) field.type             = 'string';
+    if (field.pseudo            === undefined) field.pseudo           = false;
+    if (field.rowLabelable      === undefined) field.rowLabelable     = true;
+    if (field.columnLabelable   === undefined) field.columnLabelable  = false;
+    if (field.filterable        === undefined) field.filterable       = false;
+    if (field.dataSource        === undefined) field.dataSource       = field.name;
 
-    if (field.summarizable && (field.labelable || field.filterable)) {
+    if (field.summarizable && (field.rowLabelable || field.columnLabelable || field.filterable)) {
       var summarizable_field            = shallowClone(field);
-      summarizable_field.labelable      = false;
+      summarizable_field.rowLabelable   = false;
       summarizable_field.filterable     = false;
       summarizable_field.dataSource     = field.name;
 
@@ -476,7 +490,8 @@ function pivotFields(type){
     field.values        = {};
     field.displayValues = {};
 
-    fields[field.name] = field;
+    field.index         = objectKeys(fields).length;
+    fields[field.name]  = field;
 
     return field;
   };
@@ -554,11 +569,12 @@ function pivotData(type) {
       return opts
     };
   }
-function pivotDisplay(){
+  function pivotDisplay(){
     return {
-      all:      pivotDisplayAll,
-      label:    pivotDisplayLabel,
-      summary:  pivotDisplaySummary
+      all:          pivotDisplayAll,
+      rowLabels:    pivotDisplayRowLabels,
+      columnLabels: pivotDisplayColumnLabels,
+      summaries:    pivotDisplaySummaries
     }
   };
 
@@ -566,17 +582,24 @@ function pivotDisplay(){
     return displayFields;
   };
 
-  function pivotDisplayLabel(){
+  function pivotDisplayRowLabels(){
     return {
-      set: setLabelDisplayFields,
-      get: displayFields.label
+      set: setRowLabelDisplayFields,
+      get: displayFields.rowLabels
     }
   };
 
-  function pivotDisplaySummary(){
+  function pivotDisplayColumnLabels(){
+    return {
+      set: setColumnLabelDisplayFields,
+      get: displayFields.columnLabels
+    }
+  };
+
+  function pivotDisplaySummaries(){
     return {
       set: setSummaryDisplayFields,
-      get: displayFields.summary
+      get: displayFields.summaries
     }
   };
 
@@ -596,12 +619,16 @@ function pivotDisplay(){
     };
   };
 
-  function setLabelDisplayFields(listing){
-    setDisplayFields('label', listing);
+  function setRowLabelDisplayFields(listing){
+    setDisplayFields('rowLabels', listing);
+  };
+
+  function setColumnLabelDisplayFields(listing){
+    setDisplayFields('columnLabels', listing);
   };
 
   function setSummaryDisplayFields(listing){
-    setDisplayFields('summary', listing);
+    setDisplayFields('summaries', listing);
   };
   function pivotResults(){
     return {
@@ -610,10 +637,12 @@ function pivotDisplay(){
     }
   };
 
+
   function getDataResults(){
     applyFilter();
-    var results = {},
-        output  = [],
+    results = {};
+
+    var output  = [],
         i       = -1,
         m       = data.length,
         keys;
@@ -622,14 +651,14 @@ function pivotDisplay(){
       var row       = data[i],
           resultKey = '';
 
-      for (var key in displayFields.label) {
-        if (displayFields.label.hasOwnProperty(key)) resultKey += key + ':' + row[key] + '|';
+      for (var key in displayFields.rowLabels) {
+        if (displayFields.rowLabels.hasOwnProperty(key)) resultKey += key + ':' + row[key] + '|';
       }
       if (results[resultKey] === undefined) {
         results[resultKey] = {};
 
-        for (var key in displayFields.label) {
-          if (displayFields.label.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
+        for (var key in displayFields.rowLabels) {
+          if (displayFields.rowLabels.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
         }
 
         results[resultKey].rows = [];
@@ -639,8 +668,8 @@ function pivotDisplay(){
     };
 
     for (resultKey in results) {
-      for (var key in displayFields.summary) {
-        if (displayFields.summary.hasOwnProperty(key)) {
+      for (var key in displayFields.summaries) {
+        if (displayFields.summaries.hasOwnProperty(key)) {
           results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows, fields[key]);
           results[resultKey][key] = fields[key].displayFunction(results[resultKey][key], key);
         }
@@ -652,6 +681,7 @@ function pivotDisplay(){
     while (++i < m){
       output.push(results[keys[i]])
     };
+
 
     return output;
   };

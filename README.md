@@ -32,7 +32,7 @@ Step one is to initialize the pivot object.  It expects the following attributes
 ```javascript
  [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
  {name: 'header-name', type: 'string', optional_attributes: 'optional field' }]
- 
+
 ```
 (<small>See more about fields in Section below</small>)
 
@@ -127,11 +127,11 @@ pivot.filters().add({first_name: 'Jon'});
 Pivot has a concept of labels.  A label is simply the value that is shown after data has been filtered.  By default, every field is `labelable`.  To access said labels:
 
 ```javascript
-pivot.display().label().set(['last_name'])
+pivot.display().rowLabels().set(['last_name'])
 
-// which creates an object that you can view with pivot.display().label().get:
+// which creates an object that you can view with pivot.display().rowLabels().get:
 
-pivot.display().label().get;
+pivot.display().rowLabels().get;
 //> Object
 // >last_name: Object
 // >__proto__: Object

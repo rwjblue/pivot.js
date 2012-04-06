@@ -5,10 +5,12 @@
     }
   };
 
+
   function getDataResults(){
     applyFilter();
-    var results = {},
-        output  = [],
+    results = {};
+
+    var output  = [],
         i       = -1,
         m       = data.length,
         keys;
@@ -17,14 +19,14 @@
       var row       = data[i],
           resultKey = '';
 
-      for (var key in displayFields.label) {
-        if (displayFields.label.hasOwnProperty(key)) resultKey += key + ':' + row[key] + '|';
+      for (var key in displayFields.rowLabels) {
+        if (displayFields.rowLabels.hasOwnProperty(key)) resultKey += key + ':' + row[key] + '|';
       }
       if (results[resultKey] === undefined) {
         results[resultKey] = {};
 
-        for (var key in displayFields.label) {
-          if (displayFields.label.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
+        for (var key in displayFields.rowLabels) {
+          if (displayFields.rowLabels.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
         }
 
         results[resultKey].rows = [];
@@ -34,8 +36,8 @@
     };
 
     for (resultKey in results) {
-      for (var key in displayFields.summary) {
-        if (displayFields.summary.hasOwnProperty(key)) {
+      for (var key in displayFields.summaries) {
+        if (displayFields.summaries.hasOwnProperty(key)) {
           results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows, fields[key]);
           results[resultKey][key] = fields[key].displayFunction(results[resultKey][key], key);
         }
@@ -47,6 +49,7 @@
     while (++i < m){
       output.push(results[keys[i]])
     };
+
 
     return output;
   };

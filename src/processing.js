@@ -113,7 +113,7 @@ function processHeaderRow(row){
     j = -1, m = pseudoFields.length;
     while (++j < m) {
       var field = pseudoFields[j],
-          value = castFieldValue(field.name, field.pseudoFunction(o));
+          value = castFieldValue(field.name, field.pseudoFunction(o, field));
       o[field.name] = value;
       addFieldValue(field.name, value);
     };

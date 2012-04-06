@@ -1,6 +1,7 @@
 (function( $ ){
   'use strict';
 var element;
+var resultsTitle;
 var methods = {
   setup   : function(options){
     element = this; // set element for build_containers()
@@ -14,15 +15,22 @@ var methods = {
 
     pivot.init(options);
 
+    resultsTitle = options.resultsTitle;
+
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
-    self.build_toggle_fields('#label-fields',   pivot.fields().labelable,     'labelable');
+    self.build_toggle_fields('#row-label-fields',     pivot.fields().rowLabelable, 'row-labelable');
+    self.build_toggle_fields('#column-label-fields',  pivot.fields().columnLabelable, 'column-labelable');
     self.build_toggle_fields('#summary-fields', pivot.fields().summarizable,  'summary');
 
     methods.build_filter_list();
 
-    $('.labelable').change(function(event) {
-      self.update_label_fields();
+    $('.row-labelable').change(function(event) {
+      self.update_label_fields('row');
+    });
+
+    $('.column-labelable').change(function(event) {
+      self.update_label_fields('column');
     });
 
     $('.summary').change(function(event) {
@@ -68,8 +76,7 @@ var methods = {
       select += '<option>' + field.name + '</option>';
     })
     select += '</select>'
-    $('#filter-list').append(select);
-
+    $('#filter-list').empty().append(select);
     // show pre-defined filters (from init)
     $.each(pivot.filters().all(), function(fieldName, restriction){
       methods.build_filter_field(fieldName, restriction);
@@ -128,6 +135,7 @@ var methods = {
   //toggles
 
   build_toggle_fields : function(div, fields, klass){
+    $(div).empty();
     $.each(fields, function(index, field){
       $(div).append('<label class="checkbox">' +
                     '<input type="checkbox" class="' + klass + '" ' +
@@ -137,10 +145,12 @@ var methods = {
     });
 
     var displayFields;
-    if (klass === 'labelable')
-      displayFields = pivot.display().label().get
+    if (klass === 'row-labelable')
+      displayFields = pivot.display().rowLabels().get
+    else if (klass === 'column-labelable')
+      displayFields = pivot.display().columnLabels().get
     else
-      displayFields = pivot.display().summary().get
+      displayFields = pivot.display().summaries().get
 
     for (var fieldName in displayFields) {
       var elem = $(div + ' input[data-field=' + fieldName +']');
@@ -171,17 +181,29 @@ var methods = {
     else
       $(children[last_checked.length-1]).before( field );
   },
+  update_result_details : function(){
+    var snip = '';
+    if ($('#pivot-detail').length !== 0)
+      snip += '<b>Filters:</b> '    + pivot.utils().objectKeys( pivot.filters().all() ) + "<br/>" +
+              '<b>Row Labels:</b> ' + pivot.config().rowLabels  + "<br/>" +
+              '<b>Summaries:</b> '  + pivot.config().summaries ;
+      $('#pivot-detail').html(snip);
+  },
   update_results : function(){
     var results = pivot.results(),
         columns = [],
         snip    = '',
         fieldName;
 
-    for (fieldName in pivot.display().label().get){
+    for (fieldName in pivot.display().rowLabels().get){
       columns.push(fieldName);
     };
 
-    for (fieldName in pivot.display().summary().get){
+    for (fieldName in pivot.display().columnLabels().get){
+      columns.push(fieldName);
+    };
+
+    for (fieldName in pivot.display().summaries().get){
       columns.push(fieldName);
     };
 
@@ -208,15 +230,16 @@ var methods = {
 
       result_rows.append(snip);
     });
+    methods.update_result_details();
   },
-  update_label_fields :  function(){
+  update_label_fields :  function(type){
     var display_fields = [];
 
-    $('.labelable:checked').each(function(index){
+    $('.' + type + '-labelable:checked').each(function(index){
         display_fields.push($(this).attr('data-field'));
     });
 
-    pivot.display().label().set(display_fields);
+    pivot.display()[type + 'Labels']().set(display_fields);
 
     methods.update_results();
   },
@@ -227,7 +250,7 @@ var methods = {
         summary_fields.push($(this).attr('data-field'));
     });
 
-    pivot.display().summary().set(summary_fields);
+    pivot.display().summaries().set(summary_fields);
 
     methods.update_results();
   }

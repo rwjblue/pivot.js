@@ -36,11 +36,25 @@ describe('pivot', function () {
 
   describe('config', function(){
     it('can generate a valid configuration object for passing into pivot.init()', function(){
-      var initialDisplay = pivot.display().all(),
+      var initialRowLabels = pivot.utils().objectKeys(pivot.display().rowLabels().get),
+          initialColumnLabels = pivot.utils().objectKeys(pivot.display().columnLabels().get),
+          initialSummaries = pivot.utils().objectKeys(pivot.display().summaries().get),
           initialFilters = pivot.filters().all(),
           initialFields  = pivot.fields().all();
 
-      expect(pivot.config()).toEqual({fields: initialFields, filters: initialFilters, display: initialDisplay});
+      expect(pivot.config()).toEqual({  fields: initialFields,
+                                        filters: initialFilters,
+                                        rowLabels: initialRowLabels,
+                                        columnLabels: initialColumnLabels,
+                                        summaries: initialSummaries
+                                      });
+
+      var fields = pivot.config().fields,
+          i = -1,
+          m = fields.length;
+      while (++i < m){
+        expect(fields[i].values).toBeUndefined();
+      }
     });
   });
 
@@ -182,55 +196,55 @@ describe('pivot', function () {
 
   describe('Display', function(){
     it('should allow set/get of label fields', function(){
-      pivot.display().label().set(['last_name']);
-      expect(Object.keys(pivot.display().label().get)).toEqual(['last_name']);
+      pivot.display().rowLabels().set(['last_name']);
+      expect(Object.keys(pivot.display().rowLabels().get)).toEqual(['last_name']);
     });
 
     it('should allow set/get of summary fields', function(){
-      pivot.display().summary().set(['last_name']);
-      expect(Object.keys(pivot.display().summary().get)).toEqual(['last_name']);
+      pivot.display().summaries().set(['last_name']);
+      expect(Object.keys(pivot.display().summaries().get)).toEqual(['last_name']);
     });
 
     it('should reset summary fields on subsequent calls', function(){
-      pivot.display().summary().set(['last_name']);
-      expect(Object.keys(pivot.display().summary().get)).toEqual(['last_name']);
+      pivot.display().summaries().set(['last_name']);
+      expect(Object.keys(pivot.display().summaries().get)).toEqual(['last_name']);
 
-      pivot.display().summary().set(['first_name']);
-      expect(Object.keys(pivot.display().summary().get)).toEqual(['first_name']);
+      pivot.display().summaries().set(['first_name']);
+      expect(Object.keys(pivot.display().summaries().get)).toEqual(['first_name']);
     });
   });
 
   describe('Results', function(){
     it('should only return label fields that were selected', function(){
-      pivot.display().label().set(['last_name']);
+      pivot.display().rowLabels().set(['last_name']);
       expect(pivot.results()[0].last_name).toEqual('Fornea');
       expect(pivot.results()[2].last_name).toEqual('Smith');
       expect(pivot.results()[0].zip_code).toEqual(undefined);
 
-      pivot.display().label().set(['last_name', 'zip_code']);
+      pivot.display().rowLabels().set(['last_name', 'zip_code']);
       expect(pivot.results()[0].last_name).toEqual('Fornea');
       expect(pivot.results()[0].zip_code).toEqual(34474);
     });
 
     it('should only return summary fields that were selected', function(){
-      pivot.display().label().set(['last_name']);
+      pivot.display().rowLabels().set(['last_name']);
 
-      pivot.display().summary().set([]);
+      pivot.display().summaries().set([]);
       expect(pivot.results()[0].billed_amount_sum).toEqual(undefined);
 
-      pivot.display().summary().set(['billed_amount_sum']);
+      pivot.display().summaries().set(['billed_amount_sum']);
       expect(pivot.results()[1].billed_amount_sum).toEqual(369.87);
     });
 
     it("should return sum for summarizable: 'sum' fields", function(){
-      pivot.display().summary().set(['billed_amount_sum']);
+      pivot.display().summaries().set(['billed_amount_sum']);
       expect(pivot.results()[0].billed_amount_sum.toFixed(2)).toEqual('730.68');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
       pivot.fields().get('billed_amount_sum').displayFunction = function(value){ return "$" + value.toFixed(2)};
 
-      pivot.display().summary().set(['billed_amount_sum']);
+      pivot.display().summaries().set(['billed_amount_sum']);
       expect(pivot.results()[0].billed_amount_sum).toEqual('$730.68');
     });
   });
