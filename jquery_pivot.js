@@ -16,13 +16,18 @@ var methods = {
 
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
-    self.build_toggle_fields('#label-fields',   pivot.fields().labelable,     'labelable');
+    self.build_toggle_fields('#row-label-fields',     pivot.fields().labelable, 'row-labelable');
+    self.build_toggle_fields('#column-label-fields',  pivot.fields().labelable, 'column-labelable');
     self.build_toggle_fields('#summary-fields', pivot.fields().summarizable,  'summary');
 
     methods.build_filter_list();
 
-    $('.labelable').change(function(event) {
-      self.update_label_fields();
+    $('.row-labelable').change(function(event) {
+      self.update_label_fields('row');
+    });
+
+    $('.column-labelable').change(function(event) {
+      self.update_label_fields('column');
     });
 
     $('.summary').change(function(event) {
@@ -137,8 +142,10 @@ var methods = {
     });
 
     var displayFields;
-    if (klass === 'labelable')
+    if (klass === 'row-labelable')
       displayFields = pivot.display().rowLabels().get
+    else if (klass === 'column-labelable')
+      displayFields = pivot.display().columnLabels().get
     else
       displayFields = pivot.display().summaries().get
 
@@ -181,6 +188,10 @@ var methods = {
       columns.push(fieldName);
     };
 
+    for (fieldName in pivot.display().columnLabels().get){
+      columns.push(fieldName);
+    };
+
     for (fieldName in pivot.display().summaries().get){
       columns.push(fieldName);
     };
@@ -209,14 +220,14 @@ var methods = {
       result_rows.append(snip);
     });
   },
-  update_label_fields :  function(){
+  update_label_fields :  function(type){
     var display_fields = [];
 
-    $('.labelable:checked').each(function(index){
+    $('.' + type + '-labelable:checked').each(function(index){
         display_fields.push($(this).attr('data-field'));
     });
 
-    pivot.display().rowLabels().set(display_fields);
+    pivot.display()[type + 'Labels']().set(display_fields);
 
     methods.update_results();
   },
