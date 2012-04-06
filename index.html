@@ -176,6 +176,7 @@ var fields = [
       event.stopPropagation();
     });
 
+    // **Sexy** In your console type pivot.config() to view your current internal structure (the full initialize object).  Pass it to setup and you have a canned report.
     $('#ar-aged-balance').click(function(event){
       $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{},"rowLabels":["age_bucket"],"columnLabels":[],"summaries":["billed_amount","payment_amount"]})
     });
