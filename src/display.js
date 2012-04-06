@@ -36,6 +36,8 @@
     if (objectType(field) === 'string')
       field = fields[field];
 
+    results = undefined;
+
     displayFields[type][field.name] = field;
   };
 

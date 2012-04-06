@@ -217,35 +217,35 @@ describe('pivot', function () {
   describe('Results', function(){
     it('should only return label fields that were selected', function(){
       pivot.display().rowLabels().set(['last_name']);
-      expect(pivot.results()[0].last_name).toEqual('Fornea');
-      expect(pivot.results()[2].last_name).toEqual('Smith');
-      expect(pivot.results()[0].zip_code).toEqual(undefined);
+      expect(pivot.results().all()[0].last_name).toEqual('Fornea');
+      expect(pivot.results().all()[2].last_name).toEqual('Smith');
+      expect(pivot.results().all()[0].zip_code).toEqual(undefined);
 
       pivot.display().rowLabels().set(['last_name', 'zip_code']);
-      expect(pivot.results()[0].last_name).toEqual('Fornea');
-      expect(pivot.results()[0].zip_code).toEqual(34474);
+      expect(pivot.results().all()[0].last_name).toEqual('Fornea');
+      expect(pivot.results().all()[0].zip_code).toEqual(34474);
     });
 
     it('should only return summary fields that were selected', function(){
       pivot.display().rowLabels().set(['last_name']);
 
       pivot.display().summaries().set([]);
-      expect(pivot.results()[0].billed_amount_sum).toEqual(undefined);
+      expect(pivot.results().all()[0].billed_amount_sum).toEqual(undefined);
 
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results()[1].billed_amount_sum).toEqual(369.87);
+      expect(pivot.results().all()[1].billed_amount_sum).toEqual(369.87);
     });
 
     it("should return sum for summarizable: 'sum' fields", function(){
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results()[0].billed_amount_sum.toFixed(2)).toEqual('730.68');
+      expect(pivot.results().all()[0].billed_amount_sum.toFixed(2)).toEqual('730.68');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
       pivot.fields().get('billed_amount_sum').displayFunction = function(value){ return "$" + value.toFixed(2)};
 
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results()[0].billed_amount_sum).toEqual('$730.68');
+      expect(pivot.results().all()[0].billed_amount_sum).toEqual('$730.68');
     });
   });
 });

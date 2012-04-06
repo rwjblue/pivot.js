@@ -8,7 +8,7 @@ function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
   displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
 
-  if (options === undefined) options = {};
+  if (options               === undefined) options = {};
   if (options.fields        !== undefined) setFields(options.fields);
   if (options.filters       !== undefined) setFilters(options.filters);
   if (options.rowLabels     !== undefined) setRowLabelDisplayFields(options.rowLabels);
@@ -19,6 +19,7 @@ function init(options){
     processCSV(options.csv)
   if (options.json !== undefined)
     processJSON(options.json)
+
   return pivot;
 }
 

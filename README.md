@@ -153,7 +153,7 @@ There are a few built in functions that can be used on a summarizable field ('su
 
 For example,
 
-If you were to filter by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results()[0].last_name_count`.  The reason for the empty string is because no label fields were set.  Each combination of labels has its own object in results(an array of objects) that corresponds to the summarized values.
+If you were to filter by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results().all()[0].last_name_count`.  The reason for the empty string is because no label fields were set.  Each combination of labels has its own object in results(an array of objects) that corresponds to the summarized values.
 
 # Integrating with jQuery
 

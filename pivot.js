@@ -9,7 +9,7 @@ function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
   displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
 
-  if (options === undefined) options = {};
+  if (options               === undefined) options = {};
   if (options.fields        !== undefined) setFields(options.fields);
   if (options.filters       !== undefined) setFilters(options.filters);
   if (options.rowLabels     !== undefined) setRowLabelDisplayFields(options.rowLabels);
@@ -20,6 +20,7 @@ function init(options){
     processCSV(options.csv)
   if (options.json !== undefined)
     processJSON(options.json)
+
   return pivot;
 }
 
@@ -607,6 +608,8 @@ function pivotData(type) {
     if (objectType(field) === 'string')
       field = fields[field];
 
+    results = undefined;
+
     displayFields[type][field.name] = field;
   };
 
@@ -632,20 +635,29 @@ function pivotData(type) {
   };
   function pivotResults(){
     return {
-      data:     getDataResults,
+      all:      getFormattedResults,
       columns:  getColumnResults
     }
   };
 
+  function getFormattedResults(){
+    if (results !== undefined) return getResultArray();
 
-  function getDataResults(){
+    processRowLabelResults();
+
+    if (objectKeys(displayFields.columnLabels) > 0)
+      processColumnLabelResults();
+    else
+      processSummaryResults();
+
+    return getResultArray();
+  };
+
+  function processRowLabelResults(){
     applyFilter();
     results = {};
 
-    var output  = [],
-        i       = -1,
-        m       = data.length,
-        keys;
+    var i = -1, m = data.length, keys;
 
     while (++i < m) {
       var row       = data[i],
@@ -666,8 +678,10 @@ function pivotData(type) {
 
       results[resultKey].rows.push(row);
     };
+  };
 
-    for (resultKey in results) {
+  function processSummaryResults(){
+    for (var resultKey in results) {
       for (var key in displayFields.summaries) {
         if (displayFields.summaries.hasOwnProperty(key)) {
           results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows, fields[key]);
@@ -676,8 +690,13 @@ function pivotData(type) {
       };
     };
 
-    keys = objectKeys(results).sort();
-    i = -1; m = keys.length;
+    return results;
+  };
+
+  function getResultArray(){
+    var output  = [], keys  = objectKeys(results).sort(),
+        i       = -1, m     = keys.length;
+
     while (++i < m){
       output.push(results[keys[i]])
     };
@@ -698,7 +717,7 @@ function pivotData(type) {
     csv:      processCSV,
     json:     processJSON,
     data:     pivotData,
-    results:  getDataResults,
+    results:  pivotResults,
     fields:   pivotFields,
     filters:  pivotFilters,
     display:  pivotDisplay
