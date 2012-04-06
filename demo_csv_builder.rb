@@ -58,8 +58,3 @@ class DemoCSV
     Time.at(from + rand * (to.to_f - from.to_f))
   end
 end
-
-if __FILE__ == $0
-  dcsv = DemoCSV.new(1000)
-  dcsv.to_file "./lib/csv/demo.csv"
-end

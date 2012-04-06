@@ -1,44 +1,33 @@
 var pivot = (function(){
-  'use strict';
+'use strict';
 
-  var fields, filters, rawData, data, dataFilters, displayFields;
+var fields, filters, rawData, data, dataFilters, displayFields;
 
-  init();
-  //*******************************
-  // Configuration
-  //*******************************
-  function init(options){
-    rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
-    displayFields   = {label: {}, summary: {}};
+init();
 
-    if (options === undefined) options = {};
+function init(options){
+  rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
+  displayFields   = {label: {}, summary: {}};
 
-    if (options.fields   !== undefined) setFields(options.fields);
-    if (options.filters  !== undefined) setFilters(options.filters);
-    if (options.label    !== undefined) setLabelDisplayFields(options.label);
-    if (options.summary  !== undefined) setSummaryDisplayFields(options.summary);
+  if (options === undefined) options = {};
+  if (options.fields   !== undefined) setFields(options.fields);
+  if (options.filters  !== undefined) setFilters(options.filters);
+  if (options.label    !== undefined) setLabelDisplayFields(options.label);
+  if (options.summary  !== undefined) setSummaryDisplayFields(options.summary);
 
-    if (options.csv !== undefined)
-      processCSV(options.csv)
-
-    if (options.json !== undefined)
-      processJSON(options.json)
-
-    return pivot;
-  }
-
-  function reset(){
-    return init();
-  };
-
-  function config(){
-    return {fields: getFields(), filters: filters, display: displayFields};
-  };
-
-  //*******************************
-  // General Purpose Functions
-  //*******************************
-  function pivotUtils(){
+  if (options.csv !== undefined)
+    processCSV(options.csv)
+  if (options.json !== undefined)
+    processJSON(options.json)
+  return pivot;
+}
+function reset(){
+  return init();
+};
+function config(){
+  return {fields: getFields(), filters: filters, display: displayFields};
+};
+function pivotUtils(){
     return {
       pad: pad,
       padRight: padRight,
@@ -127,12 +116,7 @@ var pivot = (function(){
   function sortNumerically(array){
     return array.sort(function(a,b){ return a - b;});
   };
-
-  //*******************************
-  // Data Processing
-  //*******************************
-
-  function processHeaderRow(row){
+function processHeaderRow(row){
     var output = [];
 
     var o = {}, i = -1, m = row.length;
@@ -254,11 +238,7 @@ var pivot = (function(){
 
     return o;
   };
-
-  //*******************************
-  // Filtering
-  //*******************************
-  function pivotFilters(type){
+function pivotFilters(type){
     var opts = {
       all:    getFilters,
       set:    setFilters,
@@ -374,11 +354,7 @@ var pivot = (function(){
 
     return dataFiltersLength > 0 && matches >= dataFiltersLength;
   };
-
-  //*******************************
-  // Fields
-  //*******************************
-  function pivotFields(type){
+function pivotFields(type){
     var opts = {
       all:          getFields,
       set:          setFields,
@@ -567,11 +543,7 @@ var pivot = (function(){
         return value.toString();
     }
   };
-
-  //*******************************
-  // Data
-  //*******************************
-  function pivotData(type) {
+function pivotData(type) {
     var opts = {raw:        rawData,
                 all:        data
               };
@@ -582,11 +554,7 @@ var pivot = (function(){
       return opts
     };
   }
-
-  //*******************************
-  // Display
-  //*******************************
-  function pivotDisplay(){
+function pivotDisplay(){
     return {
       all:      pivotDisplayAll,
       label:    pivotDisplayLabel,
@@ -635,10 +603,6 @@ var pivot = (function(){
   function setSummaryDisplayFields(listing){
     setDisplayFields('summary', listing);
   };
-
-  //*******************************
-  // Results
-  //*******************************
   function pivotResults(){
     return {
       data:     getDataResults,
@@ -695,8 +659,7 @@ var pivot = (function(){
   function getColumnResults(){
 
   };
-
-  // Entry Point
+// Entry Point
   return {
     init:     init,
     reset:    reset,
