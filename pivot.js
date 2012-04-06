@@ -1,7 +1,7 @@
 var pivot = (function(){
 'use strict';
 
-var fields, filters, rawData, data, dataFilters, displayFields;
+var fields, filters, rawData, data, dataFilters, displayFields, results;
 
 init();
 
@@ -239,7 +239,7 @@ function processHeaderRow(row){
     j = -1, m = pseudoFields.length;
     while (++j < m) {
       var field = pseudoFields[j],
-          value = castFieldValue(field.name, field.pseudoFunction(o));
+          value = castFieldValue(field.name, field.pseudoFunction(o, field));
       o[field.name] = value;
       addFieldValue(field.name, value);
     };
@@ -632,10 +632,12 @@ function pivotData(type) {
     }
   };
 
+
   function getDataResults(){
     applyFilter();
-    var results = {},
-        output  = [],
+    results = {};
+
+    var output  = [],
         i       = -1,
         m       = data.length,
         keys;
@@ -674,6 +676,7 @@ function pivotData(type) {
     while (++i < m){
       output.push(results[keys[i]])
     };
+
 
     return output;
   };

@@ -1,6 +1,6 @@
 'use strict';
 
-var fields, filters, rawData, data, dataFilters, displayFields;
+var fields, filters, rawData, data, dataFilters, displayFields, results;
 
 init();
 

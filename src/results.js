@@ -5,10 +5,12 @@
     }
   };
 
+
   function getDataResults(){
     applyFilter();
-    var results = {},
-        output  = [],
+    results = {};
+
+    var output  = [],
         i       = -1,
         m       = data.length,
         keys;
@@ -47,6 +49,7 @@
     while (++i < m){
       output.push(results[keys[i]])
     };
+
 
     return output;
   };
