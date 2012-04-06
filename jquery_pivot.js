@@ -1,6 +1,7 @@
 (function( $ ){
   'use strict';
 var element;
+var resultsTitle;
 var methods = {
   setup   : function(options){
     element = this; // set element for build_containers()
@@ -13,6 +14,8 @@ var methods = {
     var self = methods;
 
     pivot.init(options);
+
+    resultsTitle = options.resultsTitle;
 
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
@@ -73,8 +76,7 @@ var methods = {
       select += '<option>' + field.name + '</option>';
     })
     select += '</select>'
-    $('#filter-list').append(select);
-
+    $('#filter-list').empty().append(select);
     // show pre-defined filters (from init)
     $.each(pivot.filters().all(), function(fieldName, restriction){
       methods.build_filter_field(fieldName, restriction);
@@ -133,6 +135,7 @@ var methods = {
   //toggles
 
   build_toggle_fields : function(div, fields, klass){
+    $(div).empty();
     $.each(fields, function(index, field){
       $(div).append('<label class="checkbox">' +
                     '<input type="checkbox" class="' + klass + '" ' +
@@ -178,6 +181,14 @@ var methods = {
     else
       $(children[last_checked.length-1]).before( field );
   },
+  update_result_details : function(){
+    var snip = '';
+    if ($('#pivot-detail').length !== 0)
+      snip += '<b>Filters:</b> '    + pivot.utils().objectKeys( pivot.filters().all() ) + "<br/>" +
+              '<b>Row Labels:</b> ' + pivot.config().rowLabels  + "<br/>" +
+              '<b>Summaries:</b> '  + pivot.config().summaries ;
+      $('#pivot-detail').html(snip);
+  },
   update_results : function(){
     var results = pivot.results(),
         columns = [],
@@ -219,6 +230,7 @@ var methods = {
 
       result_rows.append(snip);
     });
+    methods.update_result_details();
   },
   update_label_fields :  function(type){
     var display_fields = [];
