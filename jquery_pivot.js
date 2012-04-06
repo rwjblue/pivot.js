@@ -16,8 +16,8 @@ var methods = {
 
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
-    self.build_toggle_fields('#row-label-fields',     pivot.fields().labelable, 'row-labelable');
-    self.build_toggle_fields('#column-label-fields',  pivot.fields().labelable, 'column-labelable');
+    self.build_toggle_fields('#row-label-fields',     pivot.fields().rowLabelable, 'row-labelable');
+    self.build_toggle_fields('#column-label-fields',  pivot.fields().columnLabelable, 'column-labelable');
     self.build_toggle_fields('#summary-fields', pivot.fields().summarizable,  'summary');
 
     methods.build_filter_list();

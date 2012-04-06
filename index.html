@@ -86,6 +86,22 @@
 
 <script type="text/javascript">
 
+function ageBucket(row){
+  var age = Math.abs(((new Date().getTime()) - row.last_payment_date)/1000/60/60/24);
+  switch (true){
+    case (age < 31):
+      return '000 - 030'
+    case (age < 61):
+      return '031 - 060'
+    case (age < 91):
+      return '061 - 090'
+    case (age < 121):
+      return '091 - 120'
+    default:
+      return '120+'
+  }
+};
+
   $(document).ready(function() {
 
     // Define the structure of fields, if this is not defined then all fields will be assumed
@@ -112,10 +128,12 @@
         },
         {name: 'invoice_yyyy', type: 'string', filterable: true, pseudo: true,
           pseudoFunction: function(row){ return new Date(row.invoice_date).getFullYear() }},
+        {name: 'bucket', type: 'string', filterable: true, columnLabelable: true, pseudo: true, pseudoFunction: ageBucket},
+
 
         // summary fields
-        {name: 'billed_amount',     type: 'float',  labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
-        {name: 'payment_amount',    type: 'float',  labelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+        {name: 'billed_amount',     type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+        {name: 'payment_amount',    type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
         {name: 'last_payment_date',  type: 'date',  filterable: true}
     ]
 

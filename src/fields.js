@@ -1,13 +1,14 @@
 function pivotFields(type){
     var opts = {
-      all:          getFields,
-      set:          setFields,
-      filterable:   restrictFields('filterable'),
-      summarizable: restrictFields('summarizable'),
-      pseudo:       restrictFields('pseudo'),
-      labelable:    restrictFields('labelable'),
-      get:          getField,
-      add:          appendField
+      columnLabelable:  restrictFields('columnLabelable'),
+      rowLabelable:     restrictFields('rowLabelable'),
+      summarizable:     restrictFields('summarizable'),
+      filterable:       restrictFields('filterable'),
+      pseudo:           restrictFields('pseudo'),
+      add:              appendField,
+      all:              getFields,
+      set:              setFields,
+      get:              getField
     }
 
     if (type !== undefined) {
@@ -69,16 +70,17 @@ function pivotFields(type){
     // if field is a simple string setup and object with that string as a name
     if (objectType(field) === 'string') field = {name: field};
 
-    if (field.type              === undefined) field.type          = 'string';
-    if (field.pseudo            === undefined) field.pseudo        = false;
-    if (field.labelable         === undefined) field.labelable     = true;
-    if (field.filterable        === undefined) field.filterable    = false;
-    if (field.dataSource        === undefined) field.dataSource    = field.name;
-    if (field.index             === undefined) field.index         = objectKeys(fields).length;
+    if (field.type              === undefined) field.type             = 'string';
+    if (field.pseudo            === undefined) field.pseudo           = false;
+    if (field.rowLabelable      === undefined) field.rowLabelable     = true;
+    if (field.columnLabelable   === undefined) field.columnLabelable  = false;
+    if (field.filterable        === undefined) field.filterable       = false;
+    if (field.dataSource        === undefined) field.dataSource       = field.name;
+    if (field.index             === undefined) field.index            = objectKeys(fields).length;
 
-    if (field.summarizable && (field.labelable || field.filterable)) {
+    if (field.summarizable && (field.rowLabelable || field.columnLabelable || field.filterable)) {
       var summarizable_field            = shallowClone(field);
-      summarizable_field.labelable      = false;
+      summarizable_field.rowLabelable   = false;
       summarizable_field.filterable     = false;
       summarizable_field.dataSource     = field.name;
 
