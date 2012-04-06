@@ -19,12 +19,18 @@ describe('pivot', function () {
                     ' ["Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
 
       sample_fields = [
-        {name: 'first_name',       type: 'string',  filterable: true},
-        {name: 'last_name',        type: 'string',  filterable: true},
-        {name: 'zip_code',         type: 'integer', filterable: true},
-        {name: 'pseudo_zip',       type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount',    type: 'float', summarizable: 'sum'},
-        {name: 'last_billed_date', type: 'date', filterable: true}
+        {name: 'first_name',          type: 'string',  filterable: true},
+        {name: 'last_name',           type: 'string',  filterable: true},
+        {name: 'zip_code',            type: 'integer', filterable: true},
+        {name: 'pseudo_zip',          type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'billed_amount',       type: 'float',   summarizable: 'sum'},
+        {name: 'last_billed_date',    type: 'date',    filterable: true},
+        {name: 'last_billed_yyyy_mm', type: 'string',  filterable: true, pseudo: true, columnLabelable: true
+          pseudoFunction: function(row){
+            var date = new Date(row.last_billed_date);
+            return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')
+          }
+        }
       ]
 
       pivot.init({csv: sample_csv, fields: sample_fields});
@@ -66,7 +72,7 @@ describe('pivot', function () {
     });
 
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: 1327363200000});
+      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: 1327363200000, last_billed_yyyy_mm : '2012_01'});
       expect(pivot.data().raw.length).toEqual(6)
     });
 
