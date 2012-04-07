@@ -576,7 +576,7 @@ function pivotFields(type){
     }
   };
 /**
- * Returns
+ * Returns object containing the raw fields and filtered fields.
  * @param  type A string, either 'raw', or 'all'.
  * @return {Object} An object containing lists of fields
  * @return {Object} return.all() A collection of fields after filter has been applied.
