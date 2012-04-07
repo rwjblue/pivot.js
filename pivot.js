@@ -657,7 +657,7 @@ function pivotData(type) {
 
     processRowLabelResults();
 
-    if (objectKeys(displayFields.columnLabels) > 0)
+    if (objectKeys(displayFields.columnLabels).length > 0)
       processColumnLabelResults();
     else
       processSummaryResults();
@@ -698,7 +698,7 @@ function pivotData(type) {
         if (displayFields.columnLabels.hasOwnProperty(key)) {
           var values = pluckValues(results[resultKey].rows, fields[key]);
 
-          for (value in values){
+          for (var value in values){
             results[resultKey][value] = getSummaryResults(values[value]);
           };
         }
@@ -735,6 +735,8 @@ function pivotData(type) {
         result[key] = fields[key].displayFunction(result[key], key);
       }
     };
+
+    return result;
   };
 
   function getResultArray(){

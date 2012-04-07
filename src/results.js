@@ -10,7 +10,7 @@
 
     processRowLabelResults();
 
-    if (objectKeys(displayFields.columnLabels) > 0)
+    if (objectKeys(displayFields.columnLabels).length > 0)
       processColumnLabelResults();
     else
       processSummaryResults();
@@ -51,7 +51,7 @@
         if (displayFields.columnLabels.hasOwnProperty(key)) {
           var values = pluckValues(results[resultKey].rows, fields[key]);
 
-          for (value in values){
+          for (var value in values){
             results[resultKey][value] = getSummaryResults(values[value]);
           };
         }
@@ -88,6 +88,8 @@
         result[key] = fields[key].displayFunction(result[key], key);
       }
     };
+
+    return result;
   };
 
   function getResultArray(){

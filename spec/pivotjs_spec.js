@@ -72,7 +72,10 @@ describe('pivot', function () {
     });
 
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: 1327363200000, last_billed_yyyy_mm : '2012_01'});
+      expect(pivot.data().raw[0]).toEqual(
+        {last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100,
+        pseudo_zip: 34472, last_billed_date: 1327363200000, last_billed_yyyy_mm : '2012_01'}
+      );
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -257,7 +260,7 @@ describe('pivot', function () {
     it('should return a column for each field value in columnLabels', function(){
       pivot.display().summaries().set(['billed_amount_sum']);
       pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
-      expect(pivot.results().all()[0]['2012_01']).toEqual('$730.68');
+      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual(162.98);
     });
   });
 });
