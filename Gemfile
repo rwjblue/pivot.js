@@ -7,3 +7,4 @@ gem 'faker'
 gem 'pry'
 gem 'ruby_gntp'
 gem 'guard-shell'
+gem "jsduck", "~> 3.8.3"

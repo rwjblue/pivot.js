@@ -1,3 +1,8 @@
+/**
+ * @class Pivot
+ *
+ * Pivot.js is a simple way for you to get to your data. It allows for the creation of highly customizable unique table views from your browser.
+ */
 var pivot = (function(){
 'use strict';
 
@@ -570,6 +575,13 @@ function pivotFields(type){
         return value.toString();
     }
   };
+/**
+ * Returns
+ * @param  type A string, either 'raw', or 'all'.
+ * @return {Object} An object containing lists of fields
+ * @return {Object} return.all() A collection of fields after filter has been applied.
+ * @return {Object} return.raw() A collection of all fields.
+ */
 function pivotData(type) {
     var opts = {raw:        rawData,
                 all:        data
