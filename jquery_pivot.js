@@ -193,7 +193,7 @@ var methods = {
       $('#pivot-detail').html(snip);
   },
   update_results : function(){
-    var results = pivot.results(),
+    var results = pivot.results().all(),
         columns = [],
         snip    = '',
         fieldName;
@@ -224,7 +224,7 @@ var methods = {
 
     result_rows = $('#result-rows');
 
-    $.each(pivot.results(),function(index, row){
+    $.each(pivot.results().all(),function(index, row){
       snip = '<tr>';
       $.each(columns, function(index, fieldName){
         snip += '<td>' + row[fieldName] + '</td>';
