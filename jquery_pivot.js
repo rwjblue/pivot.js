@@ -183,10 +183,13 @@ var methods = {
   },
   update_result_details : function(){
     var snip = '';
+    var filters = '';
+    $.each(pivot.filters().all(), function(k,v) {
+      filters += '<em>' + k + '</em>' + " => " + v + " "
+    });
+
     if ($('#pivot-detail').length !== 0)
-      snip += '<b>Filters:</b> '    + pivot.utils().objectKeys( pivot.filters().all() ) + "<br/>" +
-              '<b>Row Labels:</b> ' + pivot.config().rowLabels  + "<br/>" +
-              '<b>Summaries:</b> '  + pivot.config().summaries ;
+      snip += '<b>Filters:</b> '    + filters + "<br/>"
       $('#pivot-detail').html(snip);
   },
   update_results : function(){
