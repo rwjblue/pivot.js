@@ -194,21 +194,10 @@ var methods = {
   },
   update_results : function(){
     var results = pivot.results().all(),
-        columns = [],
+        config  = pivot.config(),
+        columns = [].concat(config.rowLabels, config.columnLabels, config.summaries),
         snip    = '',
         fieldName;
-
-    for (fieldName in pivot.display().rowLabels().get){
-      columns.push(fieldName);
-    };
-
-    for (fieldName in pivot.display().columnLabels().get){
-      columns.push(fieldName);
-    };
-
-    for (fieldName in pivot.display().summaries().get){
-      columns.push(fieldName);
-    };
 
     var result_table = $('#results'),
         result_rows;
@@ -224,7 +213,7 @@ var methods = {
 
     result_rows = $('#result-rows');
 
-    $.each(pivot.results().all(),function(index, row){
+    $.each(results,function(index, row){
       snip = '<tr>';
       $.each(columns, function(index, fieldName){
         snip += '<td>' + row[fieldName] + '</td>';
