@@ -1,4 +1,18 @@
-function pivotFields(type){
+/**
+* Entry point for several field methods.
+* See:
+*
+* * pivot.restrictFields()
+* * pivot.cloneFields()
+* * pivot.appendField()
+* * pivot.getFields()
+* * pivot.getField()
+* * pivot.setField()
+*
+* @param {String}
+* @return {function} One of the fucntions defined above.
+*/
+  function pivotFields(type){
     var opts = {
       columnLabelable:  restrictFields('columnLabelable'),
       rowLabelable:     restrictFields('rowLabelable'),
