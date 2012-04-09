@@ -1,4 +1,16 @@
-function pivotFilters(type){
+  /**
+  * Entry point for several filter methods.
+  * See:
+  *
+  * * getFilters() - returns filters applied to current pivot
+  * * setFilters() - sets a series of filters
+  * * appendFilter() - adds a filter to current pivot filters
+  * * applyFilter() - runs the filters on the values
+  *
+  * @param {String}
+  * @return {function} One of the fucntions defined above.
+  */
+  function pivotFilters(type){
     var opts = {
       all:    getFilters,
       set:    setFilters,
@@ -32,6 +44,10 @@ function pivotFilters(type){
     };
   };
 
+  /**
+  * Takes a new restrction (filter) and appends it to current pivot's filters
+  * @param {Object} newRestriction should looke like {"last_name":"Jackson"}
+  */
   function appendFilter(newRestriction) {
     for (var key in newRestriction) {
       if (newRestriction.hasOwnProperty(key))
@@ -41,15 +57,27 @@ function pivotFilters(type){
     castFilterValues();
   };
 
+  /**
+  * Returns current pivot's filters
+  */
   function getFilters(){
     return filters;
   };
 
+  /**
+  * Accepts list of restrictions, assigns them  as current pivot's filters and casts their values.
+  * @param {Object} restrictions - should looke something like {"employer":"Acme Corp"}
+  */
   function setFilters(restrictions){
     filters = restrictions;
     castFilterValues();
   };
 
+  /**
+  * Applies the current pivot's filters to the data returning a list of values
+  * Optionally allows you to set filters and apply them.
+  * @param {Object} restrictions allows you to pass the filters to apply without using set first.
+  */
   function applyFilter(restrictions){
     var dataToFilter    = data,
         filteredData    = [];

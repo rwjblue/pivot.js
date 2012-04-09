@@ -16,17 +16,91 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Pivot'>/**
-</span> * @class Pivot
- *
- * Pivot.js is a simple way for you to get to your data. It allows for the creation of highly customizable unique table views from your browser.
- */
+</span>* @docauthor Jonathan Jackson
+* @class Pivot
+* # Welcome to Pivot.js
+*
+* Pivot.js is a simple way for you to get to your data.  It allows for the
+* creation of highly customizable unique table views from your browser.
+*
+* &gt; In data processing, a pivot table is a data summarization tool found in
+* &gt; data visualization programs such as spreadsheets or business intelligence
+* &gt; software. Among other functions, pivot-table tools can automatically sort,
+* &gt; count, total or give the average of the data stored in one table or
+* &gt; spreadsheet. It displays the results in a second table (called a &quot;pivot
+* &gt; table&quot;) showing the summarized data.
+*
+* In our case, results (or the pivot-table) will be displayed as an HTML table
+* pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
+*
+* View an [example](http://rjackson.github.com/pivot.js/).
+*
+* #Usage
+*
+* Step one is to initialize the pivot object.  It expects the following attributes:
+*
+* - `csv` - which should contain a valid string of comma separated values.  It is
+*   __important to note__ that you must include a header row in the CSV for pivot
+*   to work properly  (you'll understand why in a minute).
+*
+* - `json` - which should contain a valid JSON string. At this time this string
+*   must be an array of arrays, and not an array of objects (storing the field
+*   names with each row consumes significantly more space).
+*
+* - `fields` - which should be an array of objects.  This is used to instruct
+*   pivot on how to interact with the fields you pass in.  It keys off of the
+*   header row names.  And is formated like so:
+*
+*     [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
+*     {name: 'header-name', type: 'string', optional_attributes: 'optional field' }]
+*
+*
+* - `filters` (default is empty) - which should contain any filters you would like to restrict your data to.  A filter is defined as an object like so:
+*
+*     {zip_code: '34471'}
+*
+*
+* Those are the options that you should consider.  There are other options that are well covered in the spec
+* A valid pivot could then be set up from like so.
+*
+*
+*     var field_definitions = [{name: 'last_name',   type: 'string',   filterable: true},
+*             {name: 'first_name',        type: 'string',   filterable: true},
+*             {name: 'zip_code',          type: 'integer',  filterable: true},
+*             {name: 'pseudo_zip',        type: 'integer',  filterable: true },
+*             {name: 'billed_amount',     type: 'float',    labelable: false,},
+*             {name: 'last_billed_date',  type: 'date',     filterable: true}
+*
+*     // from csv data:
+*     var csv_string  =  &quot;last_name,first_name,zip_code,billed_amount,last_billed_date\n&quot; +
+*                        &quot;Jackson,Robert,34471,100.00,\&quot;Tue, 24 Jan 2012 00:00:00 +0000\&quot;\n&quot; +
+*                        &quot;Jackson,Jonathan,39401,124.63,\&quot;Fri, 17 Feb 2012 00:00:00 +0000\&quot;&quot;
+*     pivot.init({csv: csv_string, fields: field_definitions});
+*
+*     // from json data:
+*     var json_string = '[[&quot;last_name&quot;,&quot;first_name&quot;,&quot;zip_code&quot;,&quot;billed_amount&quot;,&quot;last_billed_date&quot;],' +
+*                         ' [&quot;Jackson&quot;, &quot;Robert&quot;, 34471, 100.00, &quot;Tue, 24 Jan 2012 00:00:00 +0000&quot;],' +
+*                         ' [&quot;Smith&quot;, &quot;Jon&quot;, 34471, 173.20, &quot;Mon, 13 Feb 2012 00:00:00 +0000&quot;]]'
+*
+*     pivot.init({json: json_string, fields: field_definitions});
+*
+*/
 var pivot = (function(){
 'use strict';
 
 var fields, filters, rawData, data, dataFilters, displayFields, results;
 
 init();
-
+<span id='Pivot-method-init'>/**
+</span>* Initializes a new pivot.
+* Optional parameters:
+* * fields
+* * filters
+* * rowLabels
+* * columnLabels
+* * summaries
+* @param {Object}
+*/
 function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
   displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
@@ -45,10 +119,17 @@ function init(options){
   return pivot;
 }
 
+<span id='Pivot-method-reset'>/**
+</span>* Calls init with no options, which effectively resets the current pivot.
+*/
 function reset(){
   return init();
 };
 
+<span id='Pivot-method-config'>/**
+</span>* Very cool little function. If called like so: `pivot.config()` will return the exact object you would need
+* to create the current pivot from scratch.
+*/
 function config(){
 
 
@@ -270,7 +351,19 @@ function processHeaderRow(row){
 
     return o;
   };
-function pivotFilters(type){
+<span id='Pivot-method-pivotFilters'>  /**
+</span>  * Entry point for several filter methods.
+  * See:
+  *
+  * * getFilters() - returns filters applied to current pivot
+  * * setFilters() - sets a series of filters
+  * * appendFilter() - adds a filter to current pivot filters
+  * * applyFilter() - runs the filters on the values
+  *
+  * @param {String}
+  * @return {function} One of the fucntions defined above.
+  */
+  function pivotFilters(type){
     var opts = {
       all:    getFilters,
       set:    setFilters,
@@ -304,6 +397,10 @@ function pivotFilters(type){
     };
   };
 
+<span id='Pivot-method-appendFilter'>  /**
+</span>  * Takes a new restrction (filter) and appends it to current pivot's filters
+  * @param {Object} newRestriction should looke like {&quot;last_name&quot;:&quot;Jackson&quot;}
+  */
   function appendFilter(newRestriction) {
     for (var key in newRestriction) {
       if (newRestriction.hasOwnProperty(key))
@@ -313,15 +410,27 @@ function pivotFilters(type){
     castFilterValues();
   };
 
+<span id='Pivot-method-getFilters'>  /**
+</span>  * Returns current pivot's filters
+  */
   function getFilters(){
     return filters;
   };
 
+<span id='Pivot-method-setFilters'>  /**
+</span>  * Accepts list of restrictions, assigns them  as current pivot's filters and casts their values.
+  * @param {Object} restrictions - should looke something like {&quot;employer&quot;:&quot;Acme Corp&quot;}
+  */
   function setFilters(restrictions){
     filters = restrictions;
     castFilterValues();
   };
 
+<span id='Pivot-method-applyFilter'>  /**
+</span>  * Applies the current pivot's filters to the data returning a list of values
+  * Optionally allows you to set filters and apply them.
+  * @param {Object} restrictions allows you to pass the filters to apply without using set first.
+  */
   function applyFilter(restrictions){
     var dataToFilter    = data,
         filteredData    = [];
@@ -386,7 +495,21 @@ function pivotFilters(type){
 
     return dataFiltersLength &gt; 0 &amp;&amp; matches &gt;= dataFiltersLength;
   };
-function pivotFields(type){
+<span id='Pivot-method-pivotFields'>  /**
+</span>  * Entry point for several field methods.
+  * See:
+  *
+  * * restrictFields()
+  * * cloneFields()
+  * * appendField()
+  * * getFields()
+  * * getField()
+  * * setField()
+  *
+  * @param {String}
+  * @return {function} One of the fucntions defined above.
+  */
+  function pivotFields(type){
     var opts = {
       columnLabelable:  restrictFields('columnLabelable'),
       rowLabelable:     restrictFields('rowLabelable'),
@@ -406,7 +529,12 @@ function pivotFields(type){
       return opts
     };
   };
-
+<span id='Pivot-method-setFields'>  /**
+</span>  * Method for setting multiple fields.  Usually used on pivot.init().
+  * See {@link pivot#appendField} for more information.
+  * @param {Object}
+  * @return {undefined}
+  */
   function setFields(listing){
     fields = {};
     var i = -1, m = listing.length;
@@ -429,6 +557,9 @@ function pivotFields(type){
     return fieldsOutput;
   }
 
+<span id='Pivot-method-getFields'>  /**
+</span>  * Returns array of defined field objects.
+  */
   function getFields(){
     var retFields = [];
     for (var key in fields) {
@@ -438,6 +569,10 @@ function pivotFields(type){
     return retFields;
   };
 
+<span id='Pivot-method-restrictFields'>  /**
+</span>  * Returns list of defined fields filtered by type
+  * @param {String} 'columnLabelable', 'rowLabelable', 'summarizable', 'filterable', or 'pseudo'
+  */
   function restrictFields(type){
     var retFields = [];
     for (var key in fields) {
@@ -447,10 +582,17 @@ function pivotFields(type){
     return retFields;
   };
 
+<span id='Pivot-method-getField'>  /**
+</span>  * Attr reader for fields
+  * @param {String} Something like 'last_name'
+  */
   function getField(name){
     return fields[name];
   };
 
+<span id='Pivot-method-defaultSummarizeFunctionSum'>  /**
+</span>  * Returns the sum value of all rows passed to it.
+  */
   function defaultSummarizeFunctionSum(rows, field){
     var runningTotal  = 0,
         i             = -1,
@@ -461,14 +603,31 @@ function pivotFields(type){
     return runningTotal;
   };
 
+<span id='Pivot-method-defaultSummarizeFunctionAvg'>  /**
+</span>  * Returns Average of values passed in from rows
+  */
   function defaultSummarizeFunctionAvg(rows, field){
     return defaultSummarizeFunctionSum(rows, field)/rows.length;
   };
 
+<span id='Pivot-method-defaultSummarizeFunctionCount'>  /**
+</span>  * Returns count of rows
+  */
   function defaultSummarizeFunctionCount(rows, field){
     return rows.length;
   }
 
+<span id='Pivot-method-appendField'>  /**
+</span>  * The main engine by which you create and assign field.  Takes an object that should look something like {name: 'last_name',type: 'string', filterable: true}, and assigns all the associated attributes to their correct state.
+  * Allowed field attributes are
+  * * filterable - Allows you to filter based off this field
+  * * rowLabelable - Allows you to display rowLabels based off this field
+  * * columnLabelable - Allows you to display columnLabels based off this field
+  * * summarizable - Allows you to create a summary field.
+  * * pseudo - Allows you to treat an anonymous function as a field (ie you could treat the sum of a set of values as a field)
+  * Be sure to run through the source on this one if you are unsure as to what it does.  It's pretty straightforward, but definitely bears looking into.
+  * @param {Object} field
+  */
   function appendField(field){
     // if field is a simple string setup and object with that string as a name
     if (objectType(field) === 'string') field = {name: field};
@@ -530,6 +689,9 @@ function pivotFields(type){
     return field;
   };
 
+<span id='Pivot-method-addFieldValue'>  /**
+</span>  * Adds value to field based off of the Fields' displayFunction, defaults to count.
+  */
   function addFieldValue(field, value){
     if (fields[field] === undefined || fields[field].filterable === false) return;
 
@@ -540,6 +702,9 @@ function pivotFields(type){
     }
   };
 
+<span id='Pivot-method-displayFieldValue'>  /**
+</span>  * Helper for displaying properly formated field values.
+  */
   function displayFieldValue(value, fieldName){
     var field;
     if (objectType(fieldName) === 'string') field = fields[fieldName];
@@ -559,6 +724,9 @@ function pivotFields(type){
     }
   }
 
+<span id='Pivot-method-castFieldValue'>  /**
+</span>  * Used to change the string value as parsed from the CSV into the type of field it expects.
+  */
   function castFieldValue(fieldName, value){
     var field, retValue;
     if (objectType(fieldName) === 'string') field = fields[fieldName];
@@ -593,11 +761,9 @@ function pivotFields(type){
     }
   };
 <span id='Pivot-method-pivotData'>/**
-</span> * Returns object containing the raw fields and filtered fields.
- * @param  type A string, either 'raw', or 'all'.
+</span> * Returns object containing the raw fields(rawData) and filtered fields(data).
+ * @param  string, either 'raw', or 'all'.
  * @return {Object} An object containing lists of fields
- * @return {Object} return.all() A collection of fields after filter has been applied.
- * @return {Object} return.raw() A collection of all fields.
  */
 function pivotData(type) {
     var opts = {raw:        rawData,
@@ -610,6 +776,10 @@ function pivotData(type) {
       return opts
     };
   }
+<span id='Pivot-method-pivotDisplay'>  /**
+</span>  * Entry point for several display methods.  See {@link pivot#pivotDisplayAll}, {@link pivot#pivotDisplayRowLabels}, {@link  pivot#pivotDisplaycolumnLabels}, and {@link pivot#pivotDisplaySummaries}
+  * @return {function} One of the fucntions defined above.
+  */
   function pivotDisplay(){
     return {
       all:          pivotDisplayAll,
@@ -619,10 +789,18 @@ function pivotData(type) {
     }
   };
 
+<span id='Pivot-method-pivotDisplayAll'>  /**
+</span>  * This will return an object containing rowLabels, summaries, and columnLabels that are currently applied to the pivot.
+  */
   function pivotDisplayAll(){
     return displayFields;
   };
 
+<span id='Pivot-method-pivotDisplayRowLabels'>  /**
+</span>  * Returns either list of rowLabels or allows you to access the {@link pivot#setRowLabelDisplayFields}.
+  *
+  * Called from pivot like so: pivot.display().rowLabels().set() or pivot.display().rowLabels().get
+  */
   function pivotDisplayRowLabels(){
     return {
       set: setRowLabelDisplayFields,
@@ -630,6 +808,11 @@ function pivotData(type) {
     }
   };
 
+<span id='Pivot-method-pivotDisplayColumnLabels'>  /**
+</span>  * Returns either list of columnLabels or allows you to access the {@link pivot#setColumnLabelDisplayFields}.
+  *
+  * Called from pivot like so: pivot.display().columnLabels().set() or pivot.display().columnLabels().get
+  */
   function pivotDisplayColumnLabels(){
     return {
       set: setColumnLabelDisplayFields,
@@ -637,6 +820,11 @@ function pivotData(type) {
     }
   };
 
+<span id='Pivot-method-pivotDisplaySummaries'>  /**
+</span>  * Returns either list of summaries (labels) or allows you to access the {@link pivot#setSummaryDisplayFields}.
+  *
+  * Called from pivot like so: pivot.display().summaries().set() or pivot.display().summaries().get
+  */
   function pivotDisplaySummaries(){
     return {
       set: setSummaryDisplayFields,
@@ -644,6 +832,13 @@ function pivotData(type) {
     }
   };
 
+<span id='Pivot-method-appendDisplayField'>  /**
+</span>  * This method allows you to append a new label field to the specified type. For example, you could set a new displayRowLabel by sending it as the type and 'city' as the field
+  * @param string type - must be either 'rowLabels', 'columnLabels', or 'summaries'
+  * @param string field - Specify the label you would like to add.
+  * @private
+  * @return {undefined}
+  */
   function appendDisplayField(type, field){
     if (objectType(field) === 'string')
       field = fields[field];
@@ -651,6 +846,12 @@ function pivotData(type) {
     displayFields[type][field.name] = field;
   };
 
+<span id='Pivot-method-setDisplayFields'>  /**
+</span>  * This method simply calls appendDisplayField on a collection passing in each to appendDisplayField.  The object should look something like the following
+  *    {'rowLabels':['city','state'],'columnLabels':['billed_amount']}
+  * @private
+  * @return {undefined}
+  */
   function setDisplayFields(type, listing){
     displayFields[type] = {};
 
@@ -660,24 +861,47 @@ function pivotData(type) {
     };
   };
 
+<span id='Pivot-method-setRowLabelDisplayFields'>  /**
+</span>  * Allows setting of row label fields
+  * @param listing Should look like ['city','state']
+  * @return {undefined}
+  */
   function setRowLabelDisplayFields(listing){
     setDisplayFields('rowLabels', listing);
   };
 
+<span id='Pivot-method-setColumnLabelDisplayFields'>  /**
+</span>  * Allows setting of column label fields
+  * @param listing - Should look like ['city','state']
+  * @return {undefined}
+  */
   function setColumnLabelDisplayFields(listing){
     setDisplayFields('columnLabels', listing);
   };
 
+<span id='Pivot-method-setSummaryDisplayFields'>  /**
+</span>  * Allows setting of summary label fields
+  * @param listing - Should look like ['billed_amount']
+  * @return {undefined}
+  */
   function setSummaryDisplayFields(listing){
     setDisplayFields('summaries', listing);
   };
+<span id='Pivot-method-pivotResults'>  /**
+</span>  * Entry point for several results methods.
+  * See:
+  *
+  * * getDataResults() - returns filters applied to current pivot
+  * * getColumnResults() - sets a series of filters
+  *
+  * @return {function} One of the fucntions defined above.
+  */
   function pivotResults(){
     return {
       data:     getDataResults,
       columns:  getColumnResults
     }
   };
-
 
   function getDataResults(){
     applyFilter();

@@ -1,4 +1,18 @@
-function pivotFields(type){
+  /**
+  * Entry point for several field methods.
+  * See:
+  *
+  * * restrictFields()
+  * * cloneFields()
+  * * appendField()
+  * * getFields()
+  * * getField()
+  * * setField()
+  *
+  * @param {String}
+  * @return {function} One of the fucntions defined above.
+  */
+  function pivotFields(type){
     var opts = {
       columnLabelable:  restrictFields('columnLabelable'),
       rowLabelable:     restrictFields('rowLabelable'),
@@ -18,7 +32,12 @@ function pivotFields(type){
       return opts
     };
   };
-
+  /**
+  * Method for setting multiple fields.  Usually used on pivot.init().
+  * See {@link pivot#appendField} for more information.
+  * @param {Object}
+  * @return {undefined}
+  */
   function setFields(listing){
     fields = {};
     var i = -1, m = listing.length;
@@ -41,6 +60,9 @@ function pivotFields(type){
     return fieldsOutput;
   }
 
+  /**
+  * Returns array of defined field objects.
+  */
   function getFields(){
     var retFields = [];
     for (var key in fields) {
@@ -50,6 +72,10 @@ function pivotFields(type){
     return retFields;
   };
 
+  /**
+  * Returns list of defined fields filtered by type
+  * @param {String} 'columnLabelable', 'rowLabelable', 'summarizable', 'filterable', or 'pseudo'
+  */
   function restrictFields(type){
     var retFields = [];
     for (var key in fields) {
@@ -59,10 +85,17 @@ function pivotFields(type){
     return retFields;
   };
 
+  /**
+  * Attr reader for fields
+  * @param {String} Something like 'last_name'
+  */
   function getField(name){
     return fields[name];
   };
 
+  /**
+  * Returns the sum value of all rows passed to it.
+  */
   function defaultSummarizeFunctionSum(rows, field){
     var runningTotal  = 0,
         i             = -1,
@@ -73,14 +106,31 @@ function pivotFields(type){
     return runningTotal;
   };
 
+  /**
+  * Returns Average of values passed in from rows
+  */
   function defaultSummarizeFunctionAvg(rows, field){
     return defaultSummarizeFunctionSum(rows, field)/rows.length;
   };
 
+  /**
+  * Returns count of rows
+  */
   function defaultSummarizeFunctionCount(rows, field){
     return rows.length;
   }
 
+  /**
+  * The main engine by which you create and assign field.  Takes an object that should look something like {name: 'last_name',type: 'string', filterable: true}, and assigns all the associated attributes to their correct state.
+  * Allowed field attributes are
+  * * filterable - Allows you to filter based off this field
+  * * rowLabelable - Allows you to display rowLabels based off this field
+  * * columnLabelable - Allows you to display columnLabels based off this field
+  * * summarizable - Allows you to create a summary field.
+  * * pseudo - Allows you to treat an anonymous function as a field (ie you could treat the sum of a set of values as a field)
+  * Be sure to run through the source on this one if you are unsure as to what it does.  It's pretty straightforward, but definitely bears looking into.
+  * @param {Object} field
+  */
   function appendField(field){
     // if field is a simple string setup and object with that string as a name
     if (objectType(field) === 'string') field = {name: field};
@@ -142,6 +192,9 @@ function pivotFields(type){
     return field;
   };
 
+  /**
+  * Adds value to field based off of the Fields' displayFunction, defaults to count.
+  */
   function addFieldValue(field, value){
     if (fields[field] === undefined || fields[field].filterable === false) return;
 
@@ -152,6 +205,9 @@ function pivotFields(type){
     }
   };
 
+  /**
+  * Helper for displaying properly formated field values.
+  */
   function displayFieldValue(value, fieldName){
     var field;
     if (objectType(fieldName) === 'string') field = fields[fieldName];
@@ -171,6 +227,9 @@ function pivotFields(type){
     }
   }
 
+  /**
+  * Used to change the string value as parsed from the CSV into the type of field it expects.
+  */
   function castFieldValue(fieldName, value){
     var field, retValue;
     if (objectType(fieldName) === 'string') field = fields[fieldName];
