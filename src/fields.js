@@ -1,17 +1,17 @@
-/**
-* Entry point for several field methods.
-* See:
-*
-* * pivot.restrictFields()
-* * pivot.cloneFields()
-* * pivot.appendField()
-* * pivot.getFields()
-* * pivot.getField()
-* * pivot.setField()
-*
-* @param {String}
-* @return {function} One of the fucntions defined above.
-*/
+  /**
+  * Entry point for several field methods.
+  * See:
+  *
+  * * pivot.restrictFields()
+  * * pivot.cloneFields()
+  * * pivot.appendField()
+  * * pivot.getFields()
+  * * pivot.getField()
+  * * pivot.setField()
+  *
+  * @param {String}
+  * @return {function} One of the fucntions defined above.
+  */
   function pivotFields(type){
     var opts = {
       columnLabelable:  restrictFields('columnLabelable'),
@@ -32,7 +32,12 @@
       return opts
     };
   };
-
+  /**
+  * Method for setting multiple fields.  Usually used on pivot.init().
+  * See {@link pivot#appendField} for more information.
+  * @param {Object}
+  * @return {undefined}
+  */
   function setFields(listing){
     fields = {};
     var i = -1, m = listing.length;
