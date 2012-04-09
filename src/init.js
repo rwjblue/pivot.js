@@ -3,7 +3,16 @@
 var fields, filters, rawData, data, dataFilters, displayFields, results;
 
 init();
-
+/**
+* Initializes a new pivot.
+* Optional parameters:
+* * fields
+* * filters
+* * rowLabels
+* * columnLabels
+* * summaries
+* @param {Object}
+*/
 function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
   displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
@@ -22,10 +31,17 @@ function init(options){
   return pivot;
 }
 
+/**
+* Calls init with no options, which effectively resets the current pivot.
+*/
 function reset(){
   return init();
 };
 
+/**
+* Very cool little function. If called like so: `pivot.config()` will return the exact object you would need
+* to create the current pivot from scratch.
+*/
 function config(){
 
 

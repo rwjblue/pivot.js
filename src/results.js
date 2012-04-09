@@ -1,10 +1,18 @@
+  /**
+  * Entry point for several results methods.
+  * See:
+  *
+  * * getDataResults() - returns filters applied to current pivot
+  * * getColumnResults() - sets a series of filters
+  *
+  * @return {function} One of the fucntions defined above.
+  */
   function pivotResults(){
     return {
       data:     getDataResults,
       columns:  getColumnResults
     }
   };
-
 
   function getDataResults(){
     applyFilter();

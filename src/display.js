@@ -85,7 +85,7 @@
 
   /**
   * Allows setting of row label fields
-  * @param Should look like ['city','state']
+  * @param listing Should look like ['city','state']
   * @return {undefined}
   */
   function setRowLabelDisplayFields(listing){
