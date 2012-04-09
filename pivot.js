@@ -6,7 +6,7 @@
 var pivot = (function(){
 'use strict';
 
-var fields, filters, rawData, data, dataFilters, displayFields, results;
+var fields, filters, rawData, data, dataFilters, displayFields, results, resultsColumns;
 
 init();
 
@@ -660,12 +660,14 @@ function pivotData(type) {
   function pivotResults(){
     return {
       all:      getFormattedResults,
-      columns:  getColumnResults
+      columns:  populateColumnResults
     }
   };
 
   function getFormattedResults(){
     if (results !== undefined) return getResultArray();
+
+    results = {}; resultsColumns = {};
 
     processRowLabelResults();
 
@@ -674,12 +676,13 @@ function pivotData(type) {
     else
       processSummaryResults();
 
+    //populateColumnResults();
+
     return getResultArray();
   };
 
   function processRowLabelResults(){
     applyFilter();
-    results = {};
 
     var i = -1, m = data.length, keys;
 
@@ -763,7 +766,22 @@ function pivotData(type) {
     return output;
   };
 
-  function getColumnResults(){
+  function populateColumnResults(){
+    populateRowLabelColumnsResults();
+    populateColumnLabelColumnsResults();
+
+    return resultsColumns;
+  };
+
+  function populateRowLabelColumnsResults(){
+    for (var key in displayFields.rowLabels){
+      resultsColumns[displayFields.rowLabels[i]]
+    }
+
+    return resultsColumns
+  };
+
+  function populateColumnLabelColumnsResults(){
 
   };
 // Entry Point

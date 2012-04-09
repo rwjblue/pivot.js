@@ -1,12 +1,14 @@
   function pivotResults(){
     return {
       all:      getFormattedResults,
-      columns:  getColumnResults
+      columns:  populateColumnResults
     }
   };
 
   function getFormattedResults(){
     if (results !== undefined) return getResultArray();
+
+    results = {}; resultsColumns = {};
 
     processRowLabelResults();
 
@@ -15,12 +17,13 @@
     else
       processSummaryResults();
 
+    //populateColumnResults();
+
     return getResultArray();
   };
 
   function processRowLabelResults(){
     applyFilter();
-    results = {};
 
     var i = -1, m = data.length, keys;
 
@@ -104,6 +107,21 @@
     return output;
   };
 
-  function getColumnResults(){
+  function populateColumnResults(){
+    populateRowLabelColumnsResults();
+    populateColumnLabelColumnsResults();
+
+    return resultsColumns;
+  };
+
+  function populateRowLabelColumnsResults(){
+    for (var key in displayFields.rowLabels){
+      resultsColumns[displayFields.rowLabels[i]]
+    }
+
+    return resultsColumns
+  };
+
+  function populateColumnLabelColumnsResults(){
 
   };
