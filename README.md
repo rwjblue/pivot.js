@@ -13,7 +13,7 @@ creation of highly customizable unique table views from your browser.
 In our case, results (or the pivot-table) will be displayed as an HTML table
 pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
 
-View an [example](http://rjackson.github.com/pivot.js/).
+View an [example](http://rjackson.github.com/pivot.js/) or view the [Docs](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
 
 #Usage
 
@@ -202,8 +202,22 @@ See [here](https://github.com/csnover/js-iso8601) for an example.
 
 (ISO8601 dates are still not handled properly by Safari 5.1 or IE8.)
 
-License
-----------
+# Contribute
+
+If you want to help Pivot.js its as simple as following the steps below:
+
+* Fork it
+* Create your feature branch (git checkout -b my-new-feature)
+* Commit your changes (git commit -am 'Added some feature')
+* Push to the branch (git push origin my-new-feature)
+* Create new Pull Request
+
+# Authors
+
+Pivot.js is the work of Robert Jackson and Jonathan Jackson.
+
+## License
+
 This software is licensed under a modified BSD license.
 
 See LICENSE for more details.
