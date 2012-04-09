@@ -1,3 +1,3 @@
 guard :shell do
-  watch(/^src\/.+\.js/) { `rake pivot:compile && rake pivot:docs` }
+  watch(/^src\/.+\.js/) { `rake pivot:docs` }
 end

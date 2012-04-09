@@ -17,8 +17,7 @@ require_relative './demo_csv_builder.rb'
 
 namespace :pivot do
   desc "Compiles docs"
-  task :docs do
-    Rake::Task["pivot:compile"].invoke
+  task :docs => :compile do
     system("jsduck ./pivot.js --output ./docs")
     $stdout.puts "Docs have generated"
   end
