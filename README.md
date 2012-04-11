@@ -72,124 +72,14 @@ pivot.init({json: json_string, fields: field_definitions});
 
 ```
 
-# Data Interaction
+# Wiki
 
-Now that you have a pivot object instantiated properly. Let's start using it!
-
-
-## Filters
-
-### Get the data
-
-```javascript
-// From here on I'll be using the data from the spec for all examples
-
-// before filters have been run pivot.data().raw will contain the raw data
-// and pivot.data().all will be empty []
-pivot.data().all
-//=> []
-
-pivot.data().raw
-//=> [Object, Object, Object, Object, Object, Object]
-
-```
-
-### Apply a filter
-
-```javascript
-pivot.data().all()
-//=> []
-
-pivot.filters().set({last_name: 'Jackson'});
-pivot.filters().apply();
-//=> [Object, Object, Object]
-
-```
-
-As you can see once the filter was applied the fields were filtered accordingly.  Only objects with last_name of 'Jackson' remain in `pivot.data().all`
-
-### Append filter to existing filters
-
-```javascript
-// Set pre-existing filters
-pivot.filters().set({last_name: 'Jackson'});
-pivot.filters().apply();
-//=> [Object, Object, Object]
-
-// Further restrict the data
-pivot.filters().add({first_name: 'Jon'});
-//=> [Object]
-
-```
-
-## Labels
-
-Pivot has a concept of labels.  A label is simply the value that is shown after data has been filtered.  By default, every field is `labelable`.  To access said labels:
-
-```javascript
-pivot.display().rowLabels().set(['last_name'])
-
-// which creates an object that you can view with pivot.display().rowLabels().get:
-
-pivot.display().rowLabels().get;
-//> Object
-// >last_name: Object
-// >__proto__: Object
-
-```
-
-In table you'll use the labels to display your filtered fields.  Once again I reccomend reading the spec for more details.
-
-## Summaries
-
-You can summarize by adding the attribute `summarizable` to the field on init.
-
-```javascript
-{name: 'last_name',   type: 'string',   filterable: true, summarizable: 'count' }
-
-```
-
-There are a few built in functions that can be used on a summarizable field ('sum', 'avg', 'count').  If you would like to define your own simply pass an anonymous function in the field declaration.  The functions will be applied to each cell in the cvs that matches the filter criteria.
-
-For example,
-
-If you were to filter by last_name='Jackson' and set summarizable to 'count' it would give you a count of 3 when you called `pivot.results()[0].last_name_count`.  The reason for the empty string is because no label fields were set.  Each combination of labels has its own object in results(an array of objects) that corresponds to the summarized values.
-
-# Integrating with jQuery
-
-You don't have to know all of the internals to get something running quickly.  We have packaged a jQuery plugin that will create a pivot-table for you right out of the box
-
-Set the following in your HTML
-
-```html
-<head>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <!-- Set src to location of pivot.js and jquery_pivot.js relative to this file! -->
-  <script type="text/javascript" src=".location/to/pivot.js"></script>
-  <!-- Must be loaded after pivot.js & jQuery -->
-  <script type="text/javascript" src="./location/to/jquery_pivot.js"></script>
-</head>>
-<div id="pivot-table">
-</div>
-<div id="results">
-</div>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    var data = "" // Your CSV or JSON data as a string
-
-    // default fields are labelable, non-sumarrizable, non-filterable
-    // so be sure define the fields you expect to be able to filter by
-    var fields = []
-
-    $('#pivot-demo').pivot_display('process', {csv: data, fields: fields})
-  });
-</script>
-
-```
-
-This will create the filters in a drop down list, and checkboxes for labels/summaries.  Optionally you can disable the creation of the containing element.  If you do this then `<div id='filter-list'></div>`, `<div id="label-fields"></div>`, and `<div id='summary-fields'></div>` must be defined.  This offers a much more configurable setup (results div must exist).
-
+* [Filters](https://github.com/rjackson/pivot.js/wiki/Filters)
+* [Labels](https://github.com/rjackson/pivot.js/wiki/Labels) 
+* [Summaries](https://github.com/rjackson/pivot.js/wiki/Summaries) 
+* [Integrating with jQuery](https://github.com/rjackson/pivot.js/wiki/Integrating-with-jQuery)
+* [Contribute](https://github.com/rjackson/pivot.js/wiki/Contributing)
+* [DOCS](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot)
 
 # Date Processing
 
@@ -202,15 +92,6 @@ See [here](https://github.com/csnover/js-iso8601) for an example.
 
 (ISO8601 dates are still not handled properly by Safari 5.1 or IE8.)
 
-# Contribute
-
-If you want to help Pivot.js its as simple as following the steps below:
-
-* Fork it
-* Create your feature branch (git checkout -b my-new-feature)
-* Commit your changes (git commit -am 'Added some feature')
-* Push to the branch (git push origin my-new-feature)
-* Create new Pull Request
 
 # Authors
 
