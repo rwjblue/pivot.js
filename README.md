@@ -13,7 +13,7 @@ creation of highly customizable unique table views from your browser.
 In our case, results (or the pivot-table) will be displayed as an HTML table
 pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
 
-View an [example](http://rjackson.github.com/pivot.js/) or view the [Docs](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
+## View an [example](http://rjackson.github.com/pivot.js/) or view the [Docs](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
 
 #Usage
 
@@ -80,6 +80,10 @@ pivot.init({json: json_string, fields: field_definitions});
 * [Integrating with jQuery](https://github.com/rjackson/pivot.js/wiki/Integrating-with-jQuery)
 * [Contribute](https://github.com/rjackson/pivot.js/wiki/Contributing)
 * [DOCS](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot)
+
+# Blergs
+
+* [Introducing Pivot.js](http://jonathan-jackson.net/2012/04/10/introducing-pivotjs) - Jonathan Jackson
 
 # Date Processing
 
