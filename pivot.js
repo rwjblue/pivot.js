@@ -892,7 +892,7 @@ function pivotData(type) {
   function getFormattedResults(){
     if (results !== undefined) return getResultArray();
 
-    results = {}; resultsColumns = {};
+    results = {}; resultsColumns = {order: []};
 
     processRowLabelResults();
 
@@ -922,7 +922,8 @@ function pivotData(type) {
         results[resultKey] = {};
 
         for (var key in displayFields.rowLabels) {
-          if (displayFields.rowLabels.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
+          if (displayFields.rowLabels.hasOwnProperty(key))
+            results[resultKey][key] = fields[key].displayFunction(row[key], key);
         }
 
         results[resultKey].rows = [];
@@ -991,19 +992,44 @@ function pivotData(type) {
     return output;
   };
 
+  function getColumnArray(){
+    var output  = [],
+        i       = -1, m = resultsColumns.order.length;
+
+    while (++i < m){
+        output.push(resultsColumns[resultsColumns.order[i]])
+    };
+
+    return output;
+  };
+
   function populateColumnResults(){
     populateRowLabelColumnsResults();
-    populateColumnLabelColumnsResults();
 
-    return resultsColumns;
+    if (objectKeys(displayFields.columnLabels).length > 0)
+      populateColumnLabelColumnsResults();
+    else
+      populateSummaryColumnsResults();
+
+    return getColumnArray();
   };
 
   function populateRowLabelColumnsResults(){
     for (var key in displayFields.rowLabels){
-      resultsColumns[displayFields.rowLabels[i]]
+      if (displayFields.rowLabels.hasOwnProperty(key))
+        resultsColumns[key] = 1; resultsColumns.order.push(key)
     }
 
-    return resultsColumns
+    return resultsColumns;
+  };
+
+  function populateSummaryColumnsResults(){
+    for (var key in displayFields.summaries){
+      if (displayFields.summaries.hasOwnProperty(key))
+        resultsColumns[key] = 1; resultsColumns.order.push(key)
+    }
+
+    return resultsColumns;
   };
 
   function populateColumnLabelColumnsResults(){

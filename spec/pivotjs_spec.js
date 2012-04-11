@@ -262,5 +262,14 @@ describe('pivot', function () {
       pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
       expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual(162.98);
     });
+
+    it('should return the column titles and span counts for each resulting table column', function(){
+      pivot.display().summaries().set(['billed_amount_sum']);
+      expect(pivot.results().columns().length).toEqual(1);
+
+      pivot.display().summaries().set(['billed_amount_sum']);
+      pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
+      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual(162.98);
+    });
   });
 });

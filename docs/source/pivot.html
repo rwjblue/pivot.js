@@ -88,7 +88,7 @@
 var pivot = (function(){
 'use strict';
 
-var fields, filters, rawData, data, dataFilters, displayFields, results;
+var fields, filters, rawData, data, dataFilters, displayFields, results, resultsColumns;
 
 init();
 <span id='Pivot-method-init'>/**
@@ -105,7 +105,7 @@ function init(options){
   rawData = [], data = [], dataFilters = {}, fields = {}, filters = {};
   displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
 
-  if (options === undefined) options = {};
+  if (options               === undefined) options = {};
   if (options.fields        !== undefined) setFields(options.fields);
   if (options.filters       !== undefined) setFilters(options.filters);
   if (options.rowLabels     !== undefined) setRowLabelDisplayFields(options.rowLabels);
@@ -116,6 +116,7 @@ function init(options){
     processCSV(options.csv)
   if (options.json !== undefined)
     processJSON(options.json)
+
   return pivot;
 }
 
@@ -843,6 +844,8 @@ function pivotData(type) {
     if (objectType(field) === 'string')
       field = fields[field];
 
+    results = undefined;
+
     displayFields[type][field.name] = field;
   };
 
@@ -898,19 +901,32 @@ function pivotData(type) {
   */
   function pivotResults(){
     return {
-      data:     getDataResults,
-      columns:  getColumnResults
+      all:      getFormattedResults,
+      columns:  populateColumnResults
     }
   };
 
-  function getDataResults(){
-    applyFilter();
-    results = {};
+  function getFormattedResults(){
+    if (results !== undefined) return getResultArray();
 
-    var output  = [],
-        i       = -1,
-        m       = data.length,
-        keys;
+    results = {}; resultsColumns = {order: []};
+
+    processRowLabelResults();
+
+    if (objectKeys(displayFields.columnLabels).length &gt; 0)
+      processColumnLabelResults();
+    else
+      processSummaryResults();
+
+    //populateColumnResults();
+
+    return getResultArray();
+  };
+
+  function processRowLabelResults(){
+    applyFilter();
+
+    var i = -1, m = data.length, keys;
 
     while (++i &lt; m) {
       var row       = data[i],
@@ -923,7 +939,8 @@ function pivotData(type) {
         results[resultKey] = {};
 
         for (var key in displayFields.rowLabels) {
-          if (displayFields.rowLabels.hasOwnProperty(key)) results[resultKey][key] = fields[key].displayFunction(row[key], key);
+          if (displayFields.rowLabels.hasOwnProperty(key))
+            results[resultKey][key] = fields[key].displayFunction(row[key], key);
         }
 
         results[resultKey].rows = [];
@@ -931,18 +948,59 @@ function pivotData(type) {
 
       results[resultKey].rows.push(row);
     };
+  };
 
-    for (resultKey in results) {
-      for (var key in displayFields.summaries) {
-        if (displayFields.summaries.hasOwnProperty(key)) {
-          results[resultKey][key] = fields[key].summarizeFunction(results[resultKey].rows, fields[key]);
-          results[resultKey][key] = fields[key].displayFunction(results[resultKey][key], key);
+  function processColumnLabelResults(){
+    for (var resultKey in results) {
+      for (var key in displayFields.columnLabels) {
+        if (displayFields.columnLabels.hasOwnProperty(key)) {
+          var values = pluckValues(results[resultKey].rows, fields[key]);
+
+          for (var value in values){
+            results[resultKey][value] = getSummaryResults(values[value]);
+          };
         }
       };
     };
 
-    keys = objectKeys(results).sort();
-    i = -1; m = keys.length;
+    return results;
+  };
+
+  function pluckValues(rows, field){
+    var i = -1, m = rows.length, output = {};
+    while (++i &lt; m){
+      var value = rows[i][field.name];
+      if (output[value] === undefined) output[value] = {rows: []}
+
+      output[value].rows.push(rows[i]);
+    };
+    return output;
+  }
+
+  function processSummaryResults(){
+    for (var resultKey in results) {
+      getSummaryResults(results[resultKey])
+    };
+
+    return results;
+  };
+
+  function getSummaryResults(result){
+    var output = {};
+    for (var key in displayFields.summaries) {
+      if (displayFields.summaries.hasOwnProperty(key)) {
+        result[key] = fields[key].summarizeFunction(result.rows, fields[key]);
+        result[key] = fields[key].displayFunction(result[key], key);
+      }
+    };
+
+    return result;
+  };
+
+  function getResultArray(){
+    var output  = [], keys  = objectKeys(results).sort(),
+        i       = -1, m     = keys.length;
+
     while (++i &lt; m){
       output.push(results[keys[i]])
     };
@@ -951,7 +1009,47 @@ function pivotData(type) {
     return output;
   };
 
-  function getColumnResults(){
+  function getColumnArray(){
+    var output  = [],
+        i       = -1, m = resultsColumns.order.length;
+
+    while (++i &lt; m){
+        output.push(resultsColumns[resultsColumns.order[i]])
+    };
+
+    return output;
+  };
+
+  function populateColumnResults(){
+    populateRowLabelColumnsResults();
+
+    if (objectKeys(displayFields.columnLabels).length &gt; 0)
+      populateColumnLabelColumnsResults();
+    else
+      populateSummaryColumnsResults();
+
+    return getColumnArray();
+  };
+
+  function populateRowLabelColumnsResults(){
+    for (var key in displayFields.rowLabels){
+      if (displayFields.rowLabels.hasOwnProperty(key))
+        resultsColumns[key] = 1; resultsColumns.order.push(key)
+    }
+
+    return resultsColumns;
+  };
+
+  function populateSummaryColumnsResults(){
+    for (var key in displayFields.summaries){
+      if (displayFields.summaries.hasOwnProperty(key))
+        resultsColumns[key] = 1; resultsColumns.order.push(key)
+    }
+
+    return resultsColumns;
+  };
+
+  function populateColumnLabelColumnsResults(){
 
   };
 // Entry Point
@@ -963,7 +1061,7 @@ function pivotData(type) {
     csv:      processCSV,
     json:     processJSON,
     data:     pivotData,
-    results:  getDataResults,
+    results:  pivotResults,
     fields:   pivotFields,
     filters:  pivotFilters,
     display:  pivotDisplay
