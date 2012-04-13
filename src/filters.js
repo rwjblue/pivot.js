@@ -70,6 +70,7 @@
   */
   function setFilters(restrictions){
     filters = restrictions;
+    resetResults();
     castFilterValues();
   };
 
@@ -112,6 +113,7 @@
 
     data        = filteredData;
     dataFilters = shallowClone(filters);
+    resetResults();
 
     return data;
   };
