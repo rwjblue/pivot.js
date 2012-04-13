@@ -65,7 +65,7 @@
     if (objectType(field) === 'string')
       field = fields[field];
 
-    results = undefined;
+    results = undefined; resultsColumns = undefined;
 
     displayFields[type][field.name] = field;
   };

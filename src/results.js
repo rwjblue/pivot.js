@@ -10,23 +10,23 @@
   function pivotResults(){
     return {
       all:      getFormattedResults,
-      columns:  populateColumnResults
+      columns:  getColumnResults
     }
   };
 
   function getFormattedResults(){
-    if (results !== undefined) return getResultArray();
+    if (results !== undefined && resultsColumns !== undefined) return getResultArray();
 
-    results = {}; resultsColumns = {order: []};
+    results = {}; resultsColumns = [];
 
     processRowLabelResults();
 
     if (objectKeys(displayFields.columnLabels).length > 0)
       processColumnLabelResults();
-    else
+    else {
+      populateSummaryColumnsResults();
       processSummaryResults();
-
-    //populateColumnResults();
+    }
 
     return getResultArray();
   };
@@ -41,7 +41,11 @@
           resultKey = '';
 
       for (var key in displayFields.rowLabels) {
-        if (displayFields.rowLabels.hasOwnProperty(key)) resultKey += key + ':' + row[key] + '|';
+        if (displayFields.rowLabels.hasOwnProperty(key)) {
+          if (i === 0) resultsColumns.push({fieldName: key, width: 1});
+
+          resultKey += key + ':' + row[key] + '|';
+        }
       }
       if (results[resultKey] === undefined) {
         results[resultKey] = {};
@@ -61,13 +65,22 @@
   function processColumnLabelResults(){
     for (var resultKey in results) {
       for (var key in displayFields.columnLabels) {
+        var columnLabelColumns = {};
+
         if (displayFields.columnLabels.hasOwnProperty(key)) {
           var values = pluckValues(results[resultKey].rows, fields[key]);
 
           for (var value in values){
+            if (columnLabelColumns[value] === undefined)
+              columnLabelColumns[value] = 1;
+            else
+              columnLabelColumns[value] += 1;
+
             results[resultKey][value] = getSummaryResults(values[value]);
           };
         }
+
+        populateColumnLabelColumnsResults(columnLabelColumns);
       };
     };
 
@@ -117,46 +130,32 @@
     return output;
   };
 
-  function getColumnArray(){
-    var output  = [],
-        i       = -1, m = resultsColumns.order.length;
-
-    while (++i < m){
-        output.push(resultsColumns[resultsColumns.order[i]])
-    };
-
-    return output;
-  };
-
-  function populateColumnResults(){
-    populateRowLabelColumnsResults();
-
-    if (objectKeys(displayFields.columnLabels).length > 0)
-      populateColumnLabelColumnsResults();
-    else
-      populateSummaryColumnsResults();
-
-    return getColumnArray();
-  };
-
-  function populateRowLabelColumnsResults(){
-    for (var key in displayFields.rowLabels){
-      if (displayFields.rowLabels.hasOwnProperty(key))
-        resultsColumns[key] = 1; resultsColumns.order.push(key)
-    }
+  function getColumnResults(){
+    if (results === undefined || resultsColumns === undefined)
+      getFormattedResults();
 
     return resultsColumns;
-  };
+  }
 
   function populateSummaryColumnsResults(){
     for (var key in displayFields.summaries){
       if (displayFields.summaries.hasOwnProperty(key))
-        resultsColumns[key] = 1; resultsColumns.order.push(key)
+        resultsColumns.push({fieldName: key, width: 1})
     }
 
     return resultsColumns;
   };
 
-  function populateColumnLabelColumnsResults(){
+  function populateColumnLabelColumnsResults(columnLabels){
+    var keys  = objectKeys(columnLabels).sort(),
+        i     = -1,
+        m     = keys.length,
+        w     = objectKeys(displayFields.summaries).length;
 
-  };
+    while (++i < m){
+      resultsColumns.push({fieldName: keys[i], width: w})
+    };
+
+
+    return resultsColumns;
+  }
