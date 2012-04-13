@@ -286,8 +286,11 @@ describe('pivot', function () {
       expect(pivot.results().columns().length).toEqual(13);
       expect(pivot.results().columns()[1].fieldName).toEqual('2011_12');
       expect(pivot.results().columns()[1].width).toEqual(1);
+      expect(pivot.results().all()[1][pivot.results().columns()[1].fieldName].billed_amount_sum).toEqual(7.45);
+
       expect(pivot.results().columns()[2].fieldName).toEqual('2012_01');
       expect(pivot.results().columns()[2].width).toEqual(1);
+      expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual(100);
     });
   });
 });

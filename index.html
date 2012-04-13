@@ -155,7 +155,7 @@ var fields = [
         var date = new Date(row.invoice_date);
         return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')}
     },
-    {name: 'invoice_yyyy', type: 'string', filterable: true, pseudo: true,
+    {name: 'invoice_yyyy', type: 'string', filterable: true, pseudo: true, columnLabelable: true,
       pseudoFunction: function(row){ return new Date(row.invoice_date).getFullYear() }},
     {name: 'age_bucket', type: 'string', filterable: true, columnLabelable: true, pseudo: true, dataSource: 'last_payment_date', pseudoFunction: ageBucket},
 

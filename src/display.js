@@ -65,8 +65,6 @@
     if (objectType(field) === 'string')
       field = fields[field];
 
-    results = undefined; resultsColumns = undefined;
-
     displayFields[type][field.name] = field;
   };
 
@@ -78,6 +76,7 @@
   */
   function setDisplayFields(type, listing){
     displayFields[type] = {};
+    results = undefined; resultsColumns = undefined;
 
     var i = -1, m = listing.length;
     while (++i < m) {

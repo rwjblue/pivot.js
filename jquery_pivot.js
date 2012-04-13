@@ -195,7 +195,7 @@ var methods = {
   update_results : function(){
     var results = pivot.results().all(),
         config  = pivot.config(),
-        columns = [].concat(config.rowLabels, config.columnLabels, config.summaries),
+        columns = pivot.results().columns(), //[].concat(config.rowLabels, config.columnLabels, config.summaries),
         snip    = '',
         fieldName;
 
@@ -203,11 +203,33 @@ var methods = {
         result_rows;
     result_table.empty();
 
-    snip += '<table class="table table-striped table-condensed"><thead><tr>';
+    snip += '<table class="table table-striped table-condensed"><thead>';
 
-    $.each(columns, function(index, fieldName){
-      snip += '<th>' + fieldName + '</th>';
+    // build columnLabel header row
+    if (config.columnLabels.length > 0) {
+      snip += '<tr>'
+      if (config.rowLabels.length > 0) {
+        snip += '<th colspan="' + config.rowLabels.length + '">&nbsp;</th>';
+      };
+      $.each(columns, function(index, column){
+        if (column.type === 'column')
+          snip += '<th colspan="' + column.width + '">' + column.fieldName + '</th>';
+      });
+      snip += '</tr>'
+    }
+
+    snip += '<tr>'
+    $.each(columns, function(index, column){
+      if (column.type !== 'column') {
+        snip += '<th>' + column.fieldName + '</th>';
+      } else {
+        $.each(config.summaries, function(index, fieldName){
+          snip += '<th>' + fieldName + '</th>';
+        });
+      }
     });
+    snip += '</tr>'
+
     snip += '</thead></tr><tbody id="result-rows"></tbody></table>';
     result_table.append(snip);
 
@@ -215,8 +237,17 @@ var methods = {
 
     $.each(results,function(index, row){
       snip = '<tr>';
-      $.each(columns, function(index, fieldName){
-        snip += '<td>' + row[fieldName] + '</td>';
+      $.each(columns, function(index, column){
+        if (column.type !== 'column')
+          snip += '<td>' + row[column.fieldName] + '</td>';
+        else {
+          $.each(config.summaries, function(index, fieldName){
+            if (row[column.fieldName] !== undefined)
+              snip += '<td>' + row[column.fieldName][fieldName] + '</td>';
+            else
+              snip += '<td>&nbsp;</td>';
+          });
+        }
       });
       snip += '</tr>';
 

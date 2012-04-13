@@ -42,7 +42,7 @@
 
       for (var key in displayFields.rowLabels) {
         if (displayFields.rowLabels.hasOwnProperty(key)) {
-          if (i === 0) resultsColumns.push({fieldName: key, width: 1});
+          if (i === 0) resultsColumns.push({fieldName: key, width: 1, type: 'row'});
 
           resultKey += key + ':' + row[key] + '|';
         }
@@ -63,11 +63,10 @@
   };
 
   function processColumnLabelResults(){
-    for (var resultKey in results) {
-      for (var key in displayFields.columnLabels) {
+    for (var key in displayFields.columnLabels) {
+      if (displayFields.columnLabels.hasOwnProperty(key)) {
         var columnLabelColumns = {};
-
-        if (displayFields.columnLabels.hasOwnProperty(key)) {
+        for (var resultKey in results) {
           var values = pluckValues(results[resultKey].rows, fields[key]);
 
           for (var value in values){
@@ -140,7 +139,7 @@
   function populateSummaryColumnsResults(){
     for (var key in displayFields.summaries){
       if (displayFields.summaries.hasOwnProperty(key))
-        resultsColumns.push({fieldName: key, width: 1})
+        resultsColumns.push({fieldName: key, width: 1, type: 'summary'})
     }
 
     return resultsColumns;
@@ -153,7 +152,7 @@
         w     = objectKeys(displayFields.summaries).length;
 
     while (++i < m){
-      resultsColumns.push({fieldName: keys[i], width: w})
+      resultsColumns.push({fieldName: keys[i], width: w, type: 'column'})
     };
 
 
