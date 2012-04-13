@@ -283,7 +283,7 @@ describe('pivot', function () {
       pivot.display().columnLabels().set(['last_billed_yyyy_mm', 'zip_code']);
       pivot.display().summaries().set(['billed_amount_sum']);
 
-      expect(pivot.results().columns().length).toEqual(13);
+      expect(pivot.results().columns().length).toEqual(9);
       expect(pivot.results().columns()[1].fieldName).toEqual('2011_12');
       expect(pivot.results().columns()[1].width).toEqual(1);
       expect(pivot.results().all()[1][pivot.results().columns()[1].fieldName].billed_amount_sum).toEqual(7.45);

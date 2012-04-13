@@ -14,9 +14,14 @@
     }
   };
 
+  function resetResults(){
+    results = undefined; resultsColumns = undefined;
+  }
+
   function getFormattedResults(){
     if (results !== undefined && resultsColumns !== undefined) return getResultArray();
 
+    applyFilter();
     results = {}; resultsColumns = [];
 
     processRowLabelResults();
@@ -32,8 +37,6 @@
   };
 
   function processRowLabelResults(){
-    applyFilter();
-
     var i = -1, m = data.length, keys;
 
     while (++i < m) {

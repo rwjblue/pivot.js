@@ -19,9 +19,9 @@ var methods = {
 
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
-    self.build_toggle_fields('#row-label-fields',     pivot.fields().rowLabelable, 'row-labelable');
+    self.build_toggle_fields('#row-label-fields',     pivot.fields().rowLabelable,    'row-labelable');
     self.build_toggle_fields('#column-label-fields',  pivot.fields().columnLabelable, 'column-labelable');
-    self.build_toggle_fields('#summary-fields', pivot.fields().summarizable,  'summary');
+    self.build_toggle_fields('#summary-fields',       pivot.fields().summarizable,    'summary');
 
     methods.build_filter_list();
 
@@ -195,7 +195,7 @@ var methods = {
   update_results : function(){
     var results = pivot.results().all(),
         config  = pivot.config(),
-        columns = pivot.results().columns(), //[].concat(config.rowLabels, config.columnLabels, config.summaries),
+        columns = pivot.results().columns(),
         snip    = '',
         fieldName;
 

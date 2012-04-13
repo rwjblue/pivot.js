@@ -407,6 +407,7 @@ function processHeaderRow(row){
   */
   function setFilters(restrictions){
     filters = restrictions;
+    resetResults();
     castFilterValues();
   };
 
@@ -449,6 +450,7 @@ function processHeaderRow(row){
 
     data        = filteredData;
     dataFilters = shallowClone(filters);
+    resetResults();
 
     return data;
   };
@@ -827,6 +829,7 @@ function pivotData(type) {
     if (objectType(field) === 'string')
       field = fields[field];
 
+    resetResults();
     displayFields[type][field.name] = field;
   };
 
@@ -838,7 +841,7 @@ function pivotData(type) {
   */
   function setDisplayFields(type, listing){
     displayFields[type] = {};
-    results = undefined; resultsColumns = undefined;
+    resetResults();
 
     var i = -1, m = listing.length;
     while (++i < m) {
@@ -888,9 +891,14 @@ function pivotData(type) {
     }
   };
 
+  function resetResults(){
+    results = undefined; resultsColumns = undefined;
+  }
+
   function getFormattedResults(){
     if (results !== undefined && resultsColumns !== undefined) return getResultArray();
 
+    applyFilter();
     results = {}; resultsColumns = [];
 
     processRowLabelResults();
@@ -906,8 +914,6 @@ function pivotData(type) {
   };
 
   function processRowLabelResults(){
-    applyFilter();
-
     var i = -1, m = data.length, keys;
 
     while (++i < m) {
