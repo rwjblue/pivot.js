@@ -34,7 +34,7 @@ namespace :pivot do
 
   desc "Generates demo CSV for pivot.js gh-pages."
   task :csv do
-    dcsv = DemoCSV.new(1000)
+    dcsv = DemoCSV.new(5000)
     dcsv.to_file "./lib/csv/demo.csv"
     $stdout.puts "Generate demo CSV successful"
   end
