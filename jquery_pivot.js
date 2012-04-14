@@ -206,7 +206,7 @@ var methods = {
     snip += '<table class="table table-striped table-condensed"><thead>';
 
     // build columnLabel header row
-    if (config.columnLabels.length > 0) {
+    if (config.columnLabels.length > 0 && config.summaries.length > 1) {
       snip += '<tr>'
       if (config.rowLabels.length > 0) {
         snip += '<th colspan="' + config.rowLabels.length + '">&nbsp;</th>';
@@ -220,7 +220,7 @@ var methods = {
 
     snip += '<tr>'
     $.each(columns, function(index, column){
-      if (column.type !== 'column') {
+      if (column.type !== 'column' || config.summaries.length <= 1) {
         snip += '<th>' + column.fieldName + '</th>';
       } else {
         $.each(config.summaries, function(index, fieldName){
