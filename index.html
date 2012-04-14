@@ -5,10 +5,13 @@
   <!-- Twitter Bootstrap -->
   <link rel="stylesheet" href="./lib/css/bootstrap.min.css" type="text/css" />
   <link rel="stylesheet" href="./lib/css/subnav.css" type="text/css" />
+  <link rel="stylesheet" href="./lib/css/pivot.css" type="text/css" />
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="./lib/javascripts/subnav.js"></script>
   <script type="text/javascript" src="./lib/javascripts/accounting.min.js"></script>
+  <script type="text/javascript" src="./lib/javascripts/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="./lib/javascripts/dataTables.bootstrap.js"></script>
 
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -169,9 +172,22 @@ var fields = [
     {name: 'last_payment_date',  type: 'date',  filterable: true}
 ]
 
+  function setupPivot(input){
+    input.callbacks = {afterUpdateResults: function(){
+      $('#results > table').dataTable({
+        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+        "sPaginationType": "bootstrap",
+        "oLanguage": {
+          "sLengthMenu": "_MENU_ records per page"
+        }
+      });
+    }};
+    $('#pivot-demo').pivot_display('setup', input);
+  };
+
   $(document).ready(function() {
 
-    $('#pivot-demo').pivot_display('setup', {url:'./lib/csv/demo.csv', fields: fields, filters: {employer: 'Acme Corp'}, rowLabels:["city"], summaries:["billed_amount", "payment_amount"]})
+    setupPivot({url:'./lib/csv/demo.csv', fields: fields, filters: {employer: 'Acme Corp'}, rowLabels:["city"], summaries:["billed_amount", "payment_amount"]})
 
     // prevent dropdown from closing after selection
     $('.stop-propagation').click(function(event){
@@ -180,15 +196,15 @@ var fields = [
 
     // **Sexy** In your console type pivot.config() to view your current internal structure (the full initialize object).  Pass it to setup and you have a canned report.
     $('#ar-aged-balance').click(function(event){
-      $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{},"rowLabels":["employer"],"columnLabels":["age_bucket"],"summaries":["balance"]})
+      setupPivot({"url":'./lib/csv/demo.csv', "fields": fields, "filters":{},"rowLabels":["employer"],"columnLabels":["age_bucket"],"summaries":["balance"]})
     });
 
     $('#acme-detail-report').click(function(event){
-      $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"employer":"Acme Corp"},"rowLabels":["city","last_name","first_name","state","invoice_date"],"columnLabels":[],"summaries":[]})
+      setupPivot({"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"employer":"Acme Corp"},"rowLabels":["city","last_name","first_name","state","invoice_date"],"columnLabels":[],"summaries":[]})
     });
 
     $('#jacksonville-invoice-detail').click(function(event){
-      $('#pivot-demo').pivot_display('setup', {"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"city":"Jacksonville"},"rowLabels":["last_name","first_name","employer","invoice_date"],"columnLabels":[],"summaries":["payment_amount"]})
+      setupPivot({"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"city":"Jacksonville"},"rowLabels":["last_name","first_name","employer","invoice_date"],"columnLabels":[],"summaries":["payment_amount"]})
     });
   });
 </script>
