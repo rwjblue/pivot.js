@@ -78,6 +78,7 @@ pivot.init({json: json_string, fields: field_definitions});
 * [Labels](https://github.com/rjackson/pivot.js/wiki/Labels)
 * [Summaries](https://github.com/rjackson/pivot.js/wiki/Summaries)
 * [Integrating with jQuery](https://github.com/rjackson/pivot.js/wiki/Integrating-with-jQuery)
+* [Integrating with datatables](https://github.com/rjackson/pivot.js/wiki/Integrating-with-Datatables)  (__Highly Recommend__)
 * [Contribute](https://github.com/rjackson/pivot.js/wiki/Contributing)
 * [DOCS](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot)
 
