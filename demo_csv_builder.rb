@@ -27,8 +27,8 @@ class DemoCSV
     CSV.generate do |csv|
       csv << header
       count.times do |i|
-        invoice_date     = time_rand(Time.local(2010, 1, 1))
-        last_billed_date = time_rand(Time.local(2010, 1, 1), invoice_date)
+        invoice_date     = bucket
+        last_billed_date = time_rand(invoice_date)
         city             = cities[rand(29)]
 
         csv << [ Faker::Name.last_name,
@@ -45,6 +45,24 @@ class DemoCSV
     end
   end
 
+  def bucket
+    number = rand(0..10)
+    age = case number
+          when 0..4
+            rand(0..30)
+          when 5
+            rand(31..60)
+          when 6
+            rand(61..90)
+          when 7
+            rand(91..120)
+          when 8..10
+            rand(121..600)
+          end
+
+    Time.at(Time.now.to_i - age * 60 * 60 * 24)
+  end
+
 
   def to_s
     puts generate_csv
@@ -54,7 +72,7 @@ class DemoCSV
     File.open(path,"w") {|f| f.write(generate_csv)}
   end
 
-  def time_rand(from=0.0,to=Time.now)
-    Time.at(from + rand * (to.to_f - from.to_f))
+  def time_rand(from=0,to=Time.now)
+    Time.at(rand(from.to_i..to.to_i))
   end
 end

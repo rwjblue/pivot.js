@@ -7,7 +7,7 @@
     csv:      processCSV,
     json:     processJSON,
     data:     pivotData,
-    results:  getDataResults,
+    results:  pivotResults,
     fields:   pivotFields,
     filters:  pivotFilters,
     display:  pivotDisplay

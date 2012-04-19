@@ -19,12 +19,18 @@ describe('pivot', function () {
                     ' ["Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
 
       sample_fields = [
-        {name: 'first_name',       type: 'string',  filterable: true},
-        {name: 'last_name',        type: 'string',  filterable: true},
-        {name: 'zip_code',         type: 'integer', filterable: true},
-        {name: 'pseudo_zip',       type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount',    type: 'float', summarizable: 'sum'},
-        {name: 'last_billed_date', type: 'date', filterable: true}
+        {name: 'first_name',          type: 'string',  filterable: true},
+        {name: 'last_name',           type: 'string',  filterable: true},
+        {name: 'zip_code',            type: 'integer', filterable: true, columnLabelable: true},
+        {name: 'pseudo_zip',          type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
+        {name: 'billed_amount',       type: 'float',   summarizable: 'sum'},
+        {name: 'last_billed_date',    type: 'date',    filterable: true},
+        {name: 'last_billed_yyyy_mm', type: 'string',  filterable: true, pseudo: true, columnLabelable: true,
+          pseudoFunction: function(row){
+            var date = new Date(row.last_billed_date);
+            return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1),2,'0')
+          }
+        }
       ]
 
       pivot.init({csv: sample_csv, fields: sample_fields});
@@ -66,7 +72,10 @@ describe('pivot', function () {
     });
 
     it('can parse csv into an array', function(){
-      expect(pivot.data().raw[0]).toEqual({last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100, pseudo_zip: 34472, last_billed_date: 1327363200000});
+      expect(pivot.data().raw[0]).toEqual(
+        {last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100,
+        pseudo_zip: 34472, last_billed_date: 1327363200000, last_billed_yyyy_mm : '2012_01'}
+      );
       expect(pivot.data().raw.length).toEqual(6)
     });
 
@@ -217,35 +226,71 @@ describe('pivot', function () {
   describe('Results', function(){
     it('should only return label fields that were selected', function(){
       pivot.display().rowLabels().set(['last_name']);
-      expect(pivot.results()[0].last_name).toEqual('Fornea');
-      expect(pivot.results()[2].last_name).toEqual('Smith');
-      expect(pivot.results()[0].zip_code).toEqual(undefined);
+      expect(pivot.results().all()[0].last_name).toEqual('Fornea');
+      expect(pivot.results().all()[2].last_name).toEqual('Smith');
+      expect(pivot.results().all()[0].zip_code).toEqual(undefined);
 
       pivot.display().rowLabels().set(['last_name', 'zip_code']);
-      expect(pivot.results()[0].last_name).toEqual('Fornea');
-      expect(pivot.results()[0].zip_code).toEqual(34474);
+      expect(pivot.results().all()[0].last_name).toEqual('Fornea');
+      expect(pivot.results().all()[0].zip_code).toEqual(34474);
     });
 
     it('should only return summary fields that were selected', function(){
       pivot.display().rowLabels().set(['last_name']);
 
       pivot.display().summaries().set([]);
-      expect(pivot.results()[0].billed_amount_sum).toEqual(undefined);
+      expect(pivot.results().all()[0].billed_amount_sum).toEqual(undefined);
 
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results()[1].billed_amount_sum).toEqual(369.87);
+      expect(pivot.results().all()[1].billed_amount_sum).toEqual(369.87);
     });
 
     it("should return sum for summarizable: 'sum' fields", function(){
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results()[0].billed_amount_sum.toFixed(2)).toEqual('730.68');
+      expect(pivot.results().all()[0].billed_amount_sum.toFixed(2)).toEqual('730.68');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
       pivot.fields().get('billed_amount_sum').displayFunction = function(value){ return "$" + value.toFixed(2)};
 
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results()[0].billed_amount_sum).toEqual('$730.68');
+      expect(pivot.results().all()[0].billed_amount_sum).toEqual('$730.68');
+    });
+
+    it('should return a column for each field value in columnLabels', function(){
+      pivot.display().summaries().set(['billed_amount_sum']);
+      pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
+      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual(162.98);
+    });
+
+    it('should return the column titles and span counts for each resulting table column', function(){
+      pivot.display().summaries().set(['billed_amount_sum']);
+      expect(pivot.results().columns().length).toEqual(1);
+      expect(pivot.results().columns()[0].fieldName).toEqual('billed_amount_sum');
+      expect(pivot.results().columns()[0].width).toEqual(1);
+
+      pivot.display().rowLabels().set(['last_name']);
+      pivot.display().summaries().set(['billed_amount_sum']);
+      expect(pivot.results().columns().length).toEqual(2);
+      expect(pivot.results().columns()[0].fieldName).toEqual('last_name');
+      expect(pivot.results().columns()[0].width).toEqual(1);
+      expect(pivot.results().columns()[1].fieldName).toEqual('billed_amount_sum');
+      expect(pivot.results().columns()[1].width).toEqual(1);
+    });
+
+    it('should add column label fields values as columns', function(){
+      pivot.display().rowLabels().set(['last_name']);
+      pivot.display().columnLabels().set(['last_billed_yyyy_mm', 'zip_code']);
+      pivot.display().summaries().set(['billed_amount_sum']);
+
+      expect(pivot.results().columns().length).toEqual(9);
+      expect(pivot.results().columns()[1].fieldName).toEqual('2011_12');
+      expect(pivot.results().columns()[1].width).toEqual(1);
+      expect(pivot.results().all()[1][pivot.results().columns()[1].fieldName].billed_amount_sum).toEqual(7.45);
+
+      expect(pivot.results().columns()[2].fieldName).toEqual('2012_01');
+      expect(pivot.results().columns()[2].width).toEqual(1);
+      expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual(100);
     });
   });
 });
