@@ -16,6 +16,10 @@ var methods = {
       methods.process(options);
   },
   process : function(options){
+    if (callbacks && callbacks.beforePopulate) {
+      callbacks.beforePopulate();
+    };
+
     var self = methods;
 
     pivot.init(options);
@@ -44,9 +48,9 @@ var methods = {
 
     methods.update_results();
 
-    if (callbacks && callbacks.afterUpdateResults) {
-      callbacks.afterUpdateResults();
-    }
+    if (callbacks && callbacks.afterPopulate) {
+      callbacks.afterPopulate();
+    };
   },
   process_from_url : function(options){
     $.ajax({
@@ -202,6 +206,10 @@ var methods = {
       $('#pivot-detail').html(snip);
   },
   update_results : function(){
+    if (callbacks && callbacks.beforeUpdateResults) {
+      callbacks.beforeUpdateResults();
+    };
+
     var results = pivot.results().all(),
         config  = pivot.config(),
         columns = pivot.results().columns(),
@@ -271,6 +279,10 @@ var methods = {
       result_rows.append(snip);
     });
     methods.update_result_details();
+
+    if (callbacks && callbacks.afterUpdateResults) {
+      callbacks.afterUpdateResults();
+    };
   },
   update_label_fields :  function(type){
     var display_fields = [];
