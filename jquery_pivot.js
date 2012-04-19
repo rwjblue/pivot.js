@@ -1,10 +1,15 @@
 (function( $ ){
   'use strict';
-var element;
-var resultsTitle;
+
+var element,
+    callbacks = {},
+    resultsTitle;
+
 var methods = {
   setup   : function(options){
     element = this; // set element for build_containers()
+    if (options.callbacks) callbacks = options.callbacks;
+
     if (options.url !== undefined)
       methods.process_from_url(options);
     else
@@ -38,6 +43,10 @@ var methods = {
     });
 
     methods.update_results();
+
+    if (callbacks && callbacks.afterUpdateResults) {
+      callbacks.afterUpdateResults();
+    }
   },
   process_from_url : function(options){
     $.ajax({
@@ -203,33 +212,41 @@ var methods = {
         result_rows;
     result_table.empty();
 
-    snip += '<table class="table table-striped table-condensed"><thead>';
+    snip += '<table id="pivot-table" class="table table-striped table-condensed"><thead>';
 
     // build columnLabel header row
     if (config.columnLabels.length > 0 && config.summaries.length > 1) {
+      var summarySnip = '', summaryRow = '';
+      $.each(config.summaries, function(index, fieldName){
+        summarySnip += '<th>' + fieldName + '</th>';
+      })
+
       snip += '<tr>'
-      if (config.rowLabels.length > 0) {
-        snip += '<th colspan="' + config.rowLabels.length + '">&nbsp;</th>';
-      };
       $.each(columns, function(index, column){
-        if (column.type === 'column')
-          snip += '<th colspan="' + column.width + '">' + column.fieldName + '</th>';
+        switch (column.type){
+          case 'row':
+            snip += '<th rowspan="2">'+ column.fieldName + '</th>';
+            break;
+          case 'column':
+            snip += '<th colspan="' + column.width + '">' + column.fieldName + '</th>';
+            summaryRow += summarySnip
+            break;
+        }
+      });
+      snip += '</tr><tr>' + summaryRow + '</tr>';
+    } else {
+      snip += '<tr>'
+      $.each(columns, function(index, column){
+        if (column.type !== 'column' || config.summaries.length <= 1) {
+          snip += '<th>' + column.fieldName + '</th>';
+        } else {
+          $.each(config.summaries, function(index, fieldName){
+            snip += '<th>' + fieldName + '</th>';
+          });
+        }
       });
       snip += '</tr>'
     }
-
-    snip += '<tr>'
-    $.each(columns, function(index, column){
-      if (column.type !== 'column' || config.summaries.length <= 1) {
-        snip += '<th>' + column.fieldName + '</th>';
-      } else {
-        $.each(config.summaries, function(index, fieldName){
-          snip += '<th>' + fieldName + '</th>';
-        });
-      }
-    });
-    snip += '</tr>'
-
     snip += '</thead></tr><tbody id="result-rows"></tbody></table>';
     result_table.append(snip);
 
