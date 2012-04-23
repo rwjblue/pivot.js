@@ -111,13 +111,19 @@ function reset(){
 };
 
 /**
-* Very cool little function. If called like so: `pivot.config()` will return the exact object you would need
-* to create the current pivot from scratch.
+* Very cool little function. If called like so: `pivot.config(true)` will return the exact object you would need
+* to create the current pivot from scratch.  If passed with no argument will return everything except fields.
 */
-function config(){
+function config(showFields){
+  var showFields = showFields || false;
+  var fields;
 
+  if (showFields)
+    fields = cloneFields()
+  else
+    fields = "Pass showFields as true in order to view fields here.";
 
-  return {  fields: cloneFields(),
+  return {  fields: fields,
             filters: filters,
             rowLabels: objectKeys(displayFields.rowLabels),
             columnLabels: objectKeys(displayFields.columnLabels),
