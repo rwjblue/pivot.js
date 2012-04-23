@@ -53,7 +53,7 @@ var methods = {
     };
   },
   process_from_url : function(options){
-    var re = /\.csv$/i,
+    var re = /\.json$/i,
         dataType;
 
     if (re.test(options.url))
