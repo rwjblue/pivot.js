@@ -53,12 +53,23 @@ var methods = {
     };
   },
   process_from_url : function(options){
+    var dataType;
+
+    if (options.url.indexOf('json') > -1)
+      dataType = 'text/json'
+    else
+      dataType = 'text/csv'
+
     $.ajax({
       url: options.url,
       dataType: "text",
       accepts: "text/csv",
       success: function(data, status){
-        options['csv'] = data
+        if (dataType === 'text/json')
+          options['json'] = data
+        else
+          options['csv']  = data
+
         methods.process(options)
       }
     });
