@@ -53,9 +53,10 @@ var methods = {
     };
   },
   process_from_url : function(options){
-    var dataType;
+    var re = /\.csv$/i,
+        dataType;
 
-    if (options.url.indexOf('json') > -1)
+    if (re.test(options.url))
       dataType = 'text/json'
     else
       dataType = 'text/csv'
