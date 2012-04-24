@@ -103,7 +103,7 @@
           <ul class="dropdown-menu">
            <li><a id="ar-aged-balance" href="#">AR Aged Balance</a></li>
            <li><a id="acme-detail-report" href="#">Acme Corp Detail</a></li>
-           <li><a id="jacksonville-invoice-detail" href="#">Jacksonville Invoice Detail</a></li>
+           <li><a id="miami-invoice-detail" href="#">Miami Invoice Detail</a></li>
           </ul>
         </li>
       </ul>
@@ -198,15 +198,15 @@ var fields = [
 
     // **Sexy** In your console type pivot.config() to view your current internal structure (the full initialize object).  Pass it to setup and you have a canned report.
     $('#ar-aged-balance').click(function(event){
-      setupPivot({"url":'./lib/csv/demo.csv', "fields": fields, "filters":{},"rowLabels":["employer"],"columnLabels":["age_bucket"],"summaries":["balance"]})
+      $('#pivot-demo').pivot_display('reprocess_display', {rowLabels:["employer"], columnLabels:["age_bucket"], summaries:["balance"]})
     });
 
     $('#acme-detail-report').click(function(event){
-      setupPivot({"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"employer":"Acme Corp"},"rowLabels":["city","last_name","first_name","state","invoice_date"],"columnLabels":[],"summaries":[]})
+      $('#pivot-demo').pivot_display('reprocess_display', {filters:{"employer":"Acme Corp"},rowLabels:["city","last_name","first_name","state","invoice_date"]})
     });
 
-    $('#jacksonville-invoice-detail').click(function(event){
-      setupPivot({"url":'./lib/csv/demo.csv', "fields": fields, "filters":{"city":"Jacksonville"},"rowLabels":["last_name","first_name","employer","invoice_date"],"columnLabels":[],"summaries":["payment_amount"]})
+    $('#miami-invoice-detail').click(function(event){
+      $('#pivot-demo').pivot_display('reprocess_display', {"filters":{"city":"Miami"},"rowLabels":["last_name","first_name","employer","invoice_date"],"summaries":["payment_amount"]})
     });
   });
 </script>

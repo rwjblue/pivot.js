@@ -28,21 +28,17 @@ var methods = {
 
     if (options.skipBuildContainers === undefined || options.skipBuildContainers === false) self.build_containers();
 
-    self.build_toggle_fields('#row-label-fields',     pivot.fields().rowLabelable,    'row-labelable');
-    self.build_toggle_fields('#column-label-fields',  pivot.fields().columnLabelable, 'column-labelable');
-    self.build_toggle_fields('#summary-fields',       pivot.fields().summarizable,    'summary');
+    self.populate_containers();
 
-    methods.build_filter_list();
-
-    $('.row-labelable').change(function(event) {
+    $('.row-labelable').live('change',function(event) {
       self.update_label_fields('row');
     });
 
-    $('.column-labelable').change(function(event) {
+    $('.column-labelable').live('change', function(event) {
       self.update_label_fields('column');
     });
 
-    $('.summary').change(function(event) {
+    $('.summary').live('change', function(event) {
       self.update_summary_fields();
     });
 
@@ -74,6 +70,26 @@ var methods = {
         methods.process(options)
       }
     });
+  },
+  populate_containers: function(){
+    methods.build_toggle_fields('#row-label-fields',     pivot.fields().rowLabelable,    'row-labelable');
+    methods.build_toggle_fields('#column-label-fields',  pivot.fields().columnLabelable, 'column-labelable');
+    methods.build_toggle_fields('#summary-fields',       pivot.fields().summarizable,    'summary');
+    methods.build_filter_list();
+  },
+  reprocess_display : function(options){
+    if (options.rowLabels     === undefined) options.rowLabels    = [];
+    if (options.columnLabels  === undefined) options.columnLabels = [];
+    if (options.summaries     === undefined) options.summaries    = [];
+    if (options.filters       === undefined) options.filters      = {};
+
+    pivot.filters().set(options.filters);
+    pivot.display().summaries().set(options.summaries);
+    pivot.display().rowLabels().set(options.rowLabels);
+    pivot.display().columnLabels().set(options.columnLabels);
+
+    methods.populate_containers();
+    methods.update_results();
   },
   build_containers : function(){
 
