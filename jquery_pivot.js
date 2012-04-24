@@ -111,19 +111,21 @@ var methods = {
   },
   // Filters
   build_filter_list : function(){
-    var select = '<select>'
+    var select = '<select id="select-constructor">'
     select += '<option></option>'
     $.each(pivot.fields().filterable, function(index, field){
       select += '<option>' + field.name + '</option>';
     })
     select += '</select>'
     $('#filter-list').empty().append(select);
+
     // show pre-defined filters (from init)
     $.each(pivot.filters().all(), function(fieldName, restriction){
       methods.build_filter_field(fieldName, restriction);
     });
 
-    $('#filter-list select').change(function(){
+    // Bind build action to select-constructor explicitly
+    $('#select-constructor').change(function(){
       methods.build_filter_field($(this).val());
     })
   },
