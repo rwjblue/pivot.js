@@ -44,12 +44,10 @@ function reset(){
 * to create the current pivot from scratch.  If passed with no argument will return everything except fields.
 */
 function config(showFields){
-  var showFields = showFields || false;
   var fields;
-
-  if (showFields)
+  if (showFields === undefined)
     fields = cloneFields()
-  else
+  else if (showFields === false)
     fields = "Pass showFields as true in order to view fields here.";
 
   return {  fields: fields,

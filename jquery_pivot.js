@@ -30,7 +30,7 @@ var methods = {
 
     self.populate_containers();
 
-    $('.row-labelable').live('change', function(event) {
+    $('.row-labelable').live('change',function(event) {
       self.update_label_fields('row');
     });
 
