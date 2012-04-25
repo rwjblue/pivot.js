@@ -30,7 +30,7 @@ var methods = {
 
     self.populate_containers();
 
-    $('.row-labelable').live('change', function(event) {
+    $('.row-labelable').live('change',function(event) {
       self.update_label_fields('row');
     });
 
@@ -111,19 +111,21 @@ var methods = {
   },
   // Filters
   build_filter_list : function(){
-    var select = '<select>'
+    var select = '<select id="select-constructor">'
     select += '<option></option>'
     $.each(pivot.fields().filterable, function(index, field){
       select += '<option>' + field.name + '</option>';
     })
     select += '</select>'
     $('#filter-list').empty().append(select);
+
     // show pre-defined filters (from init)
     $.each(pivot.filters().all(), function(fieldName, restriction){
       methods.build_filter_field(fieldName, restriction);
     });
 
-    $('#filter-list select').change(function(){
+    // Bind build action to select-constructor explicitly
+    $('#select-constructor').change(function(){
       methods.build_filter_field($(this).val());
     })
   },
@@ -194,7 +196,7 @@ var methods = {
       displayFields = pivot.display().summaries().get
 
     for (var fieldName in displayFields) {
-      var elem = $(div + ' input[data-field=' + fieldName +']');
+      var elem = $(div + ' input[data-field="' + fieldName +'"]');
       elem.prop("checked", true);
       methods.orderChecked(div, elem);
     };
