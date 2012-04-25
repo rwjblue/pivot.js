@@ -196,7 +196,7 @@ var methods = {
       displayFields = pivot.display().summaries().get
 
     for (var fieldName in displayFields) {
-      var elem = $(div + ' input[data-field=' + fieldName +']');
+      var elem = $(div + ' input[data-field="' + fieldName +'"]');
       elem.prop("checked", true);
       methods.orderChecked(div, elem);
     };
