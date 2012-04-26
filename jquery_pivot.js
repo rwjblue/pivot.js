@@ -130,15 +130,42 @@ var methods = {
     })
   },
   build_filter_field : function(fieldName, selectedValue) {
-    var remove_filter,
-        snip,
-        orderedValues = [],
+    var snip,
+        remove_filter,
         field = pivot.fields().get(fieldName);
 
-    remove_filter = ' <a class="remove-filter-field" style="cursor:pointer;">(X)</a>'
-    snip          = '<label>' + field.name + remove_filter + '</label>' +
-                    '<select class="filter span3" data-field="' + field.name + '">' +
-                    '<option></option>';
+    if (fieldName === '') return;
+
+    if (field.filterType === 'regexp')
+      snip = methods.build_regexp_filter_field(field, selectedValue);
+    else
+      snip = methods.build_select_filter_field(field, selectedValue);
+
+    remove_filter = '<a class="remove-filter-field" style="cursor:pointer;">(X)</a></label>';
+    $('#filter-list').append('<div><hr/><label>' + field.name + remove_filter + snip + '</div>');
+
+    // Update field listeners
+    $('select.filter').on('change', function(event) {
+      methods.update_filtered_rows();
+    });
+
+    $('input[type=text].filter').on('keyup', function(event) {
+      var filterInput = this,
+          eventValue  = $(filterInput).val();
+
+      setTimeout(function(){ if ($(filterInput).val() === eventValue) methods.update_filtered_rows()}, 500);
+    });
+
+    // remove_filter listener
+    $('.remove-filter-field').click(function(){
+      $(this).parents('div').first().remove();
+      methods.update_filtered_rows();
+    })
+  },
+  build_select_filter_field : function(field, selectedValue){
+    var snip  = '<select class="filter span3" data-field="' + field.name + '">' +
+                '<option></option>',
+        orderedValues = [];
 
     for (var value in field.values){
       orderedValues.push(value);
@@ -152,24 +179,24 @@ var methods = {
     });
     snip += '</select>'
 
-    $('#filter-list').append('<div><hr/>'+ snip + '</div>');
-
-    // Update field listener
-    $('.filter').on('change', function(event) {
-      methods.update_filtered_rows();
-    });
-    // remove_filter listener
-    $('.remove-filter-field').click(function(){
-      $(this).parents('div').first().remove();
-      methods.update_filtered_rows();
-    })
+    return snip;
+  },
+  build_regexp_filter_field : function(field, value){
+    if (value === undefined) value = "";
+    return '<input type="text" class="filter span3" data-field="' + field.name + '" value="' + value + '">';
   },
   update_filtered_rows :  function(){
-    var restrictions = {};
+    var restrictions = {}, field;
 
     $('.filter').each(function(index){
-      if ($(this).val() != '')
-        restrictions[$(this).attr('data-field')] = $(this).val();
+      field = pivot.fields().get($(this).attr('data-field'));
+
+      if ($(this).val() !== ''){
+        if (field.filterType === 'regexp')
+          restrictions[$(this).attr('data-field')] = new RegExp($(this).val(),'i');
+        else
+          restrictions[$(this).attr('data-field')] = $(this).val();
+      }
     });
     pivot.filters().set(restrictions);
     methods.update_results();

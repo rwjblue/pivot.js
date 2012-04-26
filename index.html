@@ -140,7 +140,7 @@ function ageBucket(row, field){
 // to be strings.  Name must match csv header row (which must exist) in order to parse correctly.
 var fields = [
     // filterable fields
-    {name: 'last_name',         type: 'string', filterable: true},
+    {name: 'last_name',         type: 'string', filterable: true, filterType: 'regexp'},
     {name: 'first_name',        type: 'string', filterable: true},
     {name: 'state',             type: 'string', filterable: true},
     {name: 'employer',          type: 'string', filterable: true},
