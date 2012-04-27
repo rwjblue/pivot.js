@@ -16,7 +16,7 @@ var methods = {
       methods.process(options);
   },
   process : function(options){
-    if (callbacks && callbacks.beforePopulate) {
+    if (callbacks.beforePopulate) {
       callbacks.beforePopulate();
     };
 
@@ -44,7 +44,7 @@ var methods = {
 
     methods.update_results();
 
-    if (callbacks && callbacks.afterPopulate) {
+    if (callbacks.afterPopulate) {
       callbacks.afterPopulate();
     };
   },
@@ -82,6 +82,11 @@ var methods = {
     if (options.columnLabels  === undefined) options.columnLabels = [];
     if (options.summaries     === undefined) options.summaries    = [];
     if (options.filters       === undefined) options.filters      = {};
+    if (options.callbacks     === undefined) options.callbacks    = {};
+
+    if (options.callbacks.beforeReprocessDisplay) {
+      options.callbacks.afterReprocessDisplay();
+    }
 
     pivot.filters().set(options.filters);
     pivot.display().summaries().set(options.summaries);
@@ -90,6 +95,10 @@ var methods = {
 
     methods.populate_containers();
     methods.update_results();
+
+    if (options.callbacks.afterReprocessDisplay) {
+      options.callbacks.afterReprocessDisplay();
+    }
   },
   build_containers : function(){
 
