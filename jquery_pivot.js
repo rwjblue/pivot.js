@@ -30,15 +30,15 @@ var methods = {
 
     self.populate_containers();
 
-    $('.row-labelable').live('change',function(event) {
+    $(document).on('change', '.row-labelable', function(event) {
       self.update_label_fields('row');
     });
 
-    $('.column-labelable').live('change', function(event) {
+    $(document).on('change', '.column-labelable', function(event) {
       self.update_label_fields('column');
     });
 
-    $('.summary').live('change', function(event) {
+    $(document).on('change', '.summary', function(event) {
       self.update_summary_fields();
     });
 
