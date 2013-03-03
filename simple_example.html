@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>Pivot.js</title>
+  <link rel="stylesheet" href="./lib/css/pivot.css" type="text/css" />
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+  <!-- jquery_pivot must be loaded after pivot.js and jQuery -->
+  <script type="text/javascript" src="./pivot.js"></script>
+  <script type="text/javascript" src="./jquery_pivot.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      csv = "last_name,first_name,email,date_ordered,date_delivered,sale_price,unit_identifier\n" +
+          "doo, scooby, scoobydoo12512@gmail.com,2012-02-12,2012-02-17,9.99,big-bang-rpsls\n" +
+          "flinstone,fred,freddyf12516@gmail.com,2012-02-12,2012-02-17,9.99,dr-who-bad-wolf\n" +
+          "spiegel,spike,bebop1256@gmail.com,2012-02-12,2012-02-17,9.99,tng-engage\n"; 
+
+      fields =[{name: 'last_name',      type: 'string',   filterable: true},
+               {name: 'first_name',     type: 'string',   filterable: true},
+               {name: 'email',          type: 'string',   filterable: true},
+               {name: 'date_ordered',   type: 'date',     filterable: true},
+               {name: 'date_delivered', type: 'date',     rowLabelable: false},
+               {name: 'sale_price',     type: 'float',    filterable: true},
+               {name: 'unit_identifier',type: 'string',   filterable: true, summarizable: 'count' }];
+
+      $('#pivot-menu-container').pivot_display('setup', {csv:csv,fields:fields});
+    });
+  </script>
+</head>
+<body>
+<div>
+  <div>
+    <div id="pivot-menu-container"></div>
+    <div id="results"></div>
+  </div>
+</div>
+</body>
