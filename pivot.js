@@ -51,7 +51,7 @@
 *             {name: 'first_name',        type: 'string',   filterable: true},
 *             {name: 'zip_code',          type: 'integer',  filterable: true},
 *             {name: 'pseudo_zip',        type: 'integer',  filterable: true },
-*             {name: 'billed_amount',     type: 'float',    labelable: false,},
+*             {name: 'billed_amount',     type: 'float',    rowLabelable: false,},
 *             {name: 'last_billed_date',  type: 'date',     filterable: true}
 *
 *     // from csv data:
