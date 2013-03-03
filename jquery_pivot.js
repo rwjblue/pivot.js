@@ -108,8 +108,12 @@ var methods = {
                      '   <div id="filter-list"></div>' +
                      '  </div>' +
                      '  <div style="width:300px;float:left;margin-left:20px;">' +
-                     '  <h2>Label Fields</h2>' +
-                     '   <div id="label-fields"></div>' +
+                     '  <h2>Row Label Fields</h2>' +
+                     '   <div id="row-label-fields"></div>' +
+                     '  </div>' +
+                     '  <div style="width:300px;float:left;margin-left:20px;">' +
+                     '  <h2>Column Label Fields</h2>' +
+                     '   <div id="column-label-fields"></div>' +
                      '  </div>' +
                      '  <div style="width:300px;float:left;margin-left:20px;">' +
                      '  <h2>Summary Fields</h2>' +
