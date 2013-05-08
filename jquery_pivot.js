@@ -179,7 +179,7 @@ var methods = {
     })
   },
   build_select_filter_field : function(field, selectedValue){
-    var snip  = '<select class="filter span3" multiple data-field="' + field.name + '">' +
+    var snip  = '<select class="filter span3" '+(field.filterType==='multiselect'?'multiple':'')+' data-field="' + field.name + '">' +
                 '<option></option>',
         orderedValues = [];
 
