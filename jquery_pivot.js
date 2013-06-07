@@ -162,8 +162,9 @@ var methods = {
       methods.update_filtered_rows();
     });
     
-    //Optional Chosen integration
+    //Optional Chosen/Select2 integration
     if($.fn.chosen!==undefined) $('select.filter').chosen();
+    else if($.fn.select2!==undefined) $('select.filter').select2();
 
     $('input[type=text].filter').on('keyup', function(event) {
       var filterInput = this,
