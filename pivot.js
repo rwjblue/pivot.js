@@ -963,7 +963,7 @@ function pivotData(type) {
           };
         }
 
-        populateColumnLabelColumnsResults(columnLabelColumns);
+        populateColumnLabelColumnsResults(key, columnLabelColumns);
       };
     };
 
@@ -1029,8 +1029,16 @@ function pivotData(type) {
     return resultsColumns;
   };
 
-  function populateColumnLabelColumnsResults(columnLabels){
-    var keys  = objectKeys(columnLabels).sort(),
+  function populateColumnLabelColumnsResults(key, columnLabels){
+    var sortedKeys; 
+    if (fields[key].sortFunction !== undefined){
+		//custom sorting function for column labels
+        sortedKeys = objectKeys(columnLabels).sort(fields[key].sortFunction);
+    }else{
+		//natural order sorting function for column labels
+        sortedKeys = objectKeys(columnLabels).sort();
+    }
+    var keys  = sortedKeys,
         i     = -1,
         m     = keys.length,
         w     = objectKeys(displayFields.summaries).length;
