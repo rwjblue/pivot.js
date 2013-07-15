@@ -125,24 +125,39 @@ describe('pivot', function () {
       expect(pivot.data().all.length).toEqual(2);
     });
 
-    it('should allow filtering on date/time fields', function(){
-      pivot.filters().apply({last_billed_date: 'Sun Feb 12 2012 19:00:00 GMT-0500 (EST)'});
-      expect(pivot.data().all.length).toEqual(1);
+    describe('Date/Time', function() {
 
       // only test iso8601 type dates if the browser parses them properly
       if (new Date('2012-02-13').toString() !== 'Invalid Date') {
-        pivot.filters().apply({last_billed_date: Date.parse('2012-02-13')});
-        expect(pivot.data().all.length).toEqual(1);
 
-        pivot.filters().apply({last_billed_date: '2012-02-13'});
-        expect(pivot.data().all.length).toEqual(1);
+        describe('ISO8601 dates', function() {
+          it('should filter based on Date.parse output (milliseconds from epoch (unix timestamp * 1000))', function(){
+            pivot.filters().apply({last_billed_date: Date.parse('2012-02-13')});
+            expect(pivot.data().all.length).toEqual(1);
+          });
+
+          it('should filter when given YYYY-MM-DD format string', function(){
+            pivot.filters().apply({last_billed_date: '2012-02-13'});
+            expect(pivot.data().all.length).toEqual(1);
+          });
+        });
+
       }
 
-      pivot.filters().apply({last_billed_date: 1329091200000});
-      expect(pivot.data().all.length).toEqual(1);
+      it('should filter based on an RFC1123 date string', function(){
+        pivot.filters().apply({last_billed_date: 'Sun Feb 12 2012 19:00:00 GMT-0500 (EST)'});
+        expect(pivot.data().all.length).toEqual(1);
+      });
 
-      pivot.filters().apply({last_billed_date: '1329091200000'});
-      expect(pivot.data().all.length).toEqual(1);
+      it('should allow filtering on milliseconds from epoch (unix timestamp * 1000)', function(){
+        pivot.filters().apply({last_billed_date: 1329091200000});
+        expect(pivot.data().all.length).toEqual(1);
+      });
+
+      it('should allow filtering on milliseconds from epoch (unix timestamp * 1000) in string format', function(){
+        pivot.filters().apply({last_billed_date: '1329091200000'});
+        expect(pivot.data().all.length).toEqual(1);
+      });
     });
 
     it('should filter given a regular expression', function(){
