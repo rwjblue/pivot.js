@@ -161,6 +161,10 @@ var methods = {
     $('select.filter').on('change', function(event) {
       methods.update_filtered_rows();
     });
+    
+    //Optional Chosen/Select2 integration
+    if($.fn.chosen!==undefined) $('select.filter').chosen();
+    else if($.fn.select2!==undefined) $('select.filter').select2();
 
     $('input[type=text].filter').on('keyup', function(event) {
       var filterInput = this,
@@ -176,7 +180,7 @@ var methods = {
     })
   },
   build_select_filter_field : function(field, selectedValue){
-    var snip  = '<select class="filter span3" data-field="' + field.name + '">' +
+    var snip  = '<select class="filter span3" '+(field.filterType==='multiselect'?'multiple':'')+' data-field="' + field.name + '">' +
                 '<option></option>',
         orderedValues = [];
 
@@ -204,7 +208,7 @@ var methods = {
     $('.filter').each(function(index){
       field = pivot.fields().get($(this).attr('data-field'));
 
-      if ($(this).val() !== ''){
+      if ($(this).val() !== null && $(this).val()[0] !== ''){
         if (field.filterType === 'regexp')
           restrictions[$(this).attr('data-field')] = new RegExp($(this).val(),'i');
         else
