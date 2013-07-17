@@ -1031,15 +1031,7 @@ function pivotData(type) {
   };
 
   function populateColumnLabelColumnsResults(key, columnLabels){
-    var sortedKeys; 
-    if (fields[key].sortFunction !== undefined){
-		//custom sorting function for column labels
-        sortedKeys = objectKeys(columnLabels).sort(fields[key].sortFunction);
-    }else{
-		//natural order sorting function for column labels
-        sortedKeys = objectKeys(columnLabels).sort();
-    }
-    var keys  = sortedKeys,
+    var keys  = objectKeys(columnLabels).sort(fields[key].sortFunction),
         i     = -1,
         m     = keys.length,
         w     = objectKeys(displayFields.summaries).length;
