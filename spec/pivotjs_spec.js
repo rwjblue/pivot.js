@@ -216,6 +216,14 @@ describe('pivot', function () {
 
       });
     });
+
+    it('allows for storing a sortFunction for a field', function(){
+      pivot.fields().add({name: 'zip_code', type: 'integer', sortFunction: function(a,b){ return b - a}});
+
+      pivot.csv(sample_csv);
+
+      expect(pivot.fields().get('zip_code')['sortFunction']).toBeDefined();
+    });
   });
 
   describe('Display', function(){
@@ -306,6 +314,15 @@ describe('pivot', function () {
       expect(pivot.results().columns()[2].fieldName).toEqual('2012_01');
       expect(pivot.results().columns()[2].width).toEqual(1);
       expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual(100);
+    });
+
+    it('should sort the results of the column label fields using the fields sortFunction', function(){
+      pivot.fields().add({name: 'zip_code', type: 'integer', columnLabelable: true, sortFunction: function(a,b){ return b - a}});
+      pivot.csv(sample_csv);
+      pivot.display().summaries().set(['billed_amount_sum']);
+      pivot.display().columnLabels().set(['zip_code']);
+
+      expect(pivot.results().columns()[0].fieldName).toEqual('39401');
     });
   });
 });
