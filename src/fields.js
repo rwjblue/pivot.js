@@ -128,6 +128,8 @@
   * * columnLabelable - Allows you to display columnLabels based off this field
   * * summarizable - Allows you to create a summary field.
   * * pseudo - Allows you to treat an anonymous function as a field (ie you could treat the sum of a set of values as a field)
+  * * sortFunction - Allows you to override the default sort function for columnLabelable fields.
+  * * displayFunction - Allows you to override the default display function. Using this function you can completely customize the way a field is displayed without having to modify the internal storage.
   * Be sure to run through the source on this one if you are unsure as to what it does.  It's pretty straightforward, but definitely bears looking into.
   * @param {Object} field
   */
@@ -255,9 +257,10 @@
           case 'date':
             return value;
           default:
-            var output = Date.parse(value);
-            if (isNaN(output)) output = parseInt(value);
-            return output;
+            if (/^\d+$/.test(value))
+              return parseInt(value);
+            else
+              return Date.parse(value);
         };
       default:
         return value.toString();

@@ -31,7 +31,7 @@
 * &gt; table&quot;) showing the summarized data.
 *
 * In our case, results (or the pivot-table) will be displayed as an HTML table
-* pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
+* pivoting from the input data (CSV or JSON). Without further ado let&#39;s get to usage.
 *
 * View an [example](http://rjackson.github.com/pivot.js/).
 *
@@ -41,7 +41,7 @@
 *
 * - `csv` - which should contain a valid string of comma separated values.  It is
 *   __important to note__ that you must include a header row in the CSV for pivot
-*   to work properly  (you'll understand why in a minute).
+*   to work properly  (you&#39;ll understand why in a minute).
 *
 * - `json` - which should contain a valid JSON string. At this time this string
 *   must be an array of arrays, and not an array of objects (storing the field
@@ -51,25 +51,25 @@
 *   pivot on how to interact with the fields you pass in.  It keys off of the
 *   header row names.  And is formated like so:
 *
-*     [ {name: 'header-name', type: 'string', optional_attributes: 'optional field' },
-*     {name: 'header-name', type: 'string', optional_attributes: 'optional field' }]
+*     [ {name: &#39;header-name&#39;, type: &#39;string&#39;, optional_attributes: &#39;optional field&#39; },
+*     {name: &#39;header-name&#39;, type: &#39;string&#39;, optional_attributes: &#39;optional field&#39; }]
 *
 *
 * - `filters` (default is empty) - which should contain any filters you would like to restrict your data to.  A filter is defined as an object like so:
 *
-*     {zip_code: '34471'}
+*     {zip_code: &#39;34471&#39;}
 *
 *
 * Those are the options that you should consider.  There are other options that are well covered in the spec
 * A valid pivot could then be set up from like so.
 *
 *
-*     var field_definitions = [{name: 'last_name',   type: 'string',   filterable: true},
-*             {name: 'first_name',        type: 'string',   filterable: true},
-*             {name: 'zip_code',          type: 'integer',  filterable: true},
-*             {name: 'pseudo_zip',        type: 'integer',  filterable: true },
-*             {name: 'billed_amount',     type: 'float',    labelable: false,},
-*             {name: 'last_billed_date',  type: 'date',     filterable: true}
+*     var field_definitions = [{name: &#39;last_name&#39;,   type: &#39;string&#39;,   filterable: true},
+*             {name: &#39;first_name&#39;,        type: &#39;string&#39;,   filterable: true},
+*             {name: &#39;zip_code&#39;,          type: &#39;integer&#39;,  filterable: true},
+*             {name: &#39;pseudo_zip&#39;,        type: &#39;integer&#39;,  filterable: true },
+*             {name: &#39;billed_amount&#39;,     type: &#39;float&#39;,    rowLabelable: false,},
+*             {name: &#39;last_billed_date&#39;,  type: &#39;date&#39;,     filterable: true}
 *
 *     // from csv data:
 *     var csv_string  =  &quot;last_name,first_name,zip_code,billed_amount,last_billed_date\n&quot; +
@@ -78,15 +78,15 @@
 *     pivot.init({csv: csv_string, fields: field_definitions});
 *
 *     // from json data:
-*     var json_string = '[[&quot;last_name&quot;,&quot;first_name&quot;,&quot;zip_code&quot;,&quot;billed_amount&quot;,&quot;last_billed_date&quot;],' +
-*                         ' [&quot;Jackson&quot;, &quot;Robert&quot;, 34471, 100.00, &quot;Tue, 24 Jan 2012 00:00:00 +0000&quot;],' +
-*                         ' [&quot;Smith&quot;, &quot;Jon&quot;, 34471, 173.20, &quot;Mon, 13 Feb 2012 00:00:00 +0000&quot;]]'
+*     var json_string = &#39;[[&quot;last_name&quot;,&quot;first_name&quot;,&quot;zip_code&quot;,&quot;billed_amount&quot;,&quot;last_billed_date&quot;],&#39; +
+*                         &#39; [&quot;Jackson&quot;, &quot;Robert&quot;, 34471, 100.00, &quot;Tue, 24 Jan 2012 00:00:00 +0000&quot;],&#39; +
+*                         &#39; [&quot;Smith&quot;, &quot;Jon&quot;, 34471, 173.20, &quot;Mon, 13 Feb 2012 00:00:00 +0000&quot;]]&#39;
 *
 *     pivot.init({json: json_string, fields: field_definitions});
 *
 */
 var pivot = (function(){
-'use strict';
+&#39;use strict&#39;;
 
 var fields, filters, rawData, data, dataFilters, displayFields, results, resultsColumns;
 
@@ -178,30 +178,30 @@ function pivotUtils(){
   };
 
   function padRight(input, width, padString){
-    return pad('right', input, width, padString)
+    return pad(&#39;right&#39;, input, width, padString)
   };
 
   function padLeft(input, width, padString){
-    return pad('left', input, width, padString)
+    return pad(&#39;left&#39;, input, width, padString)
   };
 
   function formatDate(value){
-    return value.getUTCFullYear() + '-' + padLeft((value.getUTCMonth() + 1), 2, &quot;0&quot;) + '-' + padLeft(value.getUTCDate(), 2, '0');
+    return value.getUTCFullYear() + &#39;-&#39; + padLeft((value.getUTCMonth() + 1), 2, &quot;0&quot;) + &#39;-&#39; + padLeft(value.getUTCDate(), 2, &#39;0&#39;);
   };
 
   function formatTime(value){
-    return formatDate(value) + ' ' + padLeft(value.getUTCHours(), 2,'0') + ':' + padLeft(value.getUTCMinutes(),2,'0');
+    return formatDate(value) + &#39; &#39; + padLeft(value.getUTCHours(), 2,&#39;0&#39;) + &#39;:&#39; + padLeft(value.getUTCMinutes(),2,&#39;0&#39;);
   };
 
   function isArray(arg){
     if(!Array.isArray)
-      return objectType(arg) == 'array';
+      return objectType(arg) == &#39;array&#39;;
     else
       return Array.isArray(arg);
   };
 
   function isRegExp(arg){
-    return objectType(arg) == 'regexp';
+    return objectType(arg) == &#39;regexp&#39;;
   };
 
   function shallowClone(input){
@@ -249,9 +249,9 @@ function processHeaderRow(row){
 
   function processJSON(input) {
     var header,
-        pseudoFields  = restrictFields('pseudo');
+        pseudoFields  = restrictFields(&#39;pseudo&#39;);
 
-    if (objectType(input) === 'string') input = JSON.parse(input);
+    if (objectType(input) === &#39;string&#39;) input = JSON.parse(input);
     rawData     = [];
 
     var o = {}, j = -1, m = input.length;
@@ -266,7 +266,7 @@ function processHeaderRow(row){
   // Accepts csv as a string
   function processCSV(text) {
     var header,
-        pseudoFields = restrictFields('pseudo');
+        pseudoFields = restrictFields(&#39;pseudo&#39;);
 
     rawData = processRows(text, function(row, i){
       if (i === 0)
@@ -403,7 +403,7 @@ function processHeaderRow(row){
   };
 
 <span id='Pivot-method-appendFilter'>  /**
-</span>  * Takes a new restrction (filter) and appends it to current pivot's filters
+</span>  * Takes a new restrction (filter) and appends it to current pivot&#39;s filters
   * @param {Object} newRestriction should looke like {&quot;last_name&quot;:&quot;Jackson&quot;}
   */
   function appendFilter(newRestriction) {
@@ -416,14 +416,14 @@ function processHeaderRow(row){
   };
 
 <span id='Pivot-method-getFilters'>  /**
-</span>  * Returns current pivot's filters
+</span>  * Returns current pivot&#39;s filters
   */
   function getFilters(){
     return filters;
   };
 
 <span id='Pivot-method-setFilters'>  /**
-</span>  * Accepts list of restrictions, assigns them  as current pivot's filters and casts their values.
+</span>  * Accepts list of restrictions, assigns them  as current pivot&#39;s filters and casts their values.
   * @param {Object} restrictions - should looke something like {&quot;employer&quot;:&quot;Acme Corp&quot;}
   */
   function setFilters(restrictions){
@@ -433,7 +433,7 @@ function processHeaderRow(row){
   };
 
 <span id='Pivot-method-applyFilter'>  /**
-</span>  * Applies the current pivot's filters to the data returning a list of values
+</span>  * Applies the current pivot&#39;s filters to the data returning a list of values
   * Optionally allows you to set filters and apply them.
   * @param {Object} restrictions allows you to pass the filters to apply without using set first.
   */
@@ -518,11 +518,11 @@ function processHeaderRow(row){
   */
   function pivotFields(type){
     var opts = {
-      columnLabelable:  restrictFields('columnLabelable'),
-      rowLabelable:     restrictFields('rowLabelable'),
-      summarizable:     restrictFields('summarizable'),
-      filterable:       restrictFields('filterable'),
-      pseudo:           restrictFields('pseudo'),
+      columnLabelable:  restrictFields(&#39;columnLabelable&#39;),
+      rowLabelable:     restrictFields(&#39;rowLabelable&#39;),
+      summarizable:     restrictFields(&#39;summarizable&#39;),
+      filterable:       restrictFields(&#39;filterable&#39;),
+      pseudo:           restrictFields(&#39;pseudo&#39;),
       clone:            cloneFields,
       add:              appendField,
       all:              getFields,
@@ -555,7 +555,7 @@ function processHeaderRow(row){
     for (var field in fields){
       var newField = {};
       for (var key in fields[field]){
-        if (fields[field].hasOwnProperty(key) &amp;&amp; key !== 'values')
+        if (fields[field].hasOwnProperty(key) &amp;&amp; key !== &#39;values&#39;)
           newField[key] = fields[field][key];
       }
       fieldsOutput.push(newField);
@@ -578,7 +578,7 @@ function processHeaderRow(row){
 
 <span id='Pivot-method-restrictFields'>  /**
 </span>  * Returns list of defined fields filtered by type
-  * @param {String} 'columnLabelable', 'rowLabelable', 'summarizable', 'filterable', or 'pseudo'
+  * @param {String} &#39;columnLabelable&#39;, &#39;rowLabelable&#39;, &#39;summarizable&#39;, &#39;filterable&#39;, or &#39;pseudo&#39;
   */
   function restrictFields(type){
     var retFields = [];
@@ -591,7 +591,7 @@ function processHeaderRow(row){
 
 <span id='Pivot-method-getField'>  /**
 </span>  * Attr reader for fields
-  * @param {String} Something like 'last_name'
+  * @param {String} Something like &#39;last_name&#39;
   */
   function getField(name){
     return fields[name];
@@ -625,21 +625,23 @@ function processHeaderRow(row){
   }
 
 <span id='Pivot-method-appendField'>  /**
-</span>  * The main engine by which you create and assign field.  Takes an object that should look something like {name: 'last_name',type: 'string', filterable: true}, and assigns all the associated attributes to their correct state.
+</span>  * The main engine by which you create and assign field.  Takes an object that should look something like {name: &#39;last_name&#39;,type: &#39;string&#39;, filterable: true}, and assigns all the associated attributes to their correct state.
   * Allowed field attributes are
   * * filterable - Allows you to filter based off this field
   * * rowLabelable - Allows you to display rowLabels based off this field
   * * columnLabelable - Allows you to display columnLabels based off this field
   * * summarizable - Allows you to create a summary field.
   * * pseudo - Allows you to treat an anonymous function as a field (ie you could treat the sum of a set of values as a field)
-  * Be sure to run through the source on this one if you are unsure as to what it does.  It's pretty straightforward, but definitely bears looking into.
+  * * sortFunction - Allows you to override the default sort function for columnLabelable fields.
+  * * displayFunction - Allows you to override the default display function. Using this function you can completely customize the way a field is displayed without having to modify the internal storage.
+  * Be sure to run through the source on this one if you are unsure as to what it does.  It&#39;s pretty straightforward, but definitely bears looking into.
   * @param {Object} field
   */
   function appendField(field){
     // if field is a simple string setup and object with that string as a name
-    if (objectType(field) === 'string') field = {name: field};
+    if (objectType(field) === &#39;string&#39;) field = {name: field};
 
-    if (field.type              === undefined) field.type             = 'string';
+    if (field.type              === undefined) field.type             = &#39;string&#39;;
     if (field.pseudo            === undefined) field.pseudo           = false;
     if (field.rowLabelable      === undefined) field.rowLabelable     = true;
     if (field.columnLabelable   === undefined) field.columnLabelable  = false;
@@ -653,9 +655,9 @@ function processHeaderRow(row){
       summarizable_field.dataSource     = field.name;
 
       if (summarizable_field.summarizable !== true)
-        summarizable_field.name = summarizable_field.name + '_' + summarizable_field.summarizable;
+        summarizable_field.name = summarizable_field.name + &#39;_&#39; + summarizable_field.summarizable;
       else
-        summarizable_field.name = summarizable_field.name + '_count'
+        summarizable_field.name = summarizable_field.name + &#39;_count&#39;
 
       appendField(summarizable_field);
 
@@ -664,10 +666,10 @@ function processHeaderRow(row){
     } else if (field.summarizable) {
       if (field.summarizeFunction === undefined){
         switch (field.summarizable){
-          case 'sum':
+          case &#39;sum&#39;:
             field.summarizeFunction = defaultSummarizeFunctionSum;
             break;
-          case 'avg':
+          case &#39;avg&#39;:
             field.summarizeFunction = defaultSummarizeFunctionAvg;
             break;
           default:
@@ -682,7 +684,7 @@ function processHeaderRow(row){
     }
 
     if (field.pseudo &amp;&amp; field.pseudoFunction === undefined)
-      field.pseudoFunction = function(row){ return '' };
+      field.pseudoFunction = function(row){ return &#39;&#39; };
 
     if (field.displayFunction === undefined)
       field.displayFunction = displayFieldValue;
@@ -697,7 +699,7 @@ function processHeaderRow(row){
   };
 
 <span id='Pivot-method-addFieldValue'>  /**
-</span>  * Adds value to field based off of the Fields' displayFunction, defaults to count.
+</span>  * Adds value to field based off of the Fields&#39; displayFunction, defaults to count.
   */
   function addFieldValue(field, value){
     if (fields[field] === undefined || fields[field].filterable === false) return;
@@ -714,14 +716,14 @@ function processHeaderRow(row){
   */
   function displayFieldValue(value, fieldName){
     var field;
-    if (objectType(fieldName) === 'string') field = fields[fieldName];
+    if (objectType(fieldName) === &#39;string&#39;) field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
     switch (field.type){
       case &quot;cents&quot;:
-        return '$' + (value/100).toFixed(2);
+        return &#39;$&#39; + (value/100).toFixed(2);
       case &quot;currency&quot;:
-        return '$' + value.toFixed(2);
+        return &#39;$&#39; + value.toFixed(2);
       case &quot;date&quot;:
         return formatDate(new Date(value));
       case &quot;time&quot;:
@@ -736,32 +738,33 @@ function processHeaderRow(row){
   */
   function castFieldValue(fieldName, value){
     var field, retValue;
-    if (objectType(fieldName) === 'string') field = fields[fieldName];
+    if (objectType(fieldName) === &#39;string&#39;) field = fields[fieldName];
     if (field === undefined) field = appendField(fieldName);
 
     switch (field.type){
       case &quot;integer&quot;:
       case &quot;cents&quot;:
-        if (objectType(value) === 'number')
+        if (objectType(value) === &#39;number&#39;)
           return value;
         else
           return parseInt(value, 10);
       case &quot;float&quot;:
       case &quot;currency&quot;:
-        if (objectType(value) === 'number')
+        if (objectType(value) === &#39;number&#39;)
           return value;
         else
           return parseFloat(value, 10);
       case &quot;date&quot;:
       case &quot;time&quot;:
         switch (objectType(value)){
-          case 'number':
-          case 'date':
+          case &#39;number&#39;:
+          case &#39;date&#39;:
             return value;
           default:
-            var output = Date.parse(value);
-            if (isNaN(output)) output = parseInt(value);
-            return output;
+            if (/^\d+$/.test(value))
+              return parseInt(value);
+            else
+              return Date.parse(value);
         };
       default:
         return value.toString();
@@ -769,7 +772,7 @@ function processHeaderRow(row){
   };
 <span id='Pivot-method-pivotData'>/**
 </span> * Returns object containing the raw fields(rawData) and filtered fields(data).
- * @param  string, either 'raw', or 'all'.
+ * @param  string, either &#39;raw&#39;, or &#39;all&#39;.
  * @return {Object} An object containing lists of fields
  */
 function pivotData(type) {
@@ -840,14 +843,14 @@ function pivotData(type) {
   };
 
 <span id='Pivot-method-appendDisplayField'>  /**
-</span>  * This method allows you to append a new label field to the specified type. For example, you could set a new displayRowLabel by sending it as the type and 'city' as the field
-  * @param string type - must be either 'rowLabels', 'columnLabels', or 'summaries'
+</span>  * This method allows you to append a new label field to the specified type. For example, you could set a new displayRowLabel by sending it as the type and &#39;city&#39; as the field
+  * @param string type - must be either &#39;rowLabels&#39;, &#39;columnLabels&#39;, or &#39;summaries&#39;
   * @param string field - Specify the label you would like to add.
   * @private
   * @return {undefined}
   */
   function appendDisplayField(type, field){
-    if (objectType(field) === 'string')
+    if (objectType(field) === &#39;string&#39;)
       field = fields[field];
 
     resetResults();
@@ -856,7 +859,7 @@ function pivotData(type) {
 
 <span id='Pivot-method-setDisplayFields'>  /**
 </span>  * This method simply calls appendDisplayField on a collection passing in each to appendDisplayField.  The object should look something like the following
-  *    {'rowLabels':['city','state'],'columnLabels':['billed_amount']}
+  *    {&#39;rowLabels&#39;:[&#39;city&#39;,&#39;state&#39;],&#39;columnLabels&#39;:[&#39;billed_amount&#39;]}
   * @private
   * @return {undefined}
   */
@@ -872,29 +875,29 @@ function pivotData(type) {
 
 <span id='Pivot-method-setRowLabelDisplayFields'>  /**
 </span>  * Allows setting of row label fields
-  * @param listing Should look like ['city','state']
+  * @param listing Should look like [&#39;city&#39;,&#39;state&#39;]
   * @return {undefined}
   */
   function setRowLabelDisplayFields(listing){
-    setDisplayFields('rowLabels', listing);
+    setDisplayFields(&#39;rowLabels&#39;, listing);
   };
 
 <span id='Pivot-method-setColumnLabelDisplayFields'>  /**
 </span>  * Allows setting of column label fields
-  * @param listing - Should look like ['city','state']
+  * @param listing - Should look like [&#39;city&#39;,&#39;state&#39;]
   * @return {undefined}
   */
   function setColumnLabelDisplayFields(listing){
-    setDisplayFields('columnLabels', listing);
+    setDisplayFields(&#39;columnLabels&#39;, listing);
   };
 
 <span id='Pivot-method-setSummaryDisplayFields'>  /**
 </span>  * Allows setting of summary label fields
-  * @param listing - Should look like ['billed_amount']
+  * @param listing - Should look like [&#39;billed_amount&#39;]
   * @return {undefined}
   */
   function setSummaryDisplayFields(listing){
-    setDisplayFields('summaries', listing);
+    setDisplayFields(&#39;summaries&#39;, listing);
   };
 <span id='Pivot-method-pivotResults'>  /**
 </span>  * Entry point for several results methods.
@@ -939,13 +942,13 @@ function pivotData(type) {
 
     while (++i &lt; m) {
       var row       = data[i],
-          resultKey = '';
+          resultKey = &#39;&#39;;
 
       for (var key in displayFields.rowLabels) {
         if (displayFields.rowLabels.hasOwnProperty(key)) {
-          if (i === 0) resultsColumns.push({fieldName: key, width: 1, type: 'row'});
+          if (i === 0) resultsColumns.push({fieldName: key, width: 1, type: &#39;row&#39;});
 
-          resultKey += key + ':' + row[key] + '|';
+          resultKey += key + &#39;:&#39; + row[key] + &#39;|&#39;;
         }
       }
       if (results[resultKey] === undefined) {
@@ -980,7 +983,7 @@ function pivotData(type) {
           };
         }
 
-        populateColumnLabelColumnsResults(columnLabelColumns);
+        populateColumnLabelColumnsResults(key, columnLabelColumns);
       };
     };
 
@@ -1040,20 +1043,20 @@ function pivotData(type) {
   function populateSummaryColumnsResults(){
     for (var key in displayFields.summaries){
       if (displayFields.summaries.hasOwnProperty(key))
-        resultsColumns.push({fieldName: key, width: 1, type: 'summary'})
+        resultsColumns.push({fieldName: key, width: 1, type: &#39;summary&#39;})
     }
 
     return resultsColumns;
   };
 
-  function populateColumnLabelColumnsResults(columnLabels){
-    var keys  = objectKeys(columnLabels).sort(),
+  function populateColumnLabelColumnsResults(key, columnLabels){
+    var keys  = objectKeys(columnLabels).sort(fields[key].sortFunction),
         i     = -1,
         m     = keys.length,
         w     = objectKeys(displayFields.summaries).length;
 
     while (++i &lt; m){
-      resultsColumns.push({fieldName: keys[i], width: w, type: 'column'})
+      resultsColumns.push({fieldName: keys[i], width: w, type: &#39;column&#39;})
     };
 
 

@@ -9,12 +9,14 @@
     <link rel="stylesheet" type="text/css" href="extjs-build/resources/css/ext-all.css">
 
     <script type="text/javascript">
-        function loadInlineExample(code, options) {
+        function loadInlineExample(code, options, callback) {
             try {
                 document.body.innerHTML = '';
                 eval(code);
+                callback && callback(true);
             } catch (e) {
                 document.body.innerHTML = e;
+                callback && callback(false, e);
             }
         }
     </script>

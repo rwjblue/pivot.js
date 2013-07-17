@@ -82,7 +82,7 @@
           };
         }
 
-        populateColumnLabelColumnsResults(columnLabelColumns);
+        populateColumnLabelColumnsResults(key, columnLabelColumns);
       };
     };
 
@@ -148,8 +148,8 @@
     return resultsColumns;
   };
 
-  function populateColumnLabelColumnsResults(columnLabels){
-    var keys  = objectKeys(columnLabels).sort(),
+  function populateColumnLabelColumnsResults(key, columnLabels){
+    var keys  = objectKeys(columnLabels).sort(fields[key].sortFunction),
         i     = -1,
         m     = keys.length,
         w     = objectKeys(displayFields.summaries).length;

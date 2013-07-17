@@ -125,24 +125,39 @@ describe('pivot', function () {
       expect(pivot.data().all.length).toEqual(2);
     });
 
-    it('should allow filtering on date/time fields', function(){
-      pivot.filters().apply({last_billed_date: 'Sun Feb 12 2012 19:00:00 GMT-0500 (EST)'});
-      expect(pivot.data().all.length).toEqual(1);
+    describe('Date/Time', function() {
 
       // only test iso8601 type dates if the browser parses them properly
       if (new Date('2012-02-13').toString() !== 'Invalid Date') {
-        pivot.filters().apply({last_billed_date: Date.parse('2012-02-13')});
-        expect(pivot.data().all.length).toEqual(1);
 
-        pivot.filters().apply({last_billed_date: '2012-02-13'});
-        expect(pivot.data().all.length).toEqual(1);
+        describe('ISO8601 dates', function() {
+          it('should filter based on Date.parse output (milliseconds from epoch (unix timestamp * 1000))', function(){
+            pivot.filters().apply({last_billed_date: Date.parse('2012-02-13')});
+            expect(pivot.data().all.length).toEqual(1);
+          });
+
+          it('should filter when given YYYY-MM-DD format string', function(){
+            pivot.filters().apply({last_billed_date: '2012-02-13'});
+            expect(pivot.data().all.length).toEqual(1);
+          });
+        });
+
       }
 
-      pivot.filters().apply({last_billed_date: 1329091200000});
-      expect(pivot.data().all.length).toEqual(1);
+      it('should filter based on an RFC1123 date string', function(){
+        pivot.filters().apply({last_billed_date: 'Sun Feb 12 2012 19:00:00 GMT-0500 (EST)'});
+        expect(pivot.data().all.length).toEqual(1);
+      });
 
-      pivot.filters().apply({last_billed_date: '1329091200000'});
-      expect(pivot.data().all.length).toEqual(1);
+      it('should allow filtering on milliseconds from epoch (unix timestamp * 1000)', function(){
+        pivot.filters().apply({last_billed_date: 1329091200000});
+        expect(pivot.data().all.length).toEqual(1);
+      });
+
+      it('should allow filtering on milliseconds from epoch (unix timestamp * 1000) in string format', function(){
+        pivot.filters().apply({last_billed_date: '1329091200000'});
+        expect(pivot.data().all.length).toEqual(1);
+      });
     });
 
     it('should filter given a regular expression', function(){
@@ -200,6 +215,14 @@ describe('pivot', function () {
         expect(pivot.fields().get('zip_code_count')).toBeDefined();
 
       });
+    });
+
+    it('allows for storing a sortFunction for a field', function(){
+      pivot.fields().add({name: 'zip_code', type: 'integer', sortFunction: function(a,b){ return b - a}});
+
+      pivot.csv(sample_csv);
+
+      expect(pivot.fields().get('zip_code')['sortFunction']).toBeDefined();
     });
   });
 
@@ -291,6 +314,15 @@ describe('pivot', function () {
       expect(pivot.results().columns()[2].fieldName).toEqual('2012_01');
       expect(pivot.results().columns()[2].width).toEqual(1);
       expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual(100);
+    });
+
+    it('should sort the results of the column label fields using the fields sortFunction', function(){
+      pivot.fields().add({name: 'zip_code', type: 'integer', columnLabelable: true, sortFunction: function(a,b){ return b - a}});
+      pivot.csv(sample_csv);
+      pivot.display().summaries().set(['billed_amount_sum']);
+      pivot.display().columnLabels().set(['zip_code']);
+
+      expect(pivot.results().columns()[0].fieldName).toEqual('39401');
     });
   });
 });
