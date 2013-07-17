@@ -742,9 +742,10 @@ function processHeaderRow(row){
           case 'date':
             return value;
           default:
-            var output = Date.parse(value);
-            if (isNaN(output)) output = parseInt(value);
-            return output;
+            if (/^\d+$/.test(value))
+              return parseInt(value);
+            else
+              return Date.parse(value);
         };
       default:
         return value.toString();
