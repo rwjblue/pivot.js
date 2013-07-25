@@ -120,7 +120,7 @@ var methods = {
                      '   <div id="summary-fields"></div>' +
                      '  </div>' +
                      '</div>';
-    element.append(containers);
+    $(element).append(containers);
   },
   // Filters
   build_filter_list : function(){
