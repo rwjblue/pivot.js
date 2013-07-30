@@ -205,7 +205,7 @@ var methods = {
   update_filtered_rows :  function(){
     var restrictions = {}, field;
 
-    $('.filter').each(function(index){
+    $('select.filter').each(function(index){
       field = pivot.fields().get($(this).attr('data-field'));
 
       if ($(this).val() !== null && $(this).val()[0] !== ''){
