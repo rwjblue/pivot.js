@@ -89,7 +89,7 @@ function init(options){
   displayFields   = {rowLabels: {}, columnLabels: {}, summaries: {}};
 
   if (options               === undefined) options = {};
-  if (options.fields        !== undefined) setFields(options.fields);
+  if (options.fields !== undefined) setFields(options.fields);
   if (options.filters       !== undefined) setFilters(options.filters);
   if (options.rowLabels     !== undefined) setRowLabelDisplayFields(options.rowLabels);
   if (options.columnLabels  !== undefined) setColumnLabelDisplayFields(options.columnLabels);
@@ -322,11 +322,19 @@ function processHeaderRow(row){
   function processRow(row, header, pseudoFields) {
     // process actual fields
     var o = {}, j = -1, m = header.length;
+
+    //fill full object first
     while (++j < m) {
       var value = castFieldValue(header[j].name, row[j]);
       o[header[j].name] = value;
-      addFieldValue(header[j].name, value);
     };
+    
+    //process values
+    j = -1;
+    while (++j < m) {
+        addFieldValue(header[j].name, value, o);
+    }
+  
 
     // process pseudo fields
     j = -1, m = pseudoFields.length;
@@ -334,7 +342,7 @@ function processHeaderRow(row){
       var field = pseudoFields[j],
           value = castFieldValue(field.name, field.pseudoFunction(o, field));
       o[field.name] = value;
-      addFieldValue(field.name, value);
+      addFieldValue(field.name, value, o);
     };
 
     return o;
@@ -684,11 +692,11 @@ function processHeaderRow(row){
   /**
   * Adds value to field based off of the Fields' displayFunction, defaults to count.
   */
-  function addFieldValue(field, value){
+  function addFieldValue(field, value, row){
     if (fields[field] === undefined || fields[field].filterable === false) return;
 
     if (fields[field].values[value] === undefined) {
-      fields[field].values[value]        = {count: 1, displayValue: fields[field].displayFunction(value, field)};
+      fields[field].values[value]        = {count: 1, displayValue: fields[field].displayFunction(value, field, row)};
     } else {
       fields[field].values[value].count += 1;
     }
@@ -939,7 +947,7 @@ function pivotData(type) {
 
         for (var key in displayFields.rowLabels) {
           if (displayFields.rowLabels.hasOwnProperty(key))
-            results[resultKey][key] = fields[key].displayFunction(row[key], key);
+            results[resultKey][key] = fields[key].displayFunction(row[key], key, row);
         }
 
         results[resultKey].rows = [];
@@ -997,7 +1005,7 @@ function pivotData(type) {
     for (var key in displayFields.summaries) {
       if (displayFields.summaries.hasOwnProperty(key)) {
         result[key] = fields[key].summarizeFunction(result.rows, fields[key]);
-        result[key] = fields[key].displayFunction(result[key], key);
+        result[key] = fields[key].displayFunction(result[key], key, null);
       }
     };
 
