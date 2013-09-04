@@ -147,7 +147,9 @@ var pivot = (function () {
             shallowClone: shallowClone,
             objectKeys: objectKeys,
             objectType: objectType,
-            sortNumerically: sortNumerically
+            sortNumerically: sortNumerically,
+            isNumber: isNumber,
+            formatCurrency: formatCurrency
         }
     };
 
@@ -182,6 +184,32 @@ var pivot = (function () {
     function formatTime(value) {
         return formatDate(value) + ' ' + padLeft(value.getUTCHours(), 2, '0') + ':' + padLeft(value.getUTCMinutes(), 2, '0');
     };
+
+    function formatCurrency(value, field, row) {
+        var baseRow = row;
+        //summary functions will return a row.rows.
+        //row only contains visible rowLables
+        //rows contains all the 'summed' rows, with all properties
+        //use this to safely find the currency symbol
+        if (isArray(baseRow.rows)) {
+            baseRow = baseRow.rows[0];
+        }
+        //no built in 3rd party library support
+        //can be easily handled with custom 'displayFunction' 
+        var rowCurrency = baseRow[currencySymbolField];
+
+        if (rowCurrency === undefined) {
+            rowCurrency = defaultCurrencySymbol;
+        }
+        if (isNumber(value)) {
+            value = value.toFixed(2);
+        }
+        return rowCurrency + value;
+    }
+
+    function isNumber(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
 
     function isArray(arg) {
         if (!Array.isArray)
@@ -822,31 +850,7 @@ var pivot = (function () {
     }
 
 
-    function formatCurrency(value, field, row) {
-        var baseRow = row;
-        //summary functions will return a row.rows.
-        //row only contains visible rowLables
-        //rows contains all the 'summed' rows, with all properties
-        //use this to safely find the currency symbol
-        if (Object.prototype.toString.call(baseRow.rows) === '[object Array]') {
-            baseRow = baseRow.rows[0];
-        }
-        //no built in 3rd party library support
-        //can be easily handled with custom 'displayFunction' 
-        var rowCurrency = baseRow[currencySymbolField];
-
-        if (rowCurrency === undefined) {
-            rowCurrency = defaultCurrencySymbol;
-        }
-        if (isNumber(value)) {
-            value = value.toFixed(2);
-        }
-        return rowCurrency + value;
-    }
-
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
+   
     /**
     * Used to change the string value as parsed from the CSV into the type of field it expects.
     */

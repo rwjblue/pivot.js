@@ -1,24 +1,24 @@
-  /**
-  * Entry point for several results methods.
-  * See:
-  *
-  * * getDataResults() - returns filters applied to current pivot
-  * * getColumnResults() - sets a series of filters
-  *
-  * @return {function} One of the fucntions defined above.
-  */
-  function pivotResults(){
+/**
+    * Entry point for several results methods.
+    * See:
+    *
+    * * getDataResults() - returns filters applied to current pivot
+    * * getColumnResults() - sets a series of filters
+    *
+    * @return {function} One of the fucntions defined above.
+    */
+function pivotResults() {
     return {
-      all:      getFormattedResults,
-      columns:  getColumnResults
+        all: getFormattedResults,
+        columns: getColumnResults
     }
-  };
+};
 
-  function resetResults(){
+function resetResults() {
     results = undefined; resultsColumns = undefined;
-  }
+}
 
-  function getFormattedResults(){
+function getFormattedResults() {
     if (results !== undefined && resultsColumns !== undefined) return getResultArray();
 
     applyFilter();
@@ -27,137 +27,137 @@
     processRowLabelResults();
 
     if (objectKeys(displayFields.columnLabels).length > 0)
-      processColumnLabelResults();
+        processColumnLabelResults();
     else {
-      populateSummaryColumnsResults();
-      processSummaryResults();
+        populateSummaryColumnsResults();
+        processSummaryResults();
     }
 
     return getResultArray();
-  };
+};
 
-  function processRowLabelResults(){
+function processRowLabelResults() {
     var i = -1, m = data.length, keys;
 
     while (++i < m) {
-      var row       = data[i],
-          resultKey = '';
-
-      for (var key in displayFields.rowLabels) {
-        if (displayFields.rowLabels.hasOwnProperty(key)) {
-          if (i === 0) resultsColumns.push({fieldName: key, width: 1, type: 'row'});
-
-          resultKey += key + ':' + row[key] + '|';
-        }
-      }
-      if (results[resultKey] === undefined) {
-        results[resultKey] = {};
+        var row = data[i],
+            resultKey = '';
 
         for (var key in displayFields.rowLabels) {
-          if (displayFields.rowLabels.hasOwnProperty(key))
-            results[resultKey][key] = fields[key].displayFunction(row[key], key);
+            if (displayFields.rowLabels.hasOwnProperty(key)) {
+                if (i === 0) resultsColumns.push({ fieldName: key, width: 1, type: 'row' });
+
+                resultKey += key + ':' + row[key] + '|';
+            }
         }
+        if (results[resultKey] === undefined) {
+            results[resultKey] = {};
 
-        results[resultKey].rows = [];
-      };
+            for (var key in displayFields.rowLabels) {
+                if (displayFields.rowLabels.hasOwnProperty(key))
+                    results[resultKey][key] = fields[key].displayFunction(row[key], key, row);
+            }
 
-      results[resultKey].rows.push(row);
+            results[resultKey].rows = [];
+        };
+
+        results[resultKey].rows.push(row);
     };
-  };
+};
 
-  function processColumnLabelResults(){
+function processColumnLabelResults() {
     for (var key in displayFields.columnLabels) {
-      if (displayFields.columnLabels.hasOwnProperty(key)) {
-        var columnLabelColumns = {};
-        for (var resultKey in results) {
-          var values = pluckValues(results[resultKey].rows, fields[key]);
+        if (displayFields.columnLabels.hasOwnProperty(key)) {
+            var columnLabelColumns = {};
+            for (var resultKey in results) {
+                var values = pluckValues(results[resultKey].rows, fields[key]);
 
-          for (var value in values){
-            if (columnLabelColumns[value] === undefined)
-              columnLabelColumns[value] = 1;
-            else
-              columnLabelColumns[value] += 1;
+                for (var value in values) {
+                    if (columnLabelColumns[value] === undefined)
+                        columnLabelColumns[value] = 1;
+                    else
+                        columnLabelColumns[value] += 1;
 
-            results[resultKey][value] = getSummaryResults(values[value]);
-          };
-        }
+                    results[resultKey][value] = getSummaryResults(values[value]);
+                };
+            }
 
-        populateColumnLabelColumnsResults(key, columnLabelColumns);
-      };
+            populateColumnLabelColumnsResults(key, columnLabelColumns);
+        };
     };
 
     return results;
-  };
+};
 
-  function pluckValues(rows, field){
+function pluckValues(rows, field) {
     var i = -1, m = rows.length, output = {};
-    while (++i < m){
-      var value = rows[i][field.name];
-      if (output[value] === undefined) output[value] = {rows: []}
+    while (++i < m) {
+        var value = rows[i][field.name];
+        if (output[value] === undefined) output[value] = { rows: [] }
 
-      output[value].rows.push(rows[i]);
+        output[value].rows.push(rows[i]);
     };
     return output;
-  }
+}
 
-  function processSummaryResults(){
+function processSummaryResults() {
     for (var resultKey in results) {
-      getSummaryResults(results[resultKey])
+        getSummaryResults(results[resultKey])
     };
 
     return results;
-  };
+};
 
-  function getSummaryResults(result){
+function getSummaryResults(result) {
     var output = {};
     for (var key in displayFields.summaries) {
-      if (displayFields.summaries.hasOwnProperty(key)) {
-        result[key] = fields[key].summarizeFunction(result.rows, fields[key]);
-        result[key] = fields[key].displayFunction(result[key], key);
-      }
+        if (displayFields.summaries.hasOwnProperty(key)) {
+            result[key] = fields[key].summarizeFunction(result.rows, fields[key]);
+            result[key] = fields[key].displayFunction(result[key], key, result);//just pass in the root row - result
+        }
     };
 
     return result;
-  };
+};
 
-  function getResultArray(){
-    var output  = [], keys  = objectKeys(results).sort(),
-        i       = -1, m     = keys.length;
+function getResultArray() {
+    var output = [], keys = objectKeys(results).sort(),
+        i = -1, m = keys.length;
 
-    while (++i < m){
-      output.push(results[keys[i]])
+    while (++i < m) {
+        output.push(results[keys[i]])
     };
 
 
     return output;
-  };
+};
 
-  function getColumnResults(){
+function getColumnResults() {
     if (results === undefined || resultsColumns === undefined)
-      getFormattedResults();
+        getFormattedResults();
 
     return resultsColumns;
-  }
+}
 
-  function populateSummaryColumnsResults(){
-    for (var key in displayFields.summaries){
-      if (displayFields.summaries.hasOwnProperty(key))
-        resultsColumns.push({fieldName: key, width: 1, type: 'summary'})
+function populateSummaryColumnsResults() {
+    for (var key in displayFields.summaries) {
+        if (displayFields.summaries.hasOwnProperty(key))
+            resultsColumns.push({ fieldName: key, width: 1, type: 'summary' })
     }
 
     return resultsColumns;
-  };
+};
 
-  function populateColumnLabelColumnsResults(key, columnLabels){
-    var keys  = objectKeys(columnLabels).sort(fields[key].sortFunction),
-        i     = -1,
-        m     = keys.length,
-        w     = objectKeys(displayFields.summaries).length;
+function populateColumnLabelColumnsResults(key, columnLabels) {
+    var keys = objectKeys(columnLabels).sort(fields[key].sortFunction),
+        i = -1,
+        m = keys.length,
+        w = objectKeys(displayFields.summaries).length;
 
-    while (++i < m){
-      resultsColumns.push({fieldName: keys[i], width: w, type: 'column'})
+    while (++i < m) {
+        resultsColumns.push({ fieldName: keys[i], width: w, type: 'column' })
     };
 
 
     return resultsColumns;
-  }
+}
