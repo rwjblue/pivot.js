@@ -49,6 +49,12 @@ table.dataTable th:active {
   outline: none;
 }
 
+.pivot_header_fields
+{
+	margin-left:-20px;
+	*zoom:1;
+}
+
 .pivot_header2
 {
 	font-size: large;

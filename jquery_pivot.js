@@ -102,7 +102,7 @@ var methods = {
   },
   build_containers : function(){
 
-    var containers = '<div style="margin-left:-20px;*zoom:1;">' +
+    var containers = '<div class="pivot_header_fields">' +
                      '  <div class="pivot_field">' +
                      '  <span class="pivot_header2">Filter Fields</span>' +
                      '   <div id="filter-list"></div>' +
