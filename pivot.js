@@ -604,9 +604,9 @@ var pivot = (function () {
     function defaultSummarizeFunctionSum(rows, field) {
         var runningTotal = 0,
             i = -1,
-            m = rows.length;
-        var currencyBase = null;
-        var usingCurrencyField
+            m = rows.length,
+            currencyBase = null;
+      
         //using currency symbol field? then we must verify our summing of this field
         if (field.type == 'currency' && currencySymbolField != null) {
             currencyBase = rows[0][currencySymbolField];
@@ -631,14 +631,28 @@ var pivot = (function () {
     function defaultSummarizeFunctionMin(rows, field) {
         var min = null,
          i = -1,
-         m = rows.length;
-
+         m = rows.length,
+         currencyBase = null;
+        //using currency symbol field? then we must verify our summing of this field
+        if (field.type == 'currency' && currencySymbolField != null) {
+            currencyBase = rows[0][currencySymbolField];
+        }
         while (++i < m) {
-            var val = rows[i][field.dataSource];
-            if (min === null)
-                min = val;
-            if (val < min)
-                min = val;
+
+            var row = rows[i];
+            //if we've set a currency base, compare it to this rows currency
+            if (currencyBase != null && currencyBase != row[currencySymbolField]) {
+                min = "Mutiple-Currency-Error";
+                break;
+            } else {
+                var val = row[field.dataSource];
+                if (min === null)
+                    min = val;
+                if (val < min)
+                    min = val;
+            }
+
+         
         };
         return min;
     }
@@ -648,14 +662,28 @@ var pivot = (function () {
     function defaultSummarizeFunctionMax(rows, field) {
         var max = null,
         i = -1,
-        m = rows.length;
+        m = rows.length,
+        currencyBase = null;
 
+        //using currency symbol field? then we must verify our summing of this field
+        if (field.type == 'currency' && currencySymbolField != null) {
+            currencyBase = rows[0][currencySymbolField];
+        }
         while (++i < m) {
-            var val = rows[i][field.dataSource];
-            if (max === null)
-                max = val;
-            if (val > max)
-                max = val;
+            var row = rows[i];
+            //if we've set a currency base, compare it to this rows currency
+            if (currencyBase != null && currencyBase != row[currencySymbolField]) {
+                max = "Mutiple-Currency-Error";
+                break;
+            } else {
+                var val = row[field.dataSource];
+                if (max === null)
+                    max = val;
+                if (val > max)
+                    max = val;
+            }
+
+         
         };
         return max;
     }

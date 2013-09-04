@@ -35,7 +35,7 @@ describe('pivot', function () {
         }
       ]
 
-      pivot.init({csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: 'US$', currencySymbolColumn:'currency_symbol'});
+      pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
     });
 
   afterEach(function () {
@@ -261,31 +261,78 @@ describe('pivot', function () {
     });
 
     it('should only return summary fields that were selected', function(){
-      pivot.display().rowLabels().set(['last_name']);
+
+      pivot.display().rowLabels().set(['currency_code']);
 
       pivot.display().summaries().set([]);
       expect(pivot.results().all()[0].billed_amount_sum).toEqual(undefined);
 
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results().all()[1].billed_amount_sum).toEqual('US$369.87');
+      expect(pivot.results().all()[1].billed_amount_sum).toEqual('SG$287.61');
     });
 
-    it("should return sum for summarizable with currency appended: 'sum' fields", function(){
+    it("should return sum for summarizable with currency appended: 'sum' fields", function () {
+       
+      pivot.display().rowLabels().set(['currency_code']);
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results().all()[0].billed_amount_sum).toEqual('US$730.68');
+      expect(pivot.results().all()[2].billed_amount_sum).toEqual('US$269.87');
+    });
+
+    it("should return min for summarizable with currency appended: 'min' fields", function () {
+        sample_fields[6].summarizable = 'min';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+    
+        pivot.display().rowLabels().set(['currency_code']);
+        pivot.display().summaries().set(['billed_amount_min']);
+        expect(pivot.results().all()[2].billed_amount_min).toEqual('US$7.45');
+    });
+
+    it("should return max for summarizable with currency appended: 'max' fields", function () {
+        sample_fields[6].summarizable = 'max';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+
+        pivot.display().rowLabels().set(['currency_code']);
+        pivot.display().summaries().set(['billed_amount_max']);
+        expect(pivot.results().all()[2].billed_amount_max).toEqual('US$262.42');
+    });
+
+    it("show not allow you to min multiple currencies: 'min' fields", function () {
+        sample_fields[6].summarizable = 'min';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+        pivot.display().rowLabels().set(['last_name']);
+        pivot.display().summaries().set(['billed_amount_min']);
+        expect(pivot.results().all()[1].billed_amount_min).toEqual('SG$Mutiple-Currency-Error');
+    });
+
+    it("show not allow you to max multiple currencies: 'max' fields", function () {
+        sample_fields[6].summarizable = 'max';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+        pivot.display().rowLabels().set(['last_name']);
+        pivot.display().summaries().set(['billed_amount_max']);
+        expect(pivot.results().all()[1].billed_amount_max).toEqual('SG$Mutiple-Currency-Error');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
       pivot.fields().get('billed_amount_sum').displayFunction = function(value){ return "$" + value.toFixed(2)};
-
+      pivot.display().rowLabels().set(['first_name']);
+      pivot.display().rowLabels().set(['last_name']);
+      pivot.display().rowLabels().set(['currency_code']);
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results().all()[0].billed_amount_sum).toEqual('$730.68');
+      expect(pivot.results().all()[0].billed_amount_sum).toEqual('$173.20');
+    });
+    it("should be able to access row data within the displayFunction", function () {
+        pivot.fields().get('billed_amount_sum').displayFunction = function (value, field, row) { return row.currency_code + value.toFixed(2) };
+        pivot.display().rowLabels().set(['first_name']);
+        pivot.display().rowLabels().set(['last_name']);
+        pivot.display().rowLabels().set(['currency_code']);
+        pivot.display().summaries().set(['billed_amount_sum']);
+        expect(pivot.results().all()[0].billed_amount_sum).toEqual('EUR173.20');
     });
 
     it('should return a column for each field value in columnLabels', function(){
       pivot.display().summaries().set(['billed_amount_sum']);
       pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
-      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual('US$162.98');
+      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual('SG$162.98');
     });
 
     it('should return the column titles and span counts for each resulting table column', function(){
@@ -315,7 +362,7 @@ describe('pivot', function () {
 
       expect(pivot.results().columns()[2].fieldName).toEqual('2012_01');
       expect(pivot.results().columns()[2].width).toEqual(1);
-      expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual('US$100.00');
+      expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual('SG$100.00');
     });
 
     it('should sort the results of the column label fields using the fields sortFunction', function(){
@@ -326,5 +373,14 @@ describe('pivot', function () {
 
       expect(pivot.results().columns()[0].fieldName).toEqual('39401');
     });
+
+    it("should not allow me to summarise different currencies:", function () {
+
+        pivot.display().rowLabels().set(['zip_code']);
+        pivot.display().summaries().set(['billed_amount_sum']);
+       
+        expect(pivot.results().all()[0].billed_amount_sum).toEqual('SG$Mutiple-Currency-Error');
+    });
+
   });
 });
