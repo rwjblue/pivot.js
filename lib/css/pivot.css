@@ -48,3 +48,8 @@ table.table thead .sorting_desc_disabled { background: url('../images/sort_desc_
 table.dataTable th:active {
   outline: none;
 }
+
+.pivot_header2
+{
+	font-size: large;
+}
