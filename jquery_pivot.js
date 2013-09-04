@@ -149,6 +149,10 @@ var methods = {
 
     if (fieldName === '') return;
 
+    // Check to see if this field has already been built
+    var filterExists = $('#filter-list select[data-field=' + field.name + ']');
+    if (filterExists.length) return;
+
     if (field.filterType === 'regexp')
       snip = methods.build_regexp_filter_field(field, selectedValue);
     else
@@ -161,7 +165,7 @@ var methods = {
     $('select.filter').on('change', function(event) {
       methods.update_filtered_rows();
     });
-    
+
     //Optional Chosen/Select2 integration
     if($.fn.chosen!==undefined) $('select.filter').chosen();
     else if($.fn.select2!==undefined) $('select.filter').select2();
