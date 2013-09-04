@@ -618,13 +618,47 @@ var pivot = (function () {
                 runningTotal = "Mutiple-Currency-Error";
                 break;
             } else {
-                runningTotal += rows[i][field.dataSource];
+                runningTotal += row[field.dataSource];
             }
 
         };
         return runningTotal;
     };
 
+    /**
+     * Returns the min value of all rows passed to it.
+     */
+    function defaultSummarizeFunctionMin(rows, field) {
+        var min = null,
+         i = -1,
+         m = rows.length;
+
+        while (++i < m) {
+            var val = rows[i][field.dataSource];
+            if (min === null)
+                min = val;
+            if (val < min)
+                min = val;
+        };
+        return min;
+    }
+    /**
+    * Returns the max value of all rows passed to it.
+    */
+    function defaultSummarizeFunctionMax(rows, field) {
+        var max = null,
+        i = -1,
+        m = rows.length;
+
+        while (++i < m) {
+            var val = rows[i][field.dataSource];
+            if (max === null)
+                max = val;
+            if (val > max)
+                max = val;
+        };
+        return max;
+    }
 
     /**
     * Returns Average of values passed in from rows
@@ -691,6 +725,12 @@ var pivot = (function () {
                         break;
                     case 'avg':
                         field.summarizeFunction = defaultSummarizeFunctionAvg;
+                        break;
+                    case 'min':
+                        field.summarizeFunction = defaultSummarizeFunctionMin;
+                        break;
+                    case 'max':
+                        field.summarizeFunction = defaultSummarizeFunctionMax;
                         break;
                     default:
                         field.summarizeFunction = defaultSummarizeFunctionCount;
@@ -760,7 +800,7 @@ var pivot = (function () {
         //row only contains visible rowLables
         //rows contains all the 'summed' rows, with all properties
         //use this to safely find the currency symbol
-        if (jQuery.isArray(baseRow.rows)) {
+        if (Object.prototype.toString.call(baseRow.rows) === '[object Array]') {
             baseRow = baseRow.rows[0];
         }
         //no built in 3rd party library support
@@ -770,12 +810,15 @@ var pivot = (function () {
         if (rowCurrency === undefined) {
             rowCurrency = defaultCurrencySymbol;
         }
-        if (jQuery.isNumeric(value)) {
+        if (isNumber(value)) {
             value = value.toFixed(2);
         }
         return rowCurrency + value;
     }
 
+    function isNumber(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
     /**
     * Used to change the string value as parsed from the CSV into the type of field it expects.
     */
