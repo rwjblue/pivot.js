@@ -755,9 +755,17 @@ var pivot = (function () {
 
 
     function formatCurrency(value, field, row) {
+        var baseRow = row;
+        //summary functions will return a row.rows.
+        //row only contains visible rowLables
+        //rows contains all the 'summed' rows, with all properties
+        //use this to safely find the currency symbol
+        if (jQuery.isArray(baseRow.rows)) {
+            baseRow = baseRow.rows[0];
+        }
         //no built in 3rd party library support
         //can be easily handled with custom 'displayFunction' 
-        var rowCurrency = row[currencySymbolField];
+        var rowCurrency = baseRow[currencySymbolField];
 
         if (rowCurrency === undefined) {
             rowCurrency = defaultCurrencySymbol;
