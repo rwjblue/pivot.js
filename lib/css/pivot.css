@@ -53,3 +53,11 @@ table.dataTable th:active {
 {
 	font-size: large;
 }
+
+.pivot_field
+{
+	width:300px;
+	float:left;
+	margin-left:20px;
+}
+
