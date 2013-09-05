@@ -18,6 +18,7 @@ pivoting from the input data (CSV or JSON). Without further ado let's get to usa
 #Notable Changes in this Fork
 
 ##Currency
+
 ###Default / Single Currency
 Any field with a type of 'currency' has some special handling. To set the default currency symbol for all currency fields:
 ```javascript
@@ -25,11 +26,14 @@ Any field with a type of 'currency' has some special handling. To set the defaul
 ```
 Now all values with a field type of 'currency' will have 'HK$' appended to the front. No other globalisation features are applied. 
 
-###Multiple Currency Data
-A currency field can now be passed out in the data for a row in `currencySymbolField`. This enables reporting with rows in multiple currencies. 
-Any currency field in the row will now have whatever data is in the currencySymbolField field
-When an aggregation is attempted on a currency field with rows of differing currencies the display value will return 'Multiple-Currency-Error'. This avoids 
-incorrect value aggregration. 
+###Multiple Currency Reports
+A currency field can now be passed out in the data for a row in `currencySymbolField`. This enables reporting with rows in multiple currencies and protects against false aggregation. 
+Any currency field in the row will now have whatever data is in the `currencySymbolField` appended to the front of the value. 
+
+>Ensure you differentiate between currencies with the same currency symbol. e.g. '$' should be specified as: HK$, SG$, US$ etc. The symbol must be unique.
+
+When an aggregation is attempted on a currency field with rows of differing currencies the display value will contain `Multiple-Currency-Error`. This avoids 
+incorrect value aggregation. 
 
 It is also suggested you either make the currency symbol field 'rowLabelable' and show it by default, or pass out another field that will ensure data is not
 aggregated past the currency level. 
@@ -61,8 +65,28 @@ aggregated past the currency level.
 
     pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: 'HK$', currencySymbolField: 'currency_symbol' });});
 ```
+##Row Level Data in `displayFunction`
+
+The signature of `displayFunction` has been extened to output the row level data the same was the 'pseudo' fields do. `row` will contain only the visible columns, `row.rows[i]` will give access to all the fields for all data in the aggregation.
+
+```javascript 
+ pivot.fields().get('billed_amount_sum').displayFunction = function (value, field, row) {
+                return row.currency_code + value.toFixed(2) 
+ };
+```
+
+##New Aggregate Functions
+
+`summarizable` can now accept and perform Min / Max functions. Both will error in the same way as above on multiple currency aggregations. 
+
+```javascript
+ var fields =  { {name: 'some_int_field', type: 'integer', summarizable: 'min' },
+                {name: 'some_currency_field', type: 'currency', summarizable: 'max' }
+   };
+```
 
 
+#Base Functionaltiy
 
 #Usage
 
