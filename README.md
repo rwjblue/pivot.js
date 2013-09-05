@@ -35,8 +35,8 @@ Any currency field in the row will now have whatever data is in the `currencySym
 When an aggregation is attempted on a currency field with rows of differing currencies the display value will contain `Multiple-Currency-Error`. This avoids 
 incorrect value aggregation. 
 
-It is also suggested you either make the currency symbol field 'rowLabelable' and show it by default, or pass out another field that will ensure data is not
-aggregated past the currency level. 
+It is also suggested you either make the currency symbol field 'rowLabelable' and show it by default, or display another field that will ensure data is not
+aggregated past the currency level. In the below example this achieved by hiding `currency_symbol` but allowing the full `currency_code` field to be shown at the lable level.
 
 ```javascript
  sample_json = '[["currency_symbol","currency_code","last_name","first_name","zip_code","billed_amount","last_billed_date"],' +
