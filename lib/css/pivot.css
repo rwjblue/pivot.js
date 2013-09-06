@@ -48,3 +48,23 @@ table.table thead .sorting_desc_disabled { background: url('../images/sort_desc_
 table.dataTable th:active {
   outline: none;
 }
+
+.pivot_header_fields
+{
+	margin-left:-20px;
+	*zoom:1;
+}
+
+.pivot_header2
+{
+	font-size: x-large;
+	font-weight: bold;
+}
+
+.pivot_field
+{
+	width:300px;
+	float:left;
+	margin-left:20px;
+}
+

@@ -102,21 +102,21 @@ var methods = {
   },
   build_containers : function(){
 
-    var containers = '<div style="margin-left:-20px;*zoom:1;">' +
-                     '  <div style="width:300px;float:left;margin-left:20px;">' +
-                     '  <h2>Filter Fields</h2>' +
+    var containers = '<div class="pivot_header_fields">' +
+                     '  <div class="pivot_field">' +
+                     '  <span class="pivot_header2">Filter Fields</span>' +
                      '   <div id="filter-list"></div>' +
                      '  </div>' +
-                     '  <div style="width:300px;float:left;margin-left:20px;">' +
-                     '  <h2>Row Label Fields</h2>' +
+                     '  <div class="pivot_field">' +
+                     '  <span class="pivot_header2">Row Label Fields</span>' +
                      '   <div id="row-label-fields"></div>' +
                      '  </div>' +
-                     '  <div style="width:300px;float:left;margin-left:20px;">' +
-                     '  <h2>Column Label Fields</h2>' +
+                     '  <div class="pivot_field">' +
+                     '  <span class="pivot_header2">Column Label Fields</span>' +
                      '   <div id="column-label-fields"></div>' +
                      '  </div>' +
-                     '  <div style="width:300px;float:left;margin-left:20px;">' +
-                     '  <h2>Summary Fields</h2>' +
+                     '  <div class="pivot_field">' +
+                     '  <span class="pivot_header2">Summary Fields</span>' +
                      '   <div id="summary-fields"></div>' +
                      '  </div>' +
                      '</div>';
