@@ -58,6 +58,7 @@ table.dataTable th:active {
 .pivot_header2
 {
 	font-size: large;
+	font-weight: bold;
 }
 
 .pivot_field
