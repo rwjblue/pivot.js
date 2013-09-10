@@ -65,6 +65,11 @@ aggregated past the currency level. In the below example this achieved by hiding
 
     pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: 'HK$', currencySymbolField: 'currency_symbol' });});
 ```
+
+##Built in Support for Accounting.js
+
+If accounting.js is included within your page currency formatting will automatically format using `accounting.formatMoney(value, currencySymbol)`.
+
 ##Row Level Data in `displayFunction`
 
 The signature of `displayFunction` has been extened to output the row level data the same was the 'pseudo' fields do. `row` will contain only the visible columns, `row.rows[i]` will give access to all the fields for all data in the aggregation.

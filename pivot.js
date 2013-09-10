@@ -201,15 +201,29 @@ var pivot = (function () {
         if (rowCurrency === undefined) {
             rowCurrency = defaultCurrencySymbol;
         }
+
         if (isNumber(value)) {
             value = value.toFixed(2);
         }
-        return rowCurrency + value;
-    }
+
+        var result;
+        if (accountingJsSupported()) {
+            result = accounting.formatMoney(value, rowCurrency);
+        } else {
+            result = rowCurrency + value;
+        }
+        return result;
+    };
+
+    function accountingJsSupported() {
+        return typeof accounting !== 'undefined' &&
+               objectType(accounting) === 'object' &&
+               objectType(accounting.formatMoney) === 'function';
+    };
 
     function isNumber(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
-    }
+    };
 
     function isArray(arg) {
         if (!Array.isArray)
@@ -634,7 +648,7 @@ var pivot = (function () {
             i = -1,
             m = rows.length,
             currencyBase = null;
-      
+
         //using currency symbol field? then we must verify our summing of this field
         if (field.type == 'currency' && currencySymbolField != null) {
             currencyBase = rows[0][currencySymbolField];
@@ -680,7 +694,7 @@ var pivot = (function () {
                     min = val;
             }
 
-         
+
         };
         return min;
     }
@@ -711,7 +725,7 @@ var pivot = (function () {
                     max = val;
             }
 
-         
+
         };
         return max;
     }
@@ -850,7 +864,7 @@ var pivot = (function () {
     }
 
 
-   
+
     /**
     * Used to change the string value as parsed from the CSV into the type of field it expects.
     */

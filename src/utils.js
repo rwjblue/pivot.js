@@ -64,11 +64,25 @@ function formatCurrency(value, field, row) {
     if (rowCurrency === undefined) {
         rowCurrency = defaultCurrencySymbol;
     }
+
     if (isNumber(value)) {
         value = value.toFixed(2);
     }
-    return rowCurrency + value;
-}
+
+    var result;
+    if (accountingJsSupported()) {
+        result = accounting.formatMoney(value, rowCurrency);
+    } else {
+        result = rowCurrency + value;
+    }
+    return result;
+};
+
+function accountingJsSupported() {
+    return typeof accounting !== 'undefined' &&
+           objectType(accounting) === 'object' &&
+           objectType(accounting.formatMoney) === 'function';
+};
 
 function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
