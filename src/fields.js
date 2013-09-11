@@ -110,7 +110,7 @@ function defaultSummarizeFunctionSum(rows, field) {
         var row = rows[i];
         //if we've set a currency base, compare it to this rows currency
         if (currencyBase != null && currencyBase != row[currencySymbolField]) {
-            runningTotal = "Mutiple-Currency-Error";
+            runningTotal = "Multiple-Currency-Error";
             break;
         } else {
             runningTotal += row[field.dataSource];
@@ -137,7 +137,7 @@ function defaultSummarizeFunctionMin(rows, field) {
         var row = rows[i];
         //if we've set a currency base, compare it to this rows currency
         if (currencyBase != null && currencyBase != row[currencySymbolField]) {
-            min = "Mutiple-Currency-Error";
+            min = "Multiple-Currency-Error";
             break;
         } else {
             var val = row[field.dataSource];
@@ -168,7 +168,7 @@ function defaultSummarizeFunctionMax(rows, field) {
         var row = rows[i];
         //if we've set a currency base, compare it to this rows currency
         if (currencyBase != null && currencyBase != row[currencySymbolField]) {
-            max = "Mutiple-Currency-Error";
+            max = "Multiple-Currency-Error";
             break;
         } else {
             var val = row[field.dataSource];
@@ -188,7 +188,7 @@ function defaultSummarizeFunctionMax(rows, field) {
 */
 function defaultSummarizeFunctionAvg(rows, field) {
     var sum = defaultSummarizeFunctionSum(rows, field);
-    if (sum != "Mutiple-Currency-Error") {
+    if (sum != "Multiple-Currency-Error") {
         sum = sum / rows.length;
     }
     return sum;

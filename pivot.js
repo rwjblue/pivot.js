@@ -657,7 +657,7 @@ var pivot = (function () {
             var row = rows[i];
             //if we've set a currency base, compare it to this rows currency
             if (currencyBase != null && currencyBase != row[currencySymbolField]) {
-                runningTotal = "Mutiple-Currency-Error";
+                runningTotal = "Multiple-Currency-Error";
                 break;
             } else {
                 runningTotal += row[field.dataSource];
@@ -684,7 +684,7 @@ var pivot = (function () {
             var row = rows[i];
             //if we've set a currency base, compare it to this rows currency
             if (currencyBase != null && currencyBase != row[currencySymbolField]) {
-                min = "Mutiple-Currency-Error";
+                min = "Multiple-Currency-Error";
                 break;
             } else {
                 var val = row[field.dataSource];
@@ -715,7 +715,7 @@ var pivot = (function () {
             var row = rows[i];
             //if we've set a currency base, compare it to this rows currency
             if (currencyBase != null && currencyBase != row[currencySymbolField]) {
-                max = "Mutiple-Currency-Error";
+                max = "Multiple-Currency-Error";
                 break;
             } else {
                 var val = row[field.dataSource];
@@ -735,7 +735,7 @@ var pivot = (function () {
     */
     function defaultSummarizeFunctionAvg(rows, field) {
         var sum = defaultSummarizeFunctionSum(rows, field);
-        if (sum != "Mutiple-Currency-Error") {
+        if (sum != "Multiple-Currency-Error") {
             sum = sum / rows.length;
         }
         return sum;
