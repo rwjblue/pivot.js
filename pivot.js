@@ -202,16 +202,17 @@ var pivot = (function () {
             rowCurrency = defaultCurrencySymbol;
         }
 
-        if (isNumber(value)) {
-            value = value.toFixed(2);
+        //format
+        var result = value;
+        if (isNumber(value)) { //may be a currency error, in which case just return
+            if (accountingJsSupported()) {
+                result = accounting.formatMoney(value, rowCurrency);
+            } else {
+                result = rowCurrency + value.toFixed(2);
+            }
         }
 
-        var result;
-        if (accountingJsSupported()) {
-            result = accounting.formatMoney(value, rowCurrency);
-        } else {
-            result = rowCurrency + value;
-        }
+      
         return result;
     };
 

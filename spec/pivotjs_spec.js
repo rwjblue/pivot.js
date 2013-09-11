@@ -301,7 +301,7 @@ describe('pivot', function () {
         pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
         pivot.display().rowLabels().set(['last_name']);
         pivot.display().summaries().set(['billed_amount_min']);
-        expect(pivot.results().all()[1].billed_amount_min).toEqual('SG$Mutiple-Currency-Error');
+        expect(pivot.results().all()[1].billed_amount_min).toEqual('Multiple-Currency-Error');
     });
 
     it("show not allow you to max multiple currencies: 'max' fields", function () {
@@ -309,7 +309,7 @@ describe('pivot', function () {
         pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
         pivot.display().rowLabels().set(['last_name']);
         pivot.display().summaries().set(['billed_amount_max']);
-        expect(pivot.results().all()[1].billed_amount_max).toEqual('SG$Mutiple-Currency-Error');
+        expect(pivot.results().all()[1].billed_amount_max).toEqual('Multiple-Currency-Error');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
@@ -379,7 +379,7 @@ describe('pivot', function () {
         pivot.display().rowLabels().set(['zip_code']);
         pivot.display().summaries().set(['billed_amount_sum']);
        
-        expect(pivot.results().all()[0].billed_amount_sum).toEqual('SG$Mutiple-Currency-Error');
+        expect(pivot.results().all()[0].billed_amount_sum).toEqual('Multiple-Currency-Error');
     });
 
   });
