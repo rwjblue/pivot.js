@@ -2,28 +2,30 @@ describe('pivot', function () {
   var sample_csv, sample_fields;
 
   beforeEach(function () {
-      sample_csv =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
-                    "Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
-                    "Smith,Jon,34471,173.20,\"Mon, 13 Feb 2012 00:00:00 +0000\"\n" +
-                    "Jackson,Jon,34474,262.42,\"Mon, 5 Mar 2012 00:00:00 +0000\"\n" +
-                    "Jackson,Susan,34476,7.45,\"Thu, 15 Dec 2011 00:00:00 +0000\"\n" +
-                    "Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
-                    "Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
+      sample_csv =  "currency_symbol,currency_code,last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+                    "SG$,SGD,Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
+                    "€,EUR,Smith,Jon,34471,173.20,\"Mon, 13 Feb 2012 00:00:00 +0000\"\n" +
+                    "US$,USD,Jackson,Jon,34474,262.42,\"Mon, 5 Mar 2012 00:00:00 +0000\"\n" +
+                    "US$,USD,Jackson,Susan,34476,7.45,\"Thu, 15 Dec 2011 00:00:00 +0000\"\n" +
+                    "SG$,SGD,Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
+                    "SG$,SGD,Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
-      sample_json = '[["last_name","first_name","zip_code","billed_amount","last_billed_date"],' +
-                    ' ["Jackson", "Robert", 34471, 100.00, "Tue, 24 Jan 2012 00:00:00 +0000"],' +
-                    ' ["Smith", "Jon", 34471, 173.20, "Mon, 13 Feb 2012 00:00:00 +0000"],' +
-                    ' ["Jackson", "Jon", 34474, 262.42, "Mon, 5 Mar 2012 00:00:00 +0000"],' +
-                    ' ["Jackson", "Susan", 34476, 7.45, "Thu, 15 Dec 2011 00:00:00 +0000"],' +
-                    ' ["Fornea", "Chris", 34474, 62.98, "Mon, 30 Jan 2012 00:00:00 +0000"],' +
-                    ' ["Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
+      sample_json = '[["currency_symbol","currency_code","last_name","first_name","zip_code","billed_amount","last_billed_date"],' +
+                    ' ["SG$","SGD","Jackson", "Robert", 34471, 100.00, "Tue, 24 Jan 2012 00:00:00 +0000"],' +
+                    ' ["€","EUR","Smith", "Jon", 34471, 173.20, "Mon, 13 Feb 2012 00:00:00 +0000"],' +
+                    ' ["US$","USD","Jackson", "Jon", 34474, 262.42, "Mon, 5 Mar 2012 00:00:00 +0000"],' +
+                    ' ["US$","USD","Jackson", "Susan", 34476, 7.45, "Thu, 15 Dec 2011 00:00:00 +0000"],' +
+                    ' ["SG$","SGD","Fornea", "Chris", 34474, 62.98, "Mon, 30 Jan 2012 00:00:00 +0000"],' +
+                    ' ["SG$","SGD","Fornea", "Shelly", 39401, 124.63, "Fri, 17 Feb 2012 00:00:00 +0000"]]'
 
       sample_fields = [
-        {name: 'first_name',          type: 'string',  filterable: true},
+        {name: 'currency_symbol', type: 'string', filterable: false, rowLabelable: false, columnLabelable: false },
+        {name: 'currency_code', type: 'string', filterable: true, rowLabelable: true, columnLabelable: false },
+        {name: 'first_name', type: 'string', filterable: true },
         {name: 'last_name',           type: 'string',  filterable: true},
         {name: 'zip_code',            type: 'integer', filterable: true, columnLabelable: true},
         {name: 'pseudo_zip',          type: 'integer', filterable: true, pseudo: true, pseudoFunction: function(row){ return row.zip_code + 1}},
-        {name: 'billed_amount',       type: 'float',   summarizable: 'sum'},
+        {name: 'billed_amount', type: 'currency', summarizable: 'sum' },
         {name: 'last_billed_date',    type: 'date',    filterable: true},
         {name: 'last_billed_yyyy_mm', type: 'string',  filterable: true, pseudo: true, columnLabelable: true,
           pseudoFunction: function(row){
@@ -33,7 +35,7 @@ describe('pivot', function () {
         }
       ]
 
-      pivot.init({csv: sample_csv, fields: sample_fields});
+      pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
     });
 
   afterEach(function () {
@@ -73,7 +75,7 @@ describe('pivot', function () {
 
     it('can parse csv into an array', function(){
       expect(pivot.data().raw[0]).toEqual(
-        {last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100,
+        {currency_symbol: "SG$", currency_code: "SGD", last_name:'Jackson',first_name:'Robert',zip_code: 34471, billed_amount: 100,
         pseudo_zip: 34472, last_billed_date: 1327363200000, last_billed_yyyy_mm : '2012_01'}
       );
       expect(pivot.data().raw.length).toEqual(6)
@@ -259,31 +261,78 @@ describe('pivot', function () {
     });
 
     it('should only return summary fields that were selected', function(){
-      pivot.display().rowLabels().set(['last_name']);
+
+      pivot.display().rowLabels().set(['currency_code']);
 
       pivot.display().summaries().set([]);
       expect(pivot.results().all()[0].billed_amount_sum).toEqual(undefined);
 
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results().all()[1].billed_amount_sum).toEqual(369.87);
+      expect(pivot.results().all()[1].billed_amount_sum).toEqual('SG$287.61');
     });
 
-    it("should return sum for summarizable: 'sum' fields", function(){
+    it("should return sum for summarizable with currency appended: 'sum' fields", function () {
+       
+      pivot.display().rowLabels().set(['currency_code']);
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results().all()[0].billed_amount_sum.toFixed(2)).toEqual('730.68');
+      expect(pivot.results().all()[2].billed_amount_sum).toEqual('US$269.87');
+    });
+
+    it("should return min for summarizable with currency appended: 'min' fields", function () {
+        sample_fields[6].summarizable = 'min';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+    
+        pivot.display().rowLabels().set(['currency_code']);
+        pivot.display().summaries().set(['billed_amount_min']);
+        expect(pivot.results().all()[2].billed_amount_min).toEqual('US$7.45');
+    });
+
+    it("should return max for summarizable with currency appended: 'max' fields", function () {
+        sample_fields[6].summarizable = 'max';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+
+        pivot.display().rowLabels().set(['currency_code']);
+        pivot.display().summaries().set(['billed_amount_max']);
+        expect(pivot.results().all()[2].billed_amount_max).toEqual('US$262.42');
+    });
+
+    it("show not allow you to min multiple currencies: 'min' fields", function () {
+        sample_fields[6].summarizable = 'min';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+        pivot.display().rowLabels().set(['last_name']);
+        pivot.display().summaries().set(['billed_amount_min']);
+        expect(pivot.results().all()[1].billed_amount_min).toEqual('Multiple-Currency-Error');
+    });
+
+    it("show not allow you to max multiple currencies: 'max' fields", function () {
+        sample_fields[6].summarizable = 'max';
+        pivot.init({ csv: sample_csv, fields: sample_fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
+        pivot.display().rowLabels().set(['last_name']);
+        pivot.display().summaries().set(['billed_amount_max']);
+        expect(pivot.results().all()[1].billed_amount_max).toEqual('Multiple-Currency-Error');
     });
 
     it("should reformat the output based on the fields displayFunction", function(){
       pivot.fields().get('billed_amount_sum').displayFunction = function(value){ return "$" + value.toFixed(2)};
-
+      pivot.display().rowLabels().set(['first_name']);
+      pivot.display().rowLabels().set(['last_name']);
+      pivot.display().rowLabels().set(['currency_code']);
       pivot.display().summaries().set(['billed_amount_sum']);
-      expect(pivot.results().all()[0].billed_amount_sum).toEqual('$730.68');
+      expect(pivot.results().all()[0].billed_amount_sum).toEqual('$173.20');
+    });
+    it("should be able to access row data within the displayFunction", function () {
+        pivot.fields().get('billed_amount_sum').displayFunction = function (value, field, row) { return row.currency_code + value.toFixed(2) };
+        pivot.display().rowLabels().set(['first_name']);
+        pivot.display().rowLabels().set(['last_name']);
+        pivot.display().rowLabels().set(['currency_code']);
+        pivot.display().summaries().set(['billed_amount_sum']);
+        expect(pivot.results().all()[0].billed_amount_sum).toEqual('EUR173.20');
     });
 
     it('should return a column for each field value in columnLabels', function(){
       pivot.display().summaries().set(['billed_amount_sum']);
       pivot.display().columnLabels().set(['last_billed_yyyy_mm']);
-      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual(162.98);
+      expect(pivot.results().all()[0]['2012_01'].billed_amount_sum).toEqual('SG$162.98');
     });
 
     it('should return the column titles and span counts for each resulting table column', function(){
@@ -309,11 +358,11 @@ describe('pivot', function () {
       expect(pivot.results().columns().length).toEqual(9);
       expect(pivot.results().columns()[1].fieldName).toEqual('2011_12');
       expect(pivot.results().columns()[1].width).toEqual(1);
-      expect(pivot.results().all()[1][pivot.results().columns()[1].fieldName].billed_amount_sum).toEqual(7.45);
+      expect(pivot.results().all()[1][pivot.results().columns()[1].fieldName].billed_amount_sum).toEqual('US$7.45');
 
       expect(pivot.results().columns()[2].fieldName).toEqual('2012_01');
       expect(pivot.results().columns()[2].width).toEqual(1);
-      expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual(100);
+      expect(pivot.results().all()[1][pivot.results().columns()[2].fieldName].billed_amount_sum).toEqual('SG$100.00');
     });
 
     it('should sort the results of the column label fields using the fields sortFunction', function(){
@@ -324,5 +373,14 @@ describe('pivot', function () {
 
       expect(pivot.results().columns()[0].fieldName).toEqual('39401');
     });
+
+    it("should not allow me to summarise different currencies:", function () {
+
+        pivot.display().rowLabels().set(['zip_code']);
+        pivot.display().summaries().set(['billed_amount_sum']);
+       
+        expect(pivot.results().all()[0].billed_amount_sum).toEqual('Multiple-Currency-Error');
+    });
+
   });
 });

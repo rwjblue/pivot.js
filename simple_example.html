@@ -10,20 +10,33 @@
   <script type="text/javascript" src="./jquery_pivot.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      csv = "last_name,first_name,email,date_ordered,date_delivered,sale_price,unit_identifier\n" +
-          "doo, scooby, scoobydoo12512@gmail.com,2012-02-12,2012-02-17,9.99,big-bang-rpsls\n" +
-          "flinstone,fred,freddyf12516@gmail.com,2012-02-12,2012-02-17,9.99,dr-who-bad-wolf\n" +
-          "spiegel,spike,bebop1256@gmail.com,2012-02-12,2012-02-17,9.99,tng-engage\n"; 
+        csv = "currency_symbol,currency_code,last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
+                      "SG$,SGD,Jackson,Robert,34471,100.00,\"Tue, 24 Jan 2012 00:00:00 +0000\"\n" +
+                      "€,EUR,Smith,Jon,34471,173.20,\"Mon, 13 Feb 2012 00:00:00 +0000\"\n" +
+                      "US$,USD,Jackson,Jon,34474,262.42,\"Mon, 5 Mar 2012 00:00:00 +0000\"\n" +
+                      "US$,USD,Jackson,Susan,34476,7.45,\"Thu, 15 Dec 2011 00:00:00 +0000\"\n" +
+                      "SG$,SGD,Fornea,Chris,34474,62.98,\"Mon, 30 Jan 2012 00:00:00 +0000\"\n" +
+                      "SG$,SGD,Fornea,Shelly,39401,124.63,\"Fri, 17 Feb 2012 00:00:00 +0000\""
 
-      fields =[{name: 'last_name',      type: 'string',   filterable: true},
-               {name: 'first_name',     type: 'string',   filterable: true},
-               {name: 'email',          type: 'string',   filterable: true},
-               {name: 'date_ordered',   type: 'date',     filterable: true},
-               {name: 'date_delivered', type: 'date',     rowLabelable: false},
-               {name: 'sale_price',     type: 'float',    filterable: true},
-               {name: 'unit_identifier',type: 'string',   filterable: true, summarizable: 'count' }];
+        fields = [
+             { name: 'currency_symbol', type: 'string', filterable: false, rowLabelable: false, columnLabelable: false },
+             { name: 'currency_code', type: 'string', filterable: true, rowLabelable: true, columnLabelable: false },
+             { name: 'first_name', type: 'string', filterable: true },
+             { name: 'last_name', type: 'string', filterable: true },
+             { name: 'zip_code', type: 'integer', filterable: true, columnLabelable: true },
+             { name: 'pseudo_zip', type: 'integer', filterable: true, pseudo: true, pseudoFunction: function (row) { return row.zip_code + 1 } },
+             { name: 'billed_amount', type: 'currency', summarizable: 'max' },
+             { name: 'last_billed_date', type: 'date', filterable: true },
+             {
+                 name: 'last_billed_yyyy_mm', type: 'string', filterable: true, pseudo: true, columnLabelable: true,
+                 pseudoFunction: function (row) {
+                     var date = new Date(row.last_billed_date);
+                     return date.getFullYear() + '_' + pivot.utils().padLeft((date.getMonth() + 1), 2, '0')
+                 }
+             }
+        ]
 
-      $('#pivot-menu-container').pivot_display('setup', {csv:csv,fields:fields});
+        $('#pivot-menu-container').pivot_display('setup', { csv: csv, fields: fields, defaultCurrencySymbol: '$', currencySymbolField: 'currency_symbol' });
     });
   </script>
 </head>
