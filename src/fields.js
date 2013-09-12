@@ -224,6 +224,7 @@ function appendField(field) {
     if (field.columnLabelable === undefined) field.columnLabelable = false;
     if (field.filterable === undefined) field.filterable = false;
     if (field.dataSource === undefined) field.dataSource = field.name;
+    if (field.type == 'date') field.sortFunction = sortDate;
 
     if (field.summarizable && (field.rowLabelable || field.columnLabelable || field.filterable)) {
         var summarizable_field = shallowClone(field);
@@ -315,6 +316,7 @@ function displayFieldValue(value, fieldName, row) {
             return value;
     }
 }
+
 
 
 /**

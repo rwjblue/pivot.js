@@ -11,6 +11,7 @@ function pivotUtils() {
         objectKeys: objectKeys,
         objectType: objectType,
         sortNumerically: sortNumerically,
+        sortDate: sortDate,
         isNumber: isNumber,
         formatCurrency: formatCurrency
     }
@@ -87,7 +88,7 @@ function accountingJsSupported() {
 
 function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
-}
+};
 
 function isArray(arg) {
     if (!Array.isArray)
@@ -129,4 +130,15 @@ function objectType(obj) {
 
 function sortNumerically(array) {
     return array.sort(function (a, b) { return a - b; });
+};
+
+function sortDate(date1, date2) {
+    //if string values are passed in
+    if (objectType(date1) !== 'date') date1 = new Date(date1);
+    if (objectType(date2) !== 'date') date2 = new Date(date2);
+
+    if (date1 > date2) return 1;
+    if (date1 < date2) return -1;
+    return 0;
+
 };

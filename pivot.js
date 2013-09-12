@@ -148,6 +148,7 @@ var pivot = (function () {
             objectKeys: objectKeys,
             objectType: objectType,
             sortNumerically: sortNumerically,
+            sortDate: sortDate,
             isNumber: isNumber,
             formatCurrency: formatCurrency
         }
@@ -212,7 +213,7 @@ var pivot = (function () {
             }
         }
 
-      
+
         return result;
     };
 
@@ -267,6 +268,18 @@ var pivot = (function () {
     function sortNumerically(array) {
         return array.sort(function (a, b) { return a - b; });
     };
+
+    function sortDate(date1, date2) {
+        //if string values are passed in
+        if (objectType(date1) !== 'date') date1 = new Date(date1);
+        if (objectType(date2) !== 'date') date2 = new Date(date2);
+
+        if (date1 > date2) return 1;
+        if (date1 < date2) return -1;
+        return 0;
+
+    };
+
     function processHeaderRow(row) {
         var output = [];
 
@@ -772,6 +785,7 @@ var pivot = (function () {
         if (field.columnLabelable === undefined) field.columnLabelable = false;
         if (field.filterable === undefined) field.filterable = false;
         if (field.dataSource === undefined) field.dataSource = field.name;
+        if (field.type == 'date') field.sortFunction = sortDate;
 
         if (field.summarizable && (field.rowLabelable || field.columnLabelable || field.filterable)) {
             var summarizable_field = shallowClone(field);
@@ -1105,7 +1119,8 @@ var pivot = (function () {
             if (displayFields.columnLabels.hasOwnProperty(key)) {
                 var columnLabelColumns = {};
                 for (var resultKey in results) {
-                    var values = pluckValues(results[resultKey].rows, fields[key]);
+                    var field = fields[key];
+                    var values = pluckValues(results[resultKey], field);
 
                     for (var value in values) {
                         if (columnLabelColumns[value] === undefined)
@@ -1124,13 +1139,14 @@ var pivot = (function () {
         return results;
     };
 
-    function pluckValues(rows, field) {
-        var i = -1, m = rows.length, output = {};
+    function pluckValues(row, field) {
+        var i = -1, m = row.rows.length, output = {};
         while (++i < m) {
-            var value = rows[i][field.name];
+            var value = row.rows[i][field.name];
+            value = field.displayFunction(value, field, row);//ensure we set the value to the display name
             if (output[value] === undefined) output[value] = { rows: [] }
 
-            output[value].rows.push(rows[i]);
+            output[value].rows.push(row.rows[i]);
         };
         return output;
     }

@@ -70,7 +70,8 @@ function processColumnLabelResults() {
         if (displayFields.columnLabels.hasOwnProperty(key)) {
             var columnLabelColumns = {};
             for (var resultKey in results) {
-                var values = pluckValues(results[resultKey].rows, fields[key]);
+                var field = fields[key];
+                var values = pluckValues(results[resultKey], field);
 
                 for (var value in values) {
                     if (columnLabelColumns[value] === undefined)
@@ -89,13 +90,14 @@ function processColumnLabelResults() {
     return results;
 };
 
-function pluckValues(rows, field) {
-    var i = -1, m = rows.length, output = {};
+function pluckValues(row, field) {
+    var i = -1, m = row.rows.length, output = {};
     while (++i < m) {
-        var value = rows[i][field.name];
+        var value = row.rows[i][field.name];
+        value = field.displayFunction(value, field, row);//ensure we set the value to the display name
         if (output[value] === undefined) output[value] = { rows: [] }
 
-        output[value].rows.push(rows[i]);
+        output[value].rows.push(row.rows[i]);
     };
     return output;
 }
