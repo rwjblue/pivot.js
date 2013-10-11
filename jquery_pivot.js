@@ -3,12 +3,23 @@
 
 var element,
     callbacks = {},
-    resultsTitle;
+    resultsTitle, 
+    resultsDivID;
 
 var methods = {
   setup   : function(options){
     element = this; // set element for build_containers()
     if (options.callbacks) callbacks = options.callbacks;
+    
+    if(options.resultsDivID){
+    	
+    	resultsDivID = options.resultsDivID;
+    	
+    }
+    else
+    {
+    	resultsDivID = 'results';
+    }
 
     if (options.url !== undefined)
       methods.process_from_url(options);
@@ -294,7 +305,7 @@ var methods = {
         snip    = '',
         fieldName;
 
-    var result_table = $('#results'),
+    var result_table = $('#' + resultsDivID),
         result_rows;
     result_table.empty();
 
