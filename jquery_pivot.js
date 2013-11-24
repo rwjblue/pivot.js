@@ -172,14 +172,14 @@ var methods = {
     remove_filter = '<a class="remove-filter-field" style="cursor:pointer;">(X)</a></label>';
     $('#filter-list').append('<div><hr/><label>' + field.name + remove_filter + snip + '</div>');
 
+    //Optional Chosen/Select2 integration
+    if($.fn.chosen!==undefined) $('select.filter').chosen();
+    else if($.fn.select2!==undefined) $('select.filter').select2();
+
     // Update field listeners
     $('select.filter').on('change', function(event) {
       methods.update_filtered_rows();
     });
-
-    //Optional Chosen/Select2 integration
-    if($.fn.chosen!==undefined) $('select.filter').chosen();
-    else if($.fn.select2!==undefined) $('select.filter').select2();
 
     $('input[type=text].filter').on('keyup', function(event) {
       var filterInput = this,
@@ -223,11 +223,13 @@ var methods = {
     $('.filter').each(function(index){
       field = pivot.fields().get($(this).attr('data-field'));
 
-      if ($(this).val() !== null && $(this).val()[0] !== ''){
-        if (field.filterType === 'regexp')
-          restrictions[$(this).attr('data-field')] = new RegExp($(this).val(),'i');
-        else
-          restrictions[$(this).attr('data-field')] = $(this).val();
+      if (field) {
+        if ($(this).val() !== null && $(this).val()[0] !== ''){
+          if (field.filterType === 'regexp')
+            restrictions[$(this).attr('data-field')] = new RegExp($(this).val(),'i');
+          else
+            restrictions[$(this).attr('data-field')] = $(this).val();
+        }
       }
     });
     pivot.filters().set(restrictions);
