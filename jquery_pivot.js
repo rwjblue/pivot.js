@@ -161,7 +161,7 @@ var methods = {
     if (fieldName === '') return;
 
     // Check to see if this field has already been built
-    var filterExists = $('#filter-list select[data-field=' + field.name + ']');
+    var filterExists = $('#filter-list select[data-field="' + field.name + '"]');
     if (filterExists.length) return;
 
     if (field.filterType === 'regexp')
