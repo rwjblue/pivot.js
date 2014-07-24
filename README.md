@@ -13,7 +13,7 @@ creation of highly customizable unique table views from your browser.
 In our case, results (or the pivot-table) will be displayed as an HTML table
 pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
 
-## View an [example](http://rjackson.github.com/pivot.js/) or view the [Docs](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
+## View an [example](http://rwjblue.github.com/pivot.js/) or view the [Docs](http://rwjblue.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
 
 #Usage
 
@@ -74,14 +74,14 @@ pivot.init({json: json_string, fields: field_definitions});
 
 # Wiki
 
-* [Filters](https://github.com/rjackson/pivot.js/wiki/Filters)
-* [Labels](https://github.com/rjackson/pivot.js/wiki/Labels)
-* [Summaries](https://github.com/rjackson/pivot.js/wiki/Summaries)
-* [Integrating with jQuery](https://github.com/rjackson/pivot.js/wiki/Integrating-with-jQuery)
-* [jQuery Supporting Cast](https://github.com/rjackson/pivot.js/wiki/jQuery_pivot-Supporting-Cast)
-* [Integrating with DataTables](https://github.com/rjackson/pivot.js/wiki/Integrating-with-Datatables)  (__Highly Recommend__)
-* [Contribute](https://github.com/rjackson/pivot.js/wiki/Contributing)
-* [DOCS](http://rjackson.github.com/pivot.js/docs/index.html#!/api/Pivot)
+* [Filters](https://github.com/rwjblue/pivot.js/wiki/Filters)
+* [Labels](https://github.com/rwjblue/pivot.js/wiki/Labels)
+* [Summaries](https://github.com/rwjblue/pivot.js/wiki/Summaries)
+* [Integrating with jQuery](https://github.com/rwjblue/pivot.js/wiki/Integrating-with-jQuery)
+* [jQuery Supporting Cast](https://github.com/rwjblue/pivot.js/wiki/jQuery_pivot-Supporting-Cast)
+* [Integrating with DataTables](https://github.com/rwjblue/pivot.js/wiki/Integrating-with-Datatables)  (__Highly Recommend__)
+* [Contribute](https://github.com/rwjblue/pivot.js/wiki/Contributing)
+* [DOCS](http://rwjblue.github.com/pivot.js/docs/index.html#!/api/Pivot)
 
 # Articles
 
