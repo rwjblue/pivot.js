@@ -15,7 +15,7 @@ pivoting from the input data (CSV or JSON). Without further ado let's get to usa
 
 ## View an [example](http://rwjblue.github.com/pivot.js/) or view the [Docs](http://rwjblue.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
 
-#Usage
+# Usage
 
 Step one is to initialize the pivot object.  It expects the following attributes:
 
