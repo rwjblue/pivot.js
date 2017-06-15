@@ -54,7 +54,7 @@ var field_definitions = [{name: 'last_name',   type: 'string',   filterable: tru
         {name: 'zip_code',          type: 'integer',  filterable: true},
         {name: 'pseudo_zip',        type: 'integer',  filterable: true },
         {name: 'billed_amount',     type: 'float',    rowLabelable: false},
-        {name: 'last_billed_date',  type: 'date',     filterable: true}
+        {name: 'last_billed_date',  type: 'date',     filterable: true}]
 
 // from csv data:
 var csv_string  =  "last_name,first_name,zip_code,billed_amount,last_billed_date\n" +
