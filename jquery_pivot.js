@@ -96,7 +96,7 @@ var methods = {
     if (options.callbacks     === undefined) options.callbacks    = {};
 
     if (options.callbacks.beforeReprocessDisplay) {
-      options.callbacks.afterReprocessDisplay();
+      options.callbacks.beforeReprocessDisplay();
     }
 
     pivot.filters().set(options.filters);
