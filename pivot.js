@@ -203,7 +203,7 @@ function pivotUtils(){
 
     var output = [];
 
-    for (key in object){
+    for (var key in object){
       output.push(key);
     }
 
@@ -929,7 +929,7 @@ function pivotData(type) {
 
       for (var key in displayFields.rowLabels) {
         if (displayFields.rowLabels.hasOwnProperty(key)) {
-          if (i === 0) resultsColumns.push({fieldName: key, width: 1, type: 'row'});
+          if (i === 0) resultsColumns.push({fieldName: key, width: 1, title:displayFields.rowLabels[key].title||key, type: 'row'});
 
           resultKey += key + ':' + row[key] + '|';
         }
@@ -1026,7 +1026,7 @@ function pivotData(type) {
   function populateSummaryColumnsResults(){
     for (var key in displayFields.summaries){
       if (displayFields.summaries.hasOwnProperty(key))
-        resultsColumns.push({fieldName: key, width: 1, type: 'summary'})
+        resultsColumns.push({fieldName: key, width: 1,title:displayFields.summaries[key].title||key, type: 'summary'})
     }
 
     return resultsColumns;

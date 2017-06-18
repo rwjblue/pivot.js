@@ -322,12 +322,13 @@ var methods = {
 
       snip += '<tr>'
       $.each(columns, function(index, column){
+          var columnTitle = column.title || column.fieldName;
         switch (column.type){
           case 'row':
-            snip += '<th rowspan="2">'+ column.fieldName + '</th>';
+            snip += '<th rowspan="2">'+ columnTitle + '</th>';
             break;
           case 'column':
-            snip += '<th colspan="' + column.width + '">' + column.fieldName + '</th>';
+            snip += '<th colspan="' + column.width + '">' + columnTitle + '</th>';
             summaryRow += summarySnip
             break;
         }
@@ -336,8 +337,9 @@ var methods = {
     } else {
       snip += '<tr>'
       $.each(columns, function(index, column){
+          var columnTitle = column.title || column.fieldName;
         if (column.type !== 'column' || config.summaries.length <= 1) {
-          snip += '<th>' + column.fieldName + '</th>';
+          snip += '<th>' + columnTitle + '</th>';
         } else {
           $.each(config.summaries, function(index, fieldName){
             snip += '<th>' + fieldName + '</th>';

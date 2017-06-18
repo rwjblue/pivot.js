@@ -162,8 +162,8 @@ var fields = [
 
 
     // summary fields
-    {name: 'billed_amount',     type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
-    {name: 'payment_amount',    type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+    {name: 'billed_amount', title:"Billed amount", type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
+    {name: 'payment_amount',title:"Payment amount", type: 'float',  rowLabelable: false, summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
     {name: 'balance', type: 'float', rowLabelable: false, pseudo: true,
       pseudoFunction: function(row){ return row.billed_amount - row.payment_amount },
       summarizable: 'sum', displayFunction: function(value){ return accounting.formatMoney(value)}},
