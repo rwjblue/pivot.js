@@ -13,7 +13,7 @@ creation of highly customizable unique table views from your browser.
 In our case, results (or the pivot-table) will be displayed as an HTML table
 pivoting from the input data (CSV or JSON). Without further ado let's get to usage.
 
-## View an [example](http://rwjblue.github.com/pivot.js/) or view the [Docs](http://rwjblue.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
+## View an [example](https://rwjblue.github.io/pivot.js/) or view the [Docs](http://rwjblue.github.com/pivot.js/docs/index.html#!/api/Pivot) for more information.
 
 # Usage
 
